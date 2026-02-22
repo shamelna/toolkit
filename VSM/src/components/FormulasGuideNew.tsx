@@ -347,6 +347,15 @@ const FormulasGuideNew = () => {
               <Download className="w-5 h-5" />
               Download PDF Guide
             </a>
+            <a 
+              href="/VSM/docs/VSM_Calculations_Learning_to_See.xlsx"
+              download
+              className="btn-secondary"
+              style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', marginLeft: '8px' }}
+            >
+              <Download className="w-5 h-5" />
+              Download Excel Template
+            </a>
           </div>
         </div>
 
