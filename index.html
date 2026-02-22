@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/x-icon" href="https://practitioner.kaizenacademy.education/Tcia.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kaizen Academy Toolkit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+      /* Kaizen Academy Toolkit Styles */
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        background: #ffffff;
+        color: #1a1a1a;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      /* Header Styles */
+      .header {
+        background: #1a1a1a;
+        color: white;
+        padding: 20px 0;
+        border-bottom: 4px solid #ffd559;
+      }
+
+      .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .logo {
+        width: 40px;
+        height: 40px;
+        background: #ffd559;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        font-size: 18px;
+        color: #1a1a1a;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 30px;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: #ffd559;
+      }
+
+      /* Hero Section */
+      .hero {
+        text-align: center;
+        padding: 80px 0;
+        background: linear-gradient(135deg, rgba(255, 213, 89, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      }
+
+      .hero h1 {
+        font-size: 3.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 20px;
+        line-height: 1.2;
+      }
+
+      .hero .subtitle {
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .highlight {
+        color: #ffd559;
+        font-weight: 600;
+      }
+
+      /* Tools Grid */
+      .tools-section {
+        padding: 80px 0;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 60px;
+      }
+
+      .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .tool-card {
+        background: #ffffff;
+        border: 2px solid #e5e5e5;
+        border-radius: 16px;
+        padding: 30px;
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: inherit;
+        display: block;
+      }
+
+      .tool-card:hover {
+        border-color: #ffd559;
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .tool-icon {
+        width: 60px;
+        height: 60px;
+        background: #ffd559;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+        font-size: 24px;
+        color: #1a1a1a;
+      }
+
+      .tool-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 10px;
+      }
+
+      .tool-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .tool-status {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .status-available {
+        background: rgba(76, 175, 80, 0.1);
+        color: #4CAF50;
+      }
+
+      .status-coming-soon {
+        background: rgba(33, 150, 243, 0.1);
+        color: #2196F3;
+      }
+
+      /* Footer */
+      .footer {
+        background: #1a1a1a;
+        color: white;
+        padding: 40px 0;
+        text-align: center;
+        border-top: 4px solid #ffd559;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 40px;
+        margin-bottom: 30px;
+      }
+
+      .footer-section h3 {
+        color: #ffd559;
+        margin-bottom: 15px;
+        font-size: 1.1rem;
+      }
+
+      .footer-section a {
+        color: #ccc;
+        text-decoration: none;
+        transition: color 0.3s ease;
+        display: block;
+        margin-bottom: 8px;
+      }
+
+      .footer-section a:hover {
+        color: #ffd559;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #333;
+        padding-top: 20px;
+        color: #999;
+        font-size: 0.875rem;
+      }
+
+      /* Responsive */
+      @media (max-width: 768px) {
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+
+        .hero .subtitle {
+          font-size: 1.1rem;
+        }
+
+        .header-content {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .nav-links {
+          gap: 20px;
+        }
+
+        .tools-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <div class="header-content">
+          <div class="logo-section">
+            <div class="logo">KA</div>
+            <div>
+              <h1 style="margin: 0; font-size: 1.5rem;">Kaizen Academy</h1>
+              <p style="margin: 4px 0 0 0; font-size: 0.875rem; color: #ccc;">Professional Toolkit for Continuous Improvement</p>
+            </div>
+          </div>
+          <nav class="nav-links">
+            <a href="#tools">Tools</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <h1>Kaizen Academy <span class="highlight">Toolkit</span></h1>
+        <p class="subtitle">
+          A comprehensive collection of professional tools and calculators for <strong>Value Stream Mapping</strong>, 
+          <strong>Total Productive Maintenance</strong>, <strong>Quality Management</strong>, and <strong>Productivity Improvement</strong>
+        </p>
+      </div>
+    </section>
+
+    <!-- Tools Section -->
+    <section id="tools" class="tools-section">
+      <div class="container">
+        <h2 class="section-title">Professional Tools & Calculators</h2>
+        
+        <div class="tools-grid">
+          <!-- VSM Calculator -->
+          <a href="VSM/" class="tool-card">
+            <div class="tool-icon">📊</div>
+            <h3 class="tool-title">VSM Calculator</h3>
+            <p class="tool-description">
+              Complete Value Stream Mapping calculator with takt time, inventory analysis, process capacity, and kanban calculations. 
+              Features comprehensive formulas guide from Learning to See.
+            </p>
+            <span class="tool-status status-available">Available Now</span>
+          </a>
+
+          <!-- TPM Calculator -->
+          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
+            <div class="tool-icon">⚙️</div>
+            <h3 class="tool-title">TPM Calculator</h3>
+            <p class="tool-description">
+              Total Productive Maintenance calculator for OEE analysis, MTBF/MTTR calculations, and maintenance planning.
+            </p>
+            <span class="tool-status status-coming-soon">Coming Soon</span>
+          </div>
+
+          <!-- Quality Tools -->
+          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
+            <div class="tool-icon">✅</div>
+            <h3 class="tool-title">Quality Tools</h3>
+            <p class="tool-description">
+              Quality management calculators including Cp/Cpk analysis, control charts, and statistical process control tools.
+            </p>
+            <span class="tool-status status-coming-soon">Coming Soon</span>
+          </div>
+
+          <!-- Productivity Calculator -->
+          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
+            <div class="tool-icon">📈</div>
+            <h3 class="tool-title">Productivity Calculator</h3>
+            <p class="tool-description">
+              Productivity analysis tools including labor productivity, efficiency calculations, and performance metrics.
+            </p>
+            <span class="tool-status status-coming-soon">Coming Soon</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-top: 40px;">
+          <p style="color: #666; font-size: 1.1rem;">
+            <strong>More tools coming soon!</strong> We're continuously expanding our toolkit to serve the continuous improvement community.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Tools & Resources</h3>
+            <a href="VSM/">VSM Calculator</a>
+            <a href="#">TPM Calculator</a>
+            <a href="#">Quality Tools</a>
+            <a href="#">Productivity Tools</a>
+          </div>
+          
+          <div class="footer-section">
+            <h3>Learning Resources</h3>
+            <a href="#">VSM Training</a>
+            <a href="#">TPM Certification</a>
+            <a href="#">Quality Courses</a>
+            <a href="#">Kaizen Methods</a>
+          </div>
+          
+          <div class="footer-section">
+            <h3>Academy</h3>
+            <a href="#">About Us</a>
+            <a href="#">Certification Programs</a>
+            <a href="#">Consulting Services</a>
+            <a href="#">Contact</a>
+          </div>
+          
+          <div class="footer-section">
+            <h3>Connect</h3>
+            <a href="#">LinkedIn</a>
+            <a href="#">YouTube</a>
+            <a href="#">Blog</a>
+            <a href="#">Newsletter</a>
+          </div>
+        </div>
+        
+        <div class="footer-bottom">
+          <p>&copy; 2026 Kaizen Academy. Professional Toolkit for Continuous Improvement.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
