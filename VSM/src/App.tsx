@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Calculator, Clock, Users, Package, TrendingUp, BookOpen, Menu, X, Home, HelpCircle } from 'lucide-react';
 import TaktTimeCalculator from './components/TaktTimeCalculator';
 import InventoryCalculator from './components/InventoryCalculator';
