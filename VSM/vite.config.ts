@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/vsm-calculator/',
+  base: '/Kaizen-Academy-Toolkit/VSM/',
   server: {
     port: 3000,
     open: true
