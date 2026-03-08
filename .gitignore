@@ -57,3 +57,4 @@ temp/
 
 # Claude AI workspace (deployment issues)
 .claude/
+7-QC-Tools/.claude/
