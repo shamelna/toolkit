@@ -326,6 +326,81 @@ export default function KanbanCalculator() {
                   </div>
                 </div>
               </div>
+
+              {/* Changeover Time Analysis */}
+              <div className="card" style={{ 
+                background: 'rgba(220, 38, 38, 0.05)', 
+                border: '1px solid #e5e5e5',
+                textAlign: 'left',
+                padding: '30px'
+              }}>
+                <h3 className="heading-medium mb-4" style={{ color: '#1a1a1a' }}>Changeover Time Analysis</h3>
+                <div className="text-body text-muted">
+                  <p className="mb-3">
+                    <strong>Changeover Duration:</strong> {parseFloat(changeoverDuration) || 0} seconds is the time required to change from one product to another.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Available Changeover Time:</strong> {result.timeLeftForChangeovers.toFixed(0)} seconds per shift ({(result.timeLeftForChangeovers/3600).toFixed(1)} hours) is the time available for changeovers after meeting production demand.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Maximum Changeovers:</strong> {result.maxChangeoversPerDay.toFixed(1)} changeovers per day is the theoretical maximum based on available time and changeover duration.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Changeover-to-Run Ratio:</strong> {result.coToRunRatio.toFixed(1)}:1 indicates the relationship between changeover time and production time. Lower ratios are more efficient.
+                  </p>
+                  <div className="mt-4 p-3" style={{ background: 'rgba(255, 213, 89, 0.05)', borderRadius: '8px' }}>
+                    <strong>💡 Improvement Focus:</strong> Reduce changeover time through SMED (Single-Minute Exchange of Die) techniques, standardized procedures, and parallel operations.
+                  </div>
+                </div>
+              </div>
+
+              {/* Kanban System Explanation */}
+              <div className="card" style={{ 
+                background: 'rgba(34, 197, 94, 0.05)', 
+                border: '1px solid #e5e5e5',
+                textAlign: 'left',
+                padding: '30px'
+              }}>
+                <h3 className="heading-medium mb-4" style={{ color: '#1a1a1a' }}>Kanban System Design</h3>
+                <div className="text-body text-muted">
+                  <p className="mb-3">
+                    <strong>Kanban Cards:</strong> {result.kanbanPerShift.toFixed(1)} cards per shift represent the work-in-progress limits and trigger replenishment signals.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Pitch Time:</strong> {result.pitch.toFixed(0)} seconds is the interval at which material should be withdrawn to match customer takt time.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Container Size:</strong> {parseFloat(containerQuantity) || 0} pieces per container determines the withdrawal quantity and affects kanban calculations.
+                  </p>
+                  <div className="mt-4 p-3" style={{ background: 'rgba(34, 197, 94, 0.05)', borderRadius: '8px' }}>
+                    <strong>📋 Kanban Rules:</strong> Never pass defective material downstream, make only what's needed, level workload, and stabilize processes.
+                  </div>
+                </div>
+              </div>
+
+              {/* Production Leveling Strategy */}
+              <div className="card" style={{ 
+                background: 'rgba(59, 130, 246, 0.05)', 
+                border: '1px solid #e5e5e5',
+                textAlign: 'left',
+                padding: '30px'
+              }}>
+                <h3 className="heading-medium mb-4" style={{ color: '#1a1a1a' }}>Production Leveling (Heijunka)</h3>
+                <div className="text-body text-muted">
+                  <p className="mb-3">
+                    <strong>Leveling Box:</strong> {result.columnsInLevelingBox.toFixed(0)} columns represent time slots for scheduling different products in a mixed-model production sequence.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Leveling Strategy:</strong> Mix products in a repeating sequence to smooth demand and reduce inventory while maintaining flexibility.
+                  </p>
+                  <p className="mb-3">
+                    <strong>Benefits:</strong> Reduces overburden (muri), eliminates unevenness (mura), and prevents overproduction (muda).
+                  </p>
+                  <div className="mt-4 p-3" style={{ background: 'rgba(59, 130, 246, 0.05)', borderRadius: '8px' }}>
+                    <strong>🎯 Leveling Goal:</strong> Create a predictable, repeatable pattern that matches customer demand while minimizing changeovers and inventory.
+                  </div>
+                </div>
+              </div>
             </div>
           ) : (
             <div className="text-center py-12 text-muted">

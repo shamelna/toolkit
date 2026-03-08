@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run:*)",
+      "Bash(\"D:\\\\Calculations\\\\Kaizen-Academy-Toolkit\\\\7-QC-Tools\\\\src\\\\components\\\\Fishbone.tmp.tsx\":*)",
+      "Bash(\"/tmp/Fishbone.tsx\":*)",
+      "Bash(taskkill:*)",
+      "Bash(node:*)",
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx vite:*)"
+    ]
+  }
+}

@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { Calculator, Clock, Users, Package, TrendingUp, BookOpen, Menu, X, Home, HelpCircle } from 'lucide-react';
+import { Calculator, Clock, Users, Package, TrendingUp, BookOpen, Menu, X, Home, HelpCircle, Bot } from 'lucide-react';
 import TaktTimeCalculator from './components/TaktTimeCalculator';
 import InventoryCalculator from './components/InventoryCalculator';
 import ProcessCapacityCalculator from './components/ProcessCapacityCalculator';
 import KanbanCalculator from './components/KanbanCalculator';
 import FormulasGuideNew from './components/FormulasGuideNew';
+import KaizenBot from './components/KaizenBot';
 import HomeScreen from './components/HomeScreen';
 import KaizenHeader from './components/KaizenHeader';
 import KaizenFooter from './components/KaizenFooter';
 import HowToUse from './components/HowToUse';
 
-type TabType = 'home' | 'how-to-use' | 'takt-time' | 'inventory' | 'process-capacity' | 'kanban' | 'reference';
+type TabType = 'home' | 'how-to-use' | 'takt-time' | 'inventory' | 'process-capacity' | 'kanban' | 'reference' | 'ai-bot';
 
 interface Tab {
   id: TabType;
