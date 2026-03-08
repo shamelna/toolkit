@@ -157,8 +157,8 @@
 
       .apps-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 40px;
+        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+        gap: 30px;
         margin-bottom: 60px;
       }
 
@@ -166,7 +166,7 @@
         background: #ffffff;
         border: 2px solid #e5e5e5;
         border-radius: 20px;
-        padding: 40px;
+        padding: 30px;
         text-align: center;
         transition: all 0.3s ease;
         text-decoration: none;
@@ -174,6 +174,7 @@
         display: block;
         position: relative;
         overflow: hidden;
+        min-height: 380px;
       }
 
       .app-card::before {
@@ -199,36 +200,36 @@
       }
 
       .app-icon {
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         background: linear-gradient(135deg, #ffd559, #ff6b35);
         border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 30px;
-        font-size: 32px;
+        margin: 0 auto 20px;
+        font-size: 28px;
         color: #1a1a1a;
         box-shadow: 0 8px 20px rgba(255, 213, 89, 0.3);
       }
 
       .app-title {
-        font-size: 1.5rem;
+        font-size: 1.25rem;
         font-weight: 600;
         color: #1a1a1a;
-        margin-bottom: 15px;
+        margin-bottom: 12px;
       }
 
       .app-description {
         color: #666;
-        line-height: 1.6;
-        margin-bottom: 25px;
-        font-size: 1rem;
+        line-height: 1.5;
+        margin-bottom: 20px;
+        font-size: 0.9rem;
       }
 
       .app-features {
         text-align: left;
-        margin-bottom: 25px;
+        margin-bottom: 20px;
       }
 
       .app-features ul {
@@ -237,11 +238,11 @@
       }
 
       .app-features li {
-        padding: 8px 0;
+        padding: 4px 0;
         color: #666;
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         position: relative;
-        padding-left: 25px;
+        padding-left: 20px;
       }
 
       .app-features li::before {
@@ -489,7 +490,7 @@
           </a>
 
           <!-- Kaizen Academy Sensei -->
-          <a href="kaizen-academy-sensei/" class="app-card coming-soon" target="_blank">
+          <div class="app-card coming-soon" style="opacity: 0.7; cursor: not-allowed;">
             <div class="app-icon">🎓</div>
             <h3 class="app-title">Kaizen Academy Sensei</h3>
             <p class="app-description">
@@ -502,7 +503,7 @@
               <span>🎯 Personalized Learning</span>
             </div>
             <span class="app-status status-coming-soon">🔧 COMING SOON</span>
-          </a>
+          </div>
 
           <!-- TPM Calculator -->
           <div class="app-card" style="opacity: 0.7; cursor: not-allowed;">
