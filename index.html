@@ -35,6 +35,9 @@
         color: white;
         padding: 20px 0;
         border-bottom: 4px solid #ffd559;
+        position: sticky;
+        top: 0;
+        z-index: 100;
       }
 
       .header-content {
@@ -81,25 +84,46 @@
       /* Hero Section */
       .hero {
         text-align: center;
-        padding: 80px 0;
+        padding: 100px 0;
         background: linear-gradient(135deg, rgba(255, 213, 89, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: repeating-linear-gradient(
+          90deg,
+          transparent,
+          transparent 50px,
+          rgba(255, 213, 89, 0.03) 50px,
+          rgba(255, 213, 89, 0.03) 51px
+        );
+        pointer-events: none;
       }
 
       .hero h1 {
-        font-size: 3.5rem;
+        font-size: 4rem;
         font-weight: 700;
         color: #1a1a1a;
         margin-bottom: 20px;
-        line-height: 1.2;
+        line-height: 1.1;
+        position: relative;
       }
 
       .hero .subtitle {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
         color: #666;
         margin-bottom: 40px;
-        max-width: 600px;
+        max-width: 700px;
         margin-left: auto;
         margin-right: auto;
+        position: relative;
       }
 
       .highlight {
@@ -107,93 +131,181 @@
         font-weight: 600;
       }
 
-      /* Tools Grid */
-      .tools-section {
+      /* Apps Grid */
+      .apps-section {
         padding: 80px 0;
+        background: #fafafa;
       }
 
       .section-title {
         text-align: center;
-        font-size: 2.5rem;
+        font-size: 3rem;
         font-weight: 700;
         color: #1a1a1a;
-        margin-bottom: 60px;
+        margin-bottom: 20px;
       }
 
-      .tools-grid {
+      .section-subtitle {
+        text-align: center;
+        font-size: 1.25rem;
+        color: #666;
+        margin-bottom: 60px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+
+      .apps-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 30px;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 40px;
         margin-bottom: 60px;
       }
 
-      .tool-card {
+      .app-card {
         background: #ffffff;
         border: 2px solid #e5e5e5;
-        border-radius: 16px;
-        padding: 30px;
+        border-radius: 20px;
+        padding: 40px;
         text-align: center;
         transition: all 0.3s ease;
         text-decoration: none;
         color: inherit;
         display: block;
+        position: relative;
+        overflow: hidden;
       }
 
-      .tool-card:hover {
+      .app-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, #ffd559, #ff6b35);
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+      }
+
+      .app-card:hover::before {
+        transform: translateX(0);
+      }
+
+      .app-card:hover {
         border-color: #ffd559;
-        transform: translateY(-5px);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
       }
 
-      .tool-icon {
-        width: 60px;
-        height: 60px;
-        background: #ffd559;
-        border-radius: 12px;
+      .app-icon {
+        width: 80px;
+        height: 80px;
+        background: linear-gradient(135deg, #ffd559, #ff6b35);
+        border-radius: 20px;
         display: flex;
         align-items: center;
         justify-content: center;
-        margin: 0 auto 20px;
-        font-size: 24px;
+        margin: 0 auto 30px;
+        font-size: 32px;
         color: #1a1a1a;
+        box-shadow: 0 8px 20px rgba(255, 213, 89, 0.3);
       }
 
-      .tool-title {
-        font-size: 1.25rem;
+      .app-title {
+        font-size: 1.5rem;
         font-weight: 600;
         color: #1a1a1a;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
       }
 
-      .tool-description {
+      .app-description {
         color: #666;
         line-height: 1.6;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
+        font-size: 1rem;
       }
 
-      .tool-status {
+      .app-features {
+        text-align: left;
+        margin-bottom: 25px;
+      }
+
+      .app-features ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      .app-features li {
+        padding: 8px 0;
+        color: #666;
+        font-size: 0.9rem;
+        position: relative;
+        padding-left: 25px;
+      }
+
+      .app-features li::before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: #ffd559;
+        font-weight: bold;
+      }
+
+      .app-status {
         display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
+        padding: 8px 16px;
+        border-radius: 25px;
         font-size: 0.875rem;
-        font-weight: 500;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
       }
 
-      .status-available {
-        background: rgba(76, 175, 80, 0.1);
-        color: #4CAF50;
+      .status-live {
+        background: linear-gradient(135deg, #4CAF50, #45a049);
+        color: white;
+        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+      }
+
+      .status-beta {
+        background: linear-gradient(135deg, #2196F3, #1976D2);
+        color: white;
+        box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
       }
 
       .status-coming-soon {
-        background: rgba(33, 150, 243, 0.1);
-        color: #2196F3;
+        background: linear-gradient(135deg, #9E9E9E, #757575);
+        color: white;
+        box-shadow: 0 4px 10px rgba(158, 158, 158, 0.3);
+      }
+
+      /* Coming Soon Section */
+      .coming-soon {
+        background: #1a1a1a;
+        color: white;
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .coming-soon h2 {
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+        color: #ffd559;
+      }
+
+      .coming-soon p {
+        font-size: 1.25rem;
+        max-width: 600px;
+        margin: 0 auto;
+        color: #ccc;
       }
 
       /* Footer */
       .footer {
         background: #1a1a1a;
         color: white;
-        padding: 40px 0;
+        padding: 60px 0 30px;
         text-align: center;
         border-top: 4px solid #ffd559;
       }
@@ -202,13 +314,13 @@
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
         gap: 40px;
-        margin-bottom: 30px;
+        margin-bottom: 40px;
       }
 
       .footer-section h3 {
         color: #ffd559;
-        margin-bottom: 15px;
-        font-size: 1.1rem;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
       }
 
       .footer-section a {
@@ -216,7 +328,7 @@
         text-decoration: none;
         transition: color 0.3s ease;
         display: block;
-        margin-bottom: 8px;
+        margin-bottom: 12px;
       }
 
       .footer-section a:hover {
@@ -225,7 +337,7 @@
 
       .footer-bottom {
         border-top: 1px solid #333;
-        padding-top: 20px;
+        padding-top: 30px;
         color: #999;
         font-size: 0.875rem;
       }
@@ -249,9 +361,41 @@
           gap: 20px;
         }
 
-        .tools-grid {
+        .apps-grid {
           grid-template-columns: 1fr;
         }
+
+        .section-title {
+          font-size: 2rem;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .app-card {
+        animation: fadeInUp 0.6s ease-out;
+      }
+
+      .app-card:nth-child(2) {
+        animation-delay: 0.1s;
+      }
+
+      .app-card:nth-child(3) {
+        animation-delay: 0.2s;
+      }
+
+      .app-card:nth-child(4) {
+        animation-delay: 0.3s;
       }
     </style>
   </head>
@@ -266,13 +410,13 @@
             </div>
             <div>
               <h1 style="margin: 0; font-size: 1.5rem;">Kaizen Academy</h1>
-              <p style="margin: 4px 0 0 0; font-size: 0.875rem; color: #ccc;">Professional Toolkit for Continuous Improvement</p>
+              <p style="margin: 4px 0 0 0; font-size: 0.875rem; color: #ccc;">Professional Toolkit Suite</p>
             </div>
           </div>
           <nav class="nav-links">
-            <a href="#tools">Tools</a>
+            <a href="#apps">Apps</a>
+            <a href="#coming-soon">Roadmap</a>
             <a href="#about">About</a>
-            <a href="#contact">Contact</a>
           </nav>
         </div>
       </div>
@@ -283,65 +427,117 @@
       <div class="container">
         <h1>Kaizen Academy <span class="highlight">Toolkit</span></h1>
         <p class="subtitle">
-          A comprehensive collection of professional tools and calculators for <strong>Value Stream Mapping</strong>, 
-          <strong>Total Productive Maintenance</strong>, <strong>Quality Management</strong>, and <strong>Productivity Improvement</strong>
+          A comprehensive suite of professional applications for <strong>Lean Manufacturing</strong>, 
+          <strong>Quality Control</strong>, <strong>Value Stream Mapping</strong>, and <strong>Continuous Improvement</strong>
         </p>
       </div>
     </section>
 
-    <!-- Tools Section -->
-    <section id="tools" class="tools-section">
+    <!-- Apps Section -->
+    <section id="apps" class="apps-section">
       <div class="container">
-        <h2 class="section-title">Professional Tools & Calculators</h2>
+        <h2 class="section-title">Available Applications</h2>
+        <p class="section-subtitle">
+          Professional tools ready for immediate use in your continuous improvement journey
+        </p>
         
-        <div class="tools-grid">
-          <!-- VSM Calculator -->
-          <a href="VSM/" class="tool-card">
-            <div class="tool-icon">📊</div>
-            <h3 class="tool-title">VSM Calculator</h3>
-            <p class="tool-description">
-              Complete Value Stream Mapping calculator with takt time, inventory analysis, process capacity, and kanban calculations. 
-              Features comprehensive formulas guide from Learning to See.
+        <div class="apps-grid">
+          <!-- 7 QC Tools -->
+          <a href="7-QC-Tools/" class="app-card" target="_blank">
+            <div class="app-icon">📊</div>
+            <h3 class="app-title">7 QC Tools</h3>
+            <p class="app-description">
+              Complete Quality Control toolkit based on Dr. Kaoru Ishikawa's proven methodologies. 
+              All 7 fundamental QC tools with professional analysis and reporting.
             </p>
-            <span class="tool-status status-available">Available Now</span>
+            <div class="app-features">
+              <ul>
+                <li>Histogram Analysis with Process Capability</li>
+                <li>Fishbone (Ishikawa) Diagram</li>
+                <li>Check Sheets & Data Collection</li>
+                <li>Pareto Charts & Analysis</li>
+                <li>Control Charts (SPC)</li>
+                <li>Scatter Diagrams & Correlation</li>
+                <li>Graphs & Trend Analysis</li>
+                <li>Professional PDF Reports</li>
+              </ul>
+            </div>
+            <span class="app-status status-live">🚀 LIVE</span>
+          </a>
+
+          <!-- VSM Calculator -->
+          <a href="VSM/" class="app-card" target="_blank">
+            <div class="app-icon">🗺️</div>
+            <h3 class="app-title">VSM Calculator</h3>
+            <p class="app-description">
+              Complete Value Stream Mapping calculator with comprehensive formulas guide from "Learning to See". 
+              Professional takt time and flow analysis tools.
+            </p>
+            <div class="app-features">
+              <ul>
+                <li>Takt Time Calculator</li>
+                <li>Inventory Analysis & Days of Supply</li>
+                <li>Process Capacity & Utilization</li>
+                <li>Kanban Calculations</li>
+                <li>Value Added Ratio</li>
+                <li>Production Lead Time</li>
+                <li>Complete Formulas Guide</li>
+                <li>Professional Reporting</li>
+              </ul>
+            </div>
+            <span class="app-status status-live">🚀 LIVE</span>
+          </a>
+
+          <!-- Kaizen Academy Sensei -->
+          <a href="kaizen-academy-sensei/" class="app-card coming-soon" target="_blank">
+            <div class="app-icon">🎓</div>
+            <h3 class="app-title">Kaizen Academy Sensei</h3>
+            <p class="app-description">
+              AI-powered lean manufacturing assistant based on Toyota Production System principles. 
+              Your personal sensei for continuous improvement guidance.
+            </p>
+            <div class="app-features">
+              <span>💬 Interactive Chat</span>
+              <span>📚 Problem-Solving Guidance</span>
+              <span>🎯 Personalized Learning</span>
+            </div>
+            <span class="app-status status-coming-soon">🔧 COMING SOON</span>
           </a>
 
           <!-- TPM Calculator -->
-          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
-            <div class="tool-icon">⚙️</div>
-            <h3 class="tool-title">TPM Calculator</h3>
-            <p class="tool-description">
-              Total Productive Maintenance calculator for OEE analysis, MTBF/MTTR calculations, and maintenance planning.
+          <div class="app-card" style="opacity: 0.7; cursor: not-allowed;">
+            <div class="app-icon">⚙️</div>
+            <h3 class="app-title">TPM Calculator</h3>
+            <p class="app-description">
+              Total Productive Maintenance calculator for comprehensive OEE analysis, 
+              maintenance planning, and equipment reliability optimization.
             </p>
-            <span class="tool-status status-coming-soon">Coming Soon</span>
-          </div>
-
-          <!-- Quality Tools -->
-          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
-            <div class="tool-icon">✅</div>
-            <h3 class="tool-title">Quality Tools</h3>
-            <p class="tool-description">
-              Quality management calculators including Cp/Cpk analysis, control charts, and statistical process control tools.
-            </p>
-            <span class="tool-status status-coming-soon">Coming Soon</span>
-          </div>
-
-          <!-- Productivity Calculator -->
-          <div class="tool-card" style="opacity: 0.7; cursor: not-allowed;">
-            <div class="tool-icon">📈</div>
-            <h3 class="tool-title">Productivity Calculator</h3>
-            <p class="tool-description">
-              Productivity analysis tools including labor productivity, efficiency calculations, and performance metrics.
-            </p>
-            <span class="tool-status status-coming-soon">Coming Soon</span>
+            <div class="app-features">
+              <ul>
+                <li>OEE Calculation & Analysis</li>
+                <li>MTBF/MTTR Calculations</li>
+                <li>Maintenance Planning</li>
+                <li>Equipment Effectiveness</li>
+                <li>Loss Analysis</li>
+                <li>Preventive Maintenance Scheduling</li>
+                <li>Reliability Metrics</li>
+                <li>Professional Reporting</li>
+              </ul>
+            </div>
+            <span class="app-status status-coming-soon">🔧 COMING SOON</span>
           </div>
         </div>
+      </div>
+    </section>
 
-        <div style="text-align: center; margin-top: 40px;">
-          <p style="color: #666; font-size: 1.1rem;">
-            <strong>More tools coming soon!</strong> We're continuously expanding our toolkit to serve the continuous improvement community.
-          </p>
-        </div>
+    <!-- Coming Soon Section -->
+    <section id="coming-soon" class="coming-soon">
+      <div class="container">
+        <h2>More Tools Coming Soon</h2>
+        <p>
+          We're continuously expanding our toolkit with additional professional applications 
+          to support your continuous improvement journey. Stay tuned for more powerful tools!
+        </p>
       </div>
     </section>
 
@@ -350,40 +546,39 @@
       <div class="container">
         <div class="footer-content">
           <div class="footer-section">
-            <h3>Tools & Resources</h3>
-            <a href="VSM/">VSM Calculator</a>
+            <h3>Available Apps</h3>
+            <a href="7-QC-Tools/" target="_blank">7 QC Tools</a>
+            <a href="VSM/" target="_blank">VSM Calculator</a>
             <a href="#">TPM Calculator</a>
-            <a href="#">Quality Tools</a>
-            <a href="#">Productivity Tools</a>
           </div>
           
           <div class="footer-section">
-            <h3>Learning Resources</h3>
-            <a href="#">VSM Training</a>
-            <a href="#">TPM Certification</a>
-            <a href="#">Quality Courses</a>
-            <a href="#">Kaizen Methods</a>
+            <h3>Resources</h3>
+            <a href="#">Documentation</a>
+            <a href="#">Training Materials</a>
+            <a href="#">Best Practices</a>
+            <a href="#">Case Studies</a>
           </div>
           
           <div class="footer-section">
             <h3>Academy</h3>
-            <a href="#">About Us</a>
+            <a href="#">About Kaizen Academy</a>
             <a href="#">Certification Programs</a>
             <a href="#">Consulting Services</a>
-            <a href="#">Contact</a>
+            <a href="#">Contact Support</a>
           </div>
           
           <div class="footer-section">
             <h3>Connect</h3>
             <a href="#">LinkedIn</a>
-            <a href="#">YouTube</a>
+            <a href="#">YouTube Channel</a>
             <a href="#">Blog</a>
             <a href="#">Newsletter</a>
           </div>
         </div>
         
         <div class="footer-bottom">
-          <p>&copy; 2026 Kaizen Academy. Professional Toolkit for Continuous Improvement.</p>
+          <p>&copy; 2026 Kaizen Academy. Professional Toolkit Suite for Continuous Improvement Excellence.</p>
         </div>
       </div>
     </footer>

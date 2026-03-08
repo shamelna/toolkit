@@ -1,0 +1,30 @@
+{
+  "name": "kaizen-academy-sensei",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "extract": "node scripts/extract-pdf.js",
+    "build-vectors": "node scripts/build-vectors.js"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "lucide-react": "^0.263.1",
+    "openai": "^4.20.1",
+    "chromadb": "^1.7.3",
+    "pdf-parse": "^1.1.1",
+    "langchain": "^0.0.208",
+    "@langchain/openai": "^0.0.14",
+    "faiss-node": "^0.5.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}
