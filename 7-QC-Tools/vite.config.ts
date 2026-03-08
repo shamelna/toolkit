@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   root: '.',
-  base: '/7-QC-Tools/',
+  base: './',
   server: {
     port: 3001
   },

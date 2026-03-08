@@ -30,6 +30,14 @@ interface ControlChartResult {
     ucl?: number;
     lcl?: number;
     centerline?: number;
+    xbarMin?: number;
+    xbarMax?: number;
+    rMin?: number;
+    rMax?: number;
+    // R chart specific control limits
+    rUcl?: number;
+    rLcl?: number;
+    rCenterline?: number;
   }>;
   overallMean?: number;
   overallRange?: number;
@@ -212,7 +220,16 @@ export default function ControlCharts() {
         const uclXbar = overallMean + constants.A2 * overallRange;
         const lclXbar = overallMean - constants.A2 * overallRange;
         const uclR = constants.D4 * overallRange;
-        const lclR = constants.D3 * overallRange;
+        const lclR = constants.D3 * overallRange; // Will be 0 for small sample sizes
+
+        // Calculate Y-axis ranges for better readability
+        const xbarRange = uclXbar - lclXbar;
+        const xbarMin = Math.min(lclXbar - (xbarRange * 0.1), Math.min(...xbarData.map(d => d.xbar)) - 0.5);
+        const xbarMax = Math.max(uclXbar + (xbarRange * 0.1), Math.max(...xbarData.map(d => d.xbar)) + 0.5);
+
+        const rRange = uclR - lclR;
+        const rMin = Math.min(lclR - (rRange * 0.1), Math.min(...xbarData.map(d => d.r)) - 0.1);
+        const rMax = Math.max(uclR + (rRange * 0.1), Math.max(...xbarData.map(d => d.r)) + 0.1);
 
         chartData = xbarData.map(d => ({
           subgroup: d.subgroup,
@@ -220,7 +237,15 @@ export default function ControlCharts() {
           r: d.r,
           ucl: uclXbar,
           lcl: lclXbar,
-          centerline: overallMean
+          centerline: overallMean,
+          xbarMin,
+          xbarMax,
+          rMin,
+          rMax,
+          // R chart specific control limits
+          rUcl: uclR,
+          rLcl: lclR,
+          rCenterline: overallRange
         }));
 
         // Check for out-of-control points
@@ -804,7 +829,14 @@ export default function ControlCharts() {
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <YAxis 
+              domain={[
+                result?.data[0]?.xbarMin ?? 0, 
+                result?.data[0]?.xbarMax ?? 20
+              ]} 
+              tick={{ fontSize: 12 }} 
+              allowDataOverflow={false}
+            />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="xbar" stroke="#ffd559" strokeWidth={2} name="X-bar" dot={{ r: 4 }} />
@@ -822,13 +854,23 @@ export default function ControlCharts() {
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <YAxis 
+              domain={[
+                result?.data[0]?.rMin ?? 0, 
+                result?.data[0]?.rMax ?? 5
+              ]} 
+              tick={{ fontSize: 12 }} 
+              allowDataOverflow={false}
+            />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="r" stroke="#1a1a1a" strokeWidth={2} name="Range" dot={{ r: 4 }} />
-            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
-            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
-            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+            <ReferenceLine y={result?.data[0]?.rUcl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
+            {/* Only show LCL if it's greater than 0 */}
+            {(result?.data[0]?.rLcl ?? 0) > 0 && (
+              <ReferenceLine y={result?.data[0]?.rLcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
+            )}
+            <ReferenceLine y={result?.data[0]?.rCenterline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
           </LineChart>
         </ResponsiveContainer>
       </div>
