@@ -54,3 +54,6 @@ temp/
 
 # PowerShell scripts (development only)
 *.ps1
+
+# Claude AI workspace (deployment issues)
+.claude/
