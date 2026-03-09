@@ -38,6 +38,12 @@ interface ControlChartResult {
     rUcl?: number;
     rLcl?: number;
     rCenterline?: number;
+    // S chart specific control limits
+    sMin?: number;
+    sMax?: number;
+    sUcl?: number;
+    sLcl?: number;
+    sCenterline?: number;
   }>;
   overallMean?: number;
   overallRange?: number;
@@ -283,6 +289,11 @@ export default function ControlCharts() {
         const sConstantsVal = CONTROL_CHART_CONSTANTS[subgroupSize];
         const xbarSUcl = xbarSMean + sConstantsVal.A3 * sBarMean;
         const xbarSLcl = xbarSMean - sConstantsVal.A3 * sBarMean;
+        
+        // Calculate S chart control limits
+        const sUcl = sBarMean + sConstantsVal.A3 * sBarMean;
+        const sLcl = Math.max(0, sBarMean - sConstantsVal.A3 * sBarMean); // Prevent negative LCL
+        const sCenterline = sBarMean;
 
         chartData = xbarSRawData.map(d => ({
           subgroup: d.subgroup,
@@ -290,7 +301,10 @@ export default function ControlCharts() {
           s: d.s,
           ucl: xbarSUcl,
           lcl: xbarSLcl,
-          centerline: xbarSMean
+          centerline: xbarSMean,
+          sUcl: sUcl,
+          sLcl: sLcl,
+          sCenterline: sCenterline
         }));
 
         outOfControlPoints = xbarSRawData
@@ -823,54 +837,56 @@ export default function ControlCharts() {
   const renderXbarRChart = () => (
     <div className="space-y-8">
       {/* X-bar Chart - Full Width */}
-      <div className="card" style={{ padding: '20px' }}>
+      <div className="card" style={{ padding: '20px', marginBottom: '30px' }}>
         <h4 className="heading-small mb-4" style={{ color: '#1a1a1a' }}>X-bar Chart (Averages)</h4>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
             <YAxis 
               domain={[
-                result?.data[0]?.xbarMin ?? 0, 
-                result?.data[0]?.xbarMax ?? 20
+                (result?.data[0]?.lcl ?? 0) - 0.5, 
+                (result?.data[0]?.ucl ?? 20) + 0.5
               ]} 
               tick={{ fontSize: 12 }} 
+              tickFormatter={(value: number) => value.toFixed(3)}
               allowDataOverflow={false}
             />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="xbar" stroke="#ffd559" strokeWidth={2} name="X-bar" dot={{ r: 4 }} />
-            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
-            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
-            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label={`UCL: ${result?.data[0]?.ucl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label={`LCL: ${result?.data[0]?.lcl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label={`CL: ${result?.data[0]?.centerline?.toFixed(3)}`} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* R Chart - Full Width */}
-      <div className="card" style={{ padding: '20px' }}>
+      <div className="card" style={{ padding: '20px', marginBottom: '30px' }}>
         <h4 className="heading-small mb-4" style={{ color: '#1a1a1a' }}>R Chart (Range)</h4>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
             <YAxis 
               domain={[
-                result?.data[0]?.rMin ?? 0, 
-                result?.data[0]?.rMax ?? 5
+                (result?.data[0]?.rLcl ?? 0) - 0.2, 
+                (result?.data[0]?.rUcl ?? 5) + 0.5
               ]} 
               tick={{ fontSize: 12 }} 
+              tickFormatter={(value: number) => value.toFixed(3)}
               allowDataOverflow={false}
             />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="r" stroke="#1a1a1a" strokeWidth={2} name="Range" dot={{ r: 4 }} />
-            <ReferenceLine y={result?.data[0]?.rUcl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
+            <ReferenceLine y={result?.data[0]?.rUcl} stroke="#dc2626" strokeDasharray="5 5" label={`UCL: ${result?.data[0]?.rUcl?.toFixed(3)}`} />
             {/* Only show LCL if it's greater than 0 */}
             {(result?.data[0]?.rLcl ?? 0) > 0 && (
-              <ReferenceLine y={result?.data[0]?.rLcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
+              <ReferenceLine y={result?.data[0]?.rLcl} stroke="#dc2626" strokeDasharray="5 5" label={`LCL: ${result?.data[0]?.rLcl?.toFixed(3)}`} />
             )}
-            <ReferenceLine y={result?.data[0]?.rCenterline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+            <ReferenceLine y={result?.data[0]?.rCenterline} stroke="#2a2a2a" strokeDasharray="3 3" label={`CL: ${result?.data[0]?.rCenterline?.toFixed(3)}`} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -880,37 +896,53 @@ export default function ControlCharts() {
   const renderXbarSChart = () => (
     <div className="space-y-8">
       {/* X-bar Chart - Full Width */}
-      <div className="card" style={{ padding: '20px' }}>
+      <div className="card" style={{ padding: '20px', marginBottom: '30px' }}>
         <h4 className="heading-small mb-4" style={{ color: '#1a1a1a' }}>X-bar Chart (Averages)</h4>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <YAxis 
+              domain={[
+                (result?.data[0]?.lcl ?? 0) - 0.5, 
+                (result?.data[0]?.ucl ?? 20) + 0.5
+              ]} 
+              tick={{ fontSize: 12 }} 
+              tickFormatter={(value: number) => value.toFixed(3)}
+              allowDataOverflow={false}
+            />
             <Tooltip />
             <Legend />
             <Line type="monotone" dataKey="xbar" stroke="#ffd559" strokeWidth={2} name="X-bar" dot={{ r: 4 }} />
-            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
-            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
-            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label={`UCL: ${result?.data[0]?.ucl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label={`LCL: ${result?.data[0]?.lcl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label={`CL: ${result?.data[0]?.centerline?.toFixed(3)}`} />
           </LineChart>
         </ResponsiveContainer>
       </div>
 
       {/* S Chart - Full Width */}
-      <div className="card" style={{ padding: '20px' }}>
+      <div className="card" style={{ padding: '20px', marginBottom: '30px' }}>
         <h4 className="heading-small mb-4" style={{ color: '#1a1a1a' }}>S Chart (Standard Deviation)</h4>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="100%" height={400}>
           <LineChart data={result?.data}>
             <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
             <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
-            <YAxis tick={{ fontSize: 12 }} />
+            <YAxis 
+              domain={[
+                (result?.data[0]?.sLcl ?? 0) - 0.2, 
+                (result?.data[0]?.sUcl ?? 5) + 0.5
+              ]} 
+              tick={{ fontSize: 12 }} 
+              tickFormatter={(value: number) => value.toFixed(3)}
+              allowDataOverflow={false}
+            />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="s" stroke="#1a1a1a" strokeWidth={2} name="Std Dev (S)" dot={{ r: 4 }} />
-            <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
-            <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
-            <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+            <Line type="monotone" dataKey="s" stroke="#ffd559" strokeWidth={2} name="S" dot={{ r: 4 }} />
+            <ReferenceLine y={result?.data[0]?.sUcl} stroke="#dc2626" strokeDasharray="5 5" label={`UCL: ${result?.data[0]?.sUcl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.sLcl} stroke="#dc2626" strokeDasharray="5 5" label={`LCL: ${result?.data[0]?.sLcl?.toFixed(3)}`} />
+            <ReferenceLine y={result?.data[0]?.sCenterline} stroke="#2a2a2a" strokeDasharray="3 3" label={`CL: ${result?.data[0]?.sCenterline?.toFixed(3)}`} />
           </LineChart>
         </ResponsiveContainer>
       </div>
@@ -922,7 +954,15 @@ export default function ControlCharts() {
       <LineChart data={result?.data}>
         <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" />
         <XAxis dataKey="subgroup" tick={{ fontSize: 12 }} />
-        <YAxis tick={{ fontSize: 12 }} />
+        <YAxis 
+              domain={[
+                (result?.data[0]?.lcl ?? 0) - 0.1, 
+                (result?.data[0]?.ucl ?? 10) + 0.2
+              ]} 
+              tick={{ fontSize: 12 }} 
+              tickFormatter={(value: number) => activeChart === 'p' || activeChart === 'u' ? value.toFixed(4) : value.toFixed(3)}
+              allowDataOverflow={false}
+            />
         <Tooltip />
         <Legend />
         <Line 
@@ -933,9 +973,9 @@ export default function ControlCharts() {
           name={activeChart.toUpperCase()} 
           dot={{ r: 4 }} 
         />
-        <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label="UCL" />
-        <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label="LCL" />
-        <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label="Centerline" />
+        <ReferenceLine y={result?.data[0]?.ucl} stroke="#dc2626" strokeDasharray="5 5" label={`UCL: ${result?.data[0]?.ucl?.toFixed(3)}`} />
+        <ReferenceLine y={result?.data[0]?.lcl} stroke="#dc2626" strokeDasharray="5 5" label={`LCL: ${result?.data[0]?.lcl?.toFixed(3)}`} />
+        <ReferenceLine y={result?.data[0]?.centerline} stroke="#2a2a2a" strokeDasharray="3 3" label={`CL: ${result?.data[0]?.centerline?.toFixed(3)}`} />
       </LineChart>
     </ResponsiveContainer>
   );
@@ -1352,7 +1392,7 @@ export default function ControlCharts() {
                     }}
                     reportData={{
                       title: `Control Chart Analysis Report — ${chartTypes.find(t => t.id === activeChart)?.name}`,
-                      toolName: 'Control Charts (SPC) — Tool 06 of the 7 QC Tools',
+                      toolName: 'Control Charts (SPC) — Tool 06 of 7 QC Tools',
                       date: new Date().toLocaleDateString(),
                       data: {
                         sections: [
@@ -1366,15 +1406,96 @@ export default function ControlCharts() {
                             }
                           },
                           {
-                            heading: 'Control Limits',
-                            stats: {
-                              'Upper Control Limit (UCL)': result.data[0]?.ucl?.toFixed(4) || 'N/A',
-                              'Centreline (CL)': result.data[0]?.centerline?.toFixed(4) || 'N/A',
-                              'Lower Control Limit (LCL)': result.data[0]?.lcl?.toFixed(4) || 'N/A',
-                              ...(result.overallMean !== undefined ? { 'Overall Mean': result.overallMean.toFixed(4) } : {}),
-                              ...(result.overallRange !== undefined ? { 'Overall Range': result.overallRange.toFixed(4) } : {}),
-                              ...(result.overallStdDev !== undefined ? { 'Overall Std Dev': result.overallStdDev.toFixed(4) } : {}),
-                            }
+                            heading: 'Control Limits & Calculations',
+                            content: (
+                              <div className="space-y-4">
+                                {/* Control Limits Values */}
+                                <div className="bg-yellow-50 p-4 rounded">
+                                  <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Control Limits (3 decimal places)</h5>
+                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                    {(result.data[0]?.ucl !== undefined) && <div><strong>Upper Control Limit (UCL):</strong> {result.data[0]?.ucl?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.centerline !== undefined) && <div><strong>Centreline (CL):</strong> {result.data[0]?.centerline?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.lcl !== undefined) && <div><strong>Lower Control Limit (LCL):</strong> {result.data[0]?.lcl?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.rUcl !== undefined) && <div><strong>R Chart UCL:</strong> {result.data[0]?.rUcl?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.rLcl !== undefined) && <div><strong>R Chart LCL:</strong> {result.data[0]?.rLcl?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.sUcl !== undefined) && <div><strong>S Chart UCL:</strong> {result.data[0]?.sUcl?.toFixed(3) || 'N/A'}</div>}
+                                    {(result.data[0]?.sLcl !== undefined) && <div><strong>S Chart LCL:</strong> {result.data[0]?.sLcl?.toFixed(3) || 'N/A'}</div>}
+                                  </div>
+                                </div>
+                                
+                                {/* Formulas Section */}
+                                <div className="bg-gray-50 p-4 rounded">
+                                  <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Calculation Formulas</h5>
+                                  {activeChart === 'xbar-r' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>X̄ = ΣX̄/k</strong> (Overall Average)</div>
+                                      <div><strong>R̄ = ΣR/k</strong> (Average Range)</div>
+                                      <div><strong>UCL(X̄) = X̄ + A₂R̄</strong></div>
+                                      <div><strong>LCL(X̄) = X̄ - A₂R̄</strong></div>
+                                      <div><strong>UCL(R) = D₄R̄</strong></div>
+                                      <div><strong>LCL(R) = D₃R̄</strong></div>
+                                      <div className="mt-2 text-blue-600"><strong>Constants (n={subgroupSize}):</strong> A₂={CONTROL_CHART_CONSTANTS[subgroupSize]?.A2}, D₃={CONTROL_CHART_CONSTANTS[subgroupSize]?.D3}, D₄={CONTROL_CHART_CONSTANTS[subgroupSize]?.D4}</div>
+                                    </div>
+                                  )}
+                                  {activeChart === 'xbar-s' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>X̄ = ΣX̄/k</strong> (Overall Average)</div>
+                                      <div><strong>S̄ = ΣS/k</strong> (Average Standard Deviation)</div>
+                                      <div><strong>UCL(X̄) = X̄ + A₃S̄</strong></div>
+                                      <div><strong>LCL(X̄) = X̄ - A₃S̄</strong></div>
+                                      <div><strong>UCL(S) = S̄ + A₃S̄</strong></div>
+                                      <div><strong>LCL(S) = S̄ - A₃S̄</strong></div>
+                                      <div className="mt-2 text-blue-600"><strong>Constants (n={subgroupSize}):</strong> A₃={CONTROL_CHART_CONSTANTS[subgroupSize]?.A3}</div>
+                                    </div>
+                                  )}
+                                  {activeChart === 'p' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>p̄ = Σ(pn)/Σn</strong> (Overall Proportion)</div>
+                                      <div><strong>σ = √[p̄(1-p̄)/n]</strong> (Standard Deviation)</div>
+                                      <div><strong>UCL = p̄ + 3σ</strong></div>
+                                      <div><strong>LCL = max(0, p̄ - 3σ)</strong></div>
+                                    </div>
+                                  )}
+                                  {activeChart === 'pn' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>p̄ = Σ(pn)/(k×n)</strong> (Overall Proportion)</div>
+                                      <div><strong>σ = √[n×p̄(1-p̄)]</strong> (Standard Deviation)</div>
+                                      <div><strong>UCL = p̄×n + 3σ</strong></div>
+                                      <div><strong>LCL = max(0, p̄×n - 3σ)</strong></div>
+                                    </div>
+                                  )}
+                                  {activeChart === 'u' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>ū = Σ(c)/Σn</strong> (Average Defects per Unit)</div>
+                                      <div><strong>σ = √[ū/n]</strong> (Standard Deviation)</div>
+                                      <div><strong>UCL = ū + 3σ</strong></div>
+                                      <div><strong>LCL = max(0, ū - 3σ)</strong></div>
+                                    </div>
+                                  )}
+                                  {activeChart === 'c' && (
+                                    <div className="text-xs space-y-1">
+                                      <div><strong>c̄ = Σc/k</strong> (Average Defects per Unit)</div>
+                                      <div><strong>σ = √c̄</strong> (Standard Deviation)</div>
+                                      <div><strong>UCL = c̄ + 3√c̄</strong></div>
+                                      <div><strong>LCL = max(0, c̄ - 3√c̄)</strong></div>
+                                    </div>
+                                  )}
+                                </div>
+                                
+                                {/* Calculated Values */}
+                                <div className="bg-blue-50 p-4 rounded">
+                                  <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Calculated Values</h5>
+                                  <div className="grid grid-cols-2 gap-4 text-sm">
+                                    {(result.overallMean !== undefined) && <div><strong>Overall Mean:</strong> {result.overallMean.toFixed(3)}</div>}
+                                    {(result.overallRange !== undefined) && <div><strong>Overall Range:</strong> {result.overallRange.toFixed(3)}</div>}
+                                    {(result.overallStdDev !== undefined) && <div><strong>Overall Std Dev:</strong> {result.overallStdDev.toFixed(3)}</div>}
+                                    {(result.overallP !== undefined) && <div><strong>Overall Proportion:</strong> {result.overallP.toFixed(4)}</div>}
+                                    {(result.overallU !== undefined) && <div><strong>Overall Defects/Unit:</strong> {result.overallU.toFixed(4)}</div>}
+                                    {(result.overallC !== undefined) && <div><strong>Overall Defects:</strong> {result.overallC.toFixed(3)}</div>}
+                                  </div>
+                                </div>
+                              </div>
+                            )
                           },
                           {
                             heading: 'Process Interpretation',
@@ -1384,20 +1505,6 @@ export default function ControlCharts() {
                             heading: 'Out-of-Control Points — Requires Investigation',
                             list: result.outOfControlPoints.map(pt => `Subgroup ${pt} — point outside control limits`)
                           }] : []),
-                          {
-                            heading: 'Control Chart Data',
-                            table: {
-                              headers: ['Subgroup', 'Value', 'UCL', 'CL', 'LCL', 'Status'],
-                              rows: result.data.slice(0, 25).map(point => [
-                                point.subgroup,
-                                (point.xbar || point.p || point.u || point.c || 0).toFixed(3),
-                                point.ucl?.toFixed(3) || '',
-                                point.centerline?.toFixed(3) || '',
-                                point.lcl?.toFixed(3) || '',
-                                result.outOfControlPoints.includes(point.subgroup) ? 'OUT' : 'OK'
-                              ])
-                            }
-                          },
                           {
                             heading: "Ishikawa's Control Chart Rules",
                             list: [
@@ -1441,24 +1548,6 @@ export default function ControlCharts() {
                     : activeChart === 'xbar-s'
                     ? renderXbarSChart()
                     : renderAttributeChart()}
-                  
-                  <div className="mt-6 space-y-4">
-                    <h4 className="heading-small">Control Limits</h4>
-                    <div className="grid-2 gap-4">
-                      <div className="text-center p-3 bg-gray-50 rounded">
-                        <div className="text-small text-muted">UCL</div>
-                        <div className="text-lg font-bold">
-                          {result.data[0]?.ucl?.toFixed(3)}
-                        </div>
-                      </div>
-                      <div className="text-center p-3 bg-gray-50 rounded">
-                        <div className="text-small text-muted">LCL</div>
-                        <div className="text-lg font-bold">
-                          {result.data[0]?.lcl?.toFixed(3)}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
                 </>
               ) : (
                 <div className="text-center py-12">
@@ -1497,6 +1586,98 @@ export default function ControlCharts() {
                   <li>4 out of 5 points significantly off-center → Investigate</li>
                   <li>Periodic pattern → Cyclical cause</li>
                 </ul>
+              </div>
+
+              {/* Control Limits & Calculations Section */}
+              <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                <h4 className="heading-small mb-4">Control Limits & Calculations</h4>
+                <div className="space-y-4">
+                  {/* Control Limits Values */}
+                  <div className="bg-yellow-50 p-4 rounded">
+                    <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Control Limits (3 decimal places)</h5>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      {(result.data[0]?.ucl !== undefined) && <div><strong>Upper Control Limit (UCL):</strong> {result.data[0]?.ucl?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.centerline !== undefined) && <div><strong>Centreline (CL):</strong> {result.data[0]?.centerline?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.lcl !== undefined) && <div><strong>Lower Control Limit (LCL):</strong> {result.data[0]?.lcl?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.rUcl !== undefined) && <div><strong>R Chart UCL:</strong> {result.data[0]?.rUcl?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.rLcl !== undefined) && <div><strong>R Chart LCL:</strong> {result.data[0]?.rLcl?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.sUcl !== undefined) && <div><strong>S Chart UCL:</strong> {result.data[0]?.sUcl?.toFixed(3) || 'N/A'}</div>}
+                      {(result.data[0]?.sLcl !== undefined) && <div><strong>S Chart LCL:</strong> {result.data[0]?.sLcl?.toFixed(3) || 'N/A'}</div>}
+                    </div>
+                  </div>
+                  
+                  {/* Formulas Section */}
+                  <div className="bg-gray-50 p-4 rounded">
+                    <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Calculation Formulas</h5>
+                    {activeChart === 'xbar-r' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>X̄ = ΣX̄/k</strong> (Overall Average)</div>
+                        <div><strong>R̄ = ΣR/k</strong> (Average Range)</div>
+                        <div><strong>UCL(X̄) = X̄ + A₂R̄</strong></div>
+                        <div><strong>LCL(X̄) = X̄ - A₂R̄</strong></div>
+                        <div><strong>UCL(R) = D₄R̄</strong></div>
+                        <div><strong>LCL(R) = D₃R̄</strong></div>
+                        <div className="mt-2 text-blue-600"><strong>Constants (n={subgroupSize}):</strong> A₂={CONTROL_CHART_CONSTANTS[subgroupSize]?.A2}, D₃={CONTROL_CHART_CONSTANTS[subgroupSize]?.D3}, D₄={CONTROL_CHART_CONSTANTS[subgroupSize]?.D4}</div>
+                      </div>
+                    )}
+                    {activeChart === 'xbar-s' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>X̄ = ΣX̄/k</strong> (Overall Average)</div>
+                        <div><strong>S̄ = ΣS/k</strong> (Average Standard Deviation)</div>
+                        <div><strong>UCL(X̄) = X̄ + A₃S̄</strong></div>
+                        <div><strong>LCL(X̄) = X̄ - A₃S̄</strong></div>
+                        <div><strong>UCL(S) = S̄ + A₃S̄</strong></div>
+                        <div><strong>LCL(S) = S̄ - A₃S̄</strong></div>
+                        <div className="mt-2 text-blue-600"><strong>Constants (n={subgroupSize}):</strong> A₃={CONTROL_CHART_CONSTANTS[subgroupSize]?.A3}</div>
+                      </div>
+                    )}
+                    {activeChart === 'p' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>p̄ = Σ(pn)/Σn</strong> (Overall Proportion)</div>
+                        <div><strong>σ = √[p̄(1-p̄)/n]</strong> (Standard Deviation)</div>
+                        <div><strong>UCL = p̄ + 3σ</strong></div>
+                        <div><strong>LCL = max(0, p̄ - 3σ)</strong></div>
+                      </div>
+                    )}
+                    {activeChart === 'pn' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>p̄ = Σ(pn)/(k×n)</strong> (Overall Proportion)</div>
+                        <div><strong>σ = √[n×p̄(1-p̄)]</strong> (Standard Deviation)</div>
+                        <div><strong>UCL = p̄×n + 3σ</strong></div>
+                        <div><strong>LCL = max(0, p̄×n - 3σ)</strong></div>
+                      </div>
+                    )}
+                    {activeChart === 'u' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>ū = Σ(c)/Σn</strong> (Average Defects per Unit)</div>
+                        <div><strong>σ = √[ū/n]</strong> (Standard Deviation)</div>
+                        <div><strong>UCL = ū + 3σ</strong></div>
+                        <div><strong>LCL = max(0, ū - 3σ)</strong></div>
+                      </div>
+                    )}
+                    {activeChart === 'c' && (
+                      <div className="text-xs space-y-1">
+                        <div><strong>c̄ = Σc/k</strong> (Average Defects per Unit)</div>
+                        <div><strong>σ = √c̄</strong> (Standard Deviation)</div>
+                        <div><strong>UCL = c̄ + 3√c̄</strong></div>
+                        <div><strong>LCL = max(0, c̄ - 3√c̄)</strong></div>
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Calculated Values */}
+                  <div className="bg-blue-50 p-4 rounded">
+                    <h5 className="font-bold text-sm mb-2" style={{ color: '#1a1a1a' }}>Calculated Values</h5>
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      {(result.overallMean !== undefined) && <div><strong>Overall Mean:</strong> {result.overallMean.toFixed(3)}</div>}
+                      {(result.overallRange !== undefined) && <div><strong>Overall Range:</strong> {result.overallRange.toFixed(3)}</div>}
+                      {(result.overallStdDev !== undefined) && <div><strong>Overall Std Dev:</strong> {result.overallStdDev.toFixed(3)}</div>}
+                      {(result.overallP !== undefined) && <div><strong>Overall Proportion:</strong> {result.overallP.toFixed(4)}</div>}
+                      {(result.overallU !== undefined) && <div><strong>Overall Defects/Unit:</strong> {result.overallU.toFixed(4)}</div>}
+                      {(result.overallC !== undefined) && <div><strong>Overall Defects:</strong> {result.overallC.toFixed(3)}</div>}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="grid-2 gap-4">
