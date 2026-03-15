@@ -871,68 +871,137 @@ function getVisHeight(c){
   return Math.max(180, c*sh+(c-1)*gap+pad*2);
 }
 
+/* ── QUEUE CONSTANTS ── */
+const ICON_W=36, ICON_H=44, ICON_STEP=42;
+const QUEUE_START_X=12, QUEUE_CAP=60; /* max people we render in DOM */
+
 function rebuildVis(){
-  const{c}=params;
-  const vis=document.getElementById('vis-area');
-  const cont=document.getElementById('vis-container');
-  vis.innerHTML='';
+  const c = params.c;
+  const vis = document.getElementById('vis-area');
+  const cont = document.getElementById('vis-container');
+  const w = cont.offsetWidth || 700;
+  const sh = 56, gap = 10, pad = 24;
+  const visH = getVisHeight(c);
+  cont.style.minHeight = visH + 'px';
+  const srvW = 176, srvX = w - srvW - 16;
 
-  const w=cont.offsetWidth||700;
-  const sh=56, gap=10, pad=24;
-  const visH=getVisHeight(c);
-  cont.style.minHeight=visH+'px';
+  // Remove old divider and server slots only (keep person icons)
+  vis.querySelectorAll('.vis-divider, .server-slot').forEach(function(el){ el.remove(); });
 
-  const srvW=160, srvX=w-srvW-16;
-
-  /* divider line */
-  const div=document.createElement('div');
-  div.className='vis-divider';
-  div.style.cssText=`left:${srvX-14}px;`;
+  // Divider
+  const div = document.createElement('div');
+  div.className = 'vis-divider';
+  div.style.cssText = 'left:' + (srvX - 14) + 'px;';
   vis.appendChild(div);
 
-  serverStates=[];
-  for(let i=0;i<c;i++){
-    const totalH=c*sh+(c-1)*gap;
-    const startY=(visH-totalH)/2;
-    const ty=startY+i*(sh+gap);
-    const el=document.createElement('div');
-    el.className='server-slot';el.id='srv-'+i;
-    el.style.cssText=`width:${srvW}px;height:${sh}px;left:${srvX}px;top:${ty}px;`;
-    el.innerHTML=`
-      <div class="server-slot-icon">${serverSVG('#6b6860')}</div>
-      <div class="server-slot-info">
-        <div class="server-slot-label">Server ${i+1}</div>
-        <div class="server-slot-status" id="srv-status-${i}">idle</div>
-        <div class="server-progress-track" id="srv-ptrack-${i}" style="display:none">
-          <div class="server-progress-fill" id="srv-pfill-${i}" style="width:0%"></div>
-        </div>
-      </div>`;
+  const totalH = c * sh + (c - 1) * gap;
+  const startY = (visH - totalH) / 2;
+
+  // Resize serverStates array without losing busy info
+  // Shrink: release people on removed servers back to queue
+  while(serverStates.length > c){
+    const removed = serverStates.pop();
+    if(removed.personId !== null){
+      const p = people.find(function(p){ return p.id === removed.personId; });
+      if(p) p.inQueue = true;
+    }
+  }
+  // Grow: add new idle slots
+  while(serverStates.length < c){
+    serverStates.push({busy:false, progress:0, personId:null, x:0, y:0});
+  }
+
+  for(var i = 0; i < c; i++){
+    const ty = startY + i * (sh + gap);
+    // Update x/y positions in state
+    serverStates[i].x = srvX - ICON_W - 4;
+    serverStates[i].y = ty + Math.floor((sh - ICON_H) / 2);
+
+    const el = document.createElement('div');
+    el.className = 'server-slot' + (serverStates[i].busy ? ' busy' : '');
+    el.id = 'srv-' + i;
+    el.style.cssText = 'width:' + srvW + 'px;height:' + sh + 'px;left:' + srvX + 'px;top:' + ty + 'px;';
+    const iconColor = serverStates[i].busy ? '#b45309' : '#6b6860';
+    const statusText = serverStates[i].busy ? 'serving\u2026' : 'idle';
+    const pct = Math.min(serverStates[i].progress * 100, 100);
+    el.innerHTML =
+      '<div class="server-slot-icon">' + serverSVG(iconColor) + '</div>' +
+      '<div class="server-slot-info">' +
+        '<div class="server-slot-label">Server ' + (i+1) + '</div>' +
+        '<div class="server-slot-status" id="srv-status-' + i + '">' + statusText + '</div>' +
+        '<div class="server-progress-track" id="srv-ptrack-' + i + '" style="display:' + (serverStates[i].busy ? 'block' : 'none') + '">' +
+          '<div class="server-progress-fill" id="srv-pfill-' + i + '" style="width:' + pct + '%"></div>' +
+        '</div>' +
+      '</div>';
     vis.appendChild(el);
-    /* person docks 10px left of server, vertically centred */
-    const personW=36, personH=44;
-    serverStates.push({
-      busy:false, progress:0, personId:null,
-      x: srvX - personW - 6,
-      y: ty + (sh-personH)/2
-    });
+  }
+
+  // Re-anchor any person currently being served to the correct position
+  for(var j = 0; j < serverStates.length; j++){
+    if(serverStates[j].personId !== null){
+      const pel = document.getElementById('pdot-' + serverStates[j].personId);
+      if(pel){
+        pel.style.left = serverStates[j].x + 'px';
+        pel.style.top  = serverStates[j].y + 'px';
+      }
+    }
   }
 }
 
-function addPerson(){
-  const id=nextId++;
-  const ci=id%PC.length;
-  const p=PC[ci];
-  const vis=document.getElementById('vis-area');
+function getVisMetrics(){
   const cont=document.getElementById('vis-container');
-  const visH=parseInt(cont.style.minHeight)||180;
-  const el=document.createElement('div');
-  el.className='person-icon';
-  el.id='pdot-'+id;
-  el.style.cssText=`left:-40px;top:${(visH-44)/2}px;opacity:0;`;
-  el.innerHTML=personSVG(p,36);
+  const w=cont.offsetWidth||700;
+  const c=params.c;
+  const visH=getVisHeight(c);
+  const srvX=w-176-16; /* must match rebuildVis srvW+margin */
+  const queueCols=Math.max(1,Math.floor((srvX-QUEUE_START_X-8)/ICON_STEP));
+  const midY=Math.floor((visH-ICON_H)/2);
+  return{w,visH,srvX,queueCols,midY};
+}
+
+function addPerson(){
+  if(people.length >= QUEUE_CAP) return;
+  var id = nextId++;
+  var ci = id % PC.length;
+  var p = PC[ci];
+  var vis = document.getElementById('vis-area');
+  var metrics = getVisMetrics();
+  var midY = metrics.midY;
+  var el = document.createElement('div');
+  el.className = 'person-icon';
+  el.id = 'pdot-' + id;
+  el.style.cssText = 'left:-50px;top:' + midY + 'px;opacity:0;transition:left 0.5s cubic-bezier(.4,0,.2,1),top 0.4s cubic-bezier(.4,0,.2,1),opacity 0.35s;';
+  el.innerHTML = personSVG(p, 36);
   vis.appendChild(el);
-  setTimeout(()=>{if(el){el.style.left='8px';el.style.opacity='1';}},20);
-  people.push({id,inQueue:true,ci});
+  // Trigger transition on next frame
+  setTimeout(function(){ if(el.parentNode){ el.style.opacity = '1'; } }, 30);
+  people.push({id:id, inQueue:true, ci:ci});
+}
+
+function repositionQueue(){
+  var queued = [];
+  for(var k = 0; k < people.length; k++){
+    if(people[k].inQueue) queued.push(people[k]);
+  }
+  var metrics = getVisMetrics();
+  var queueCols = metrics.queueCols;
+  var visH = metrics.visH;
+  var rowH = Math.floor(ICON_H * 0.82);
+  var totalRows = Math.min(Math.ceil(queued.length / queueCols), 3);
+  var blockH = totalRows > 0 ? (totalRows - 1) * rowH + ICON_H : ICON_H;
+  var topOffset = Math.floor((visH - blockH) / 2);
+
+  for(var i = 0; i < queued.length; i++){
+    var el = document.getElementById('pdot-' + queued[i].id);
+    if(!el) continue;
+    var col = i % queueCols;
+    var row = Math.floor(i / queueCols);
+    var tx = QUEUE_START_X + col * ICON_STEP;
+    var ty = topOffset + row * rowH;
+    el.style.left = tx + 'px';
+    el.style.top  = ty + 'px';
+    el.style.opacity = row < 3 ? '1' : '0';
+  }
 }
 
 function updateServerVisual(i,busy,progress){
@@ -956,61 +1025,91 @@ function updateServerVisual(i,busy,progress){
   }
 }
 
+/* queue counter badge */
+function updateQueueBadge(n){
+  let badge=document.getElementById('q-overflow-badge');
+  if(n<=0){if(badge)badge.remove();return;}
+  if(!badge){
+    badge=document.createElement('div');
+    badge.id='q-overflow-badge';
+    badge.style.cssText=`position:absolute;bottom:8px;left:10px;font-family:'DM Mono',monospace;font-size:11px;font-weight:500;color:var(--red);background:var(--red-bg);border:1px solid var(--red-border);border-radius:100px;padding:2px 10px;z-index:10;pointer-events:none;`;
+    document.getElementById('vis-area').appendChild(badge);
+  }
+  badge.textContent=`+${n} more waiting`;
+}
+
 function simStep(){
-  const{lam,mu,c}=params;
-  const cont=document.getElementById('vis-container');
-  const w=cont.offsetWidth||700;
-  const visH=getVisHeight(c);
+  var lam = params.lam, mu = params.mu, c = params.c;
+  var metrics = getVisMetrics();
+  var w = metrics.w;
 
-  if(Math.random()<lam/10) addPerson();
+  // Arrivals: probability per tick calibrated so λ=1 trickles, λ=20 floods
+  // Tick is 200ms, so 5 ticks/sec. λ is customers/min = customers/60sec
+  // Per tick prob = λ/(60*5) * speedFactor. We use speedFactor=30 so it's watchable
+  var arrivalProb = (lam / 300) * 30;
+  if(Math.random() < arrivalProb) addPerson();
 
-  for(let i=0;i<c;i++){
-    const srv=serverStates[i];
+  // Service loop
+  for(var i = 0; i < c; i++){
+    var srv = serverStates[i];
+    if(!srv) continue;
+
     if(srv.busy){
-      srv.progress+=(mu/10)*(0.8+Math.random()*0.4);
-      updateServerVisual(i,true,srv.progress);
-      if(srv.progress>=1){
-        srv.busy=false; srv.progress=0;
-        const el=document.getElementById('pdot-'+srv.personId);
-        if(el){el.style.opacity='0'; el.style.left=(w+20)+'px'; setTimeout(()=>el&&el.remove(),500);}
-        people=people.filter(p=>p.id!==srv.personId);
-        srv.personId=null;
-        updateServerVisual(i,false,0);
+      // Service progress: mu completions/min, tick=200ms=1/300 min, speedFactor=30
+      srv.progress += (mu / 300) * 30 * (0.85 + Math.random() * 0.3);
+      updateServerVisual(i, true, srv.progress);
+
+      if(srv.progress >= 1){
+        // Person done — fly off right
+        var doneEl = document.getElementById('pdot-' + srv.personId);
+        if(doneEl){
+          doneEl.style.transition = 'left 0.35s ease, opacity 0.25s';
+          doneEl.style.left = (w + 60) + 'px';
+          doneEl.style.opacity = '0';
+          (function(el){ setTimeout(function(){ if(el && el.parentNode) el.parentNode.removeChild(el); }, 400); })(doneEl);
+        }
+        people = people.filter(function(p){ return p.id !== srv.personId; });
+        srv.busy = false;
+        srv.progress = 0;
+        srv.personId = null;
+        updateServerVisual(i, false, 0);
         servedCount++;
-        document.getElementById('sim-counter').textContent='Served: '+servedCount;
+        var sc = document.getElementById('sim-counter');
+        if(sc) sc.textContent = 'Served: ' + servedCount;
       }
     }
+
+    // Pick up next from queue if idle
     if(!srv.busy){
-      const next=people.find(p=>p.inQueue);
+      var next = null;
+      for(var k = 0; k < people.length; k++){
+        if(people[k].inQueue){ next = people[k]; break; }
+      }
       if(next){
-        next.inQueue=false; srv.busy=true; srv.progress=0; srv.personId=next.id;
-        const el=document.getElementById('pdot-'+next.id);
-        if(el){el.style.left=srv.x+'px'; el.style.top=srv.y+'px';}
-        updateServerVisual(i,true,0);
+        next.inQueue = false;
+        srv.busy = true;
+        srv.progress = 0;
+        srv.personId = next.id;
+        var pel = document.getElementById('pdot-' + next.id);
+        if(pel){
+          pel.style.transition = 'left 0.5s cubic-bezier(.4,0,.2,1), top 0.4s cubic-bezier(.4,0,.2,1), opacity 0.35s';
+          pel.style.left = srv.x + 'px';
+          pel.style.top  = srv.y + 'px';
+        }
+        updateServerVisual(i, true, 0);
       }
     }
   }
 
-  /* reposition queued people */
-  const queued=people.filter(p=>p.inQueue);
-  const iconW=36, iconStep=40;
-  const srvX=w-160-16;
-  const maxVisible=Math.max(1,Math.floor((srvX-16)/iconStep));
+  repositionQueue();
 
-  queued.forEach((p,i)=>{
-    const el=document.getElementById('pdot-'+p.id);
-    if(!el)return;
-    const tx=12+i*iconStep;
-    const ty=(visH-44)/2;
-    if(i<maxVisible){
-      el.style.left=tx+'px'; el.style.top=ty+'px'; el.style.opacity='1';
-    } else {
-      el.style.opacity='0.12'; el.style.left=(12+(maxVisible-1)*iconStep)+'px';
-    }
-  });
+  // Overflow badge
+  var queued = people.filter(function(p){ return p.inQueue; });
+  var visibleCap = metrics.queueCols * 3;
+  updateQueueBadge(Math.max(0, queued.length - visibleCap));
 
   lqHistory.push(queued.length);
-  if(lqHistory.length>50)lqHistory.shift();
+  if(lqHistory.length > 50) lqHistory.shift();
   updateHistoryChart();
 }
 
@@ -1068,21 +1167,21 @@ function updateHistoryChart(){
 }
 
 document.getElementById('sim-btn').addEventListener('click', toggleSim);
-document.getElementById('lam').addEventListener('input',e=>{params.lam=+e.target.value;update();});
-document.getElementById('mu').addEventListener('input',e=>{params.mu=+e.target.value;update();});
-document.querySelectorAll('.server-btn').forEach(btn=>{  btn.addEventListener('click',function(){
-    document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active'));
+document.getElementById('lam').addEventListener('input', function(e){
+  params.lam = +e.target.value;
+  update();
+});
+document.getElementById('mu').addEventListener('input', function(e){
+  params.mu = +e.target.value;
+  update();
+});
+document.querySelectorAll('.server-btn').forEach(function(btn){
+  btn.addEventListener('click', function(){
+    document.querySelectorAll('.server-btn').forEach(function(b){ b.classList.remove('active'); });
     btn.classList.add('active');
-    params.c=+btn.dataset.c;
-    if(simRunning){clearInterval(simTimer);simRunning=false;}
-    people=[];nextId=0;serverStates=[];servedCount=0;lqHistory=[];
-    const sc=document.getElementById('sim-counter');if(sc)sc.textContent='Served: 0';
-    const btn2=document.getElementById('sim-btn');
-    if(btn2){btn2.textContent='▶ Start Simulation';btn2.classList.add('paused');}
-    chartHistory=null;
-    /* reset vis height so it expands for more servers */
-    const cont=document.getElementById('vis-container');
-    if(cont) cont.style.minHeight=getVisHeight(params.c)+'px';
+    params.c = +btn.dataset.c;
+    // Only rebuild the server slots — keep sim running, keep queue people
+    rebuildVis();
     update();
   });
 });
