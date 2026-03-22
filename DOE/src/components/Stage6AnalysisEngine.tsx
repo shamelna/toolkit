@@ -8,14 +8,15 @@ import {
   generateMainEffectsData,
   generateInteractionData
 } from '../utils/statisticalAnalysis';
-import type { 
-  DesignRecommendation, 
-  Factor, 
-  ResponseVariable, 
-  ExperimentResults, 
+import type {
+  DesignRecommendation,
+  Factor,
+  ResponseVariable,
+  ExperimentResults,
   ANOVAResults,
   EffectEstimate,
-  ModelDiagnostics
+  ModelDiagnostics,
+  StageValidation
 } from '../types';
 
 interface Stage6AnalysisEngineProps {
@@ -24,6 +25,7 @@ interface Stage6AnalysisEngineProps {
   responseVariables: ResponseVariable[];
   data: ExperimentResults | null;
   onUpdate: (_data: ExperimentResults) => void;
+  onValidationChange?: (validation: StageValidation) => void;
 }
 
 interface AnalysisResults {
@@ -40,7 +42,8 @@ const Stage6AnalysisEngine: React.FC<Stage6AnalysisEngineProps> = ({
   factors,
   responseVariables,
   data,
-  onUpdate
+  onUpdate,
+  onValidationChange: _onValidationChange
 }) => {
   const [expandedHelp, setExpandedHelp] = useState<string | null>(null);
   const [analysisResults, setAnalysisResults] = useState<AnalysisResults | null>(null);

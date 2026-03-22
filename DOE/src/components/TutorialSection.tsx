@@ -216,7 +216,11 @@ const tutorialSections: TutorialSection[] = [
   }
 ];
 
-const TutorialSection: React.FC = () => {
+interface TutorialSectionProps {
+  onClose?: () => void;
+}
+
+const TutorialSection: React.FC<TutorialSectionProps> = ({ onClose: _onClose }) => {
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'example' | 'steps'>('overview');
 
