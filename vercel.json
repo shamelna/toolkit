@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "toolkit"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/DOE-Navigator",
+      "dest": "/toolkit/DOE-Navigator/"
+    },
+    {
+      "src": "/DOE-Navigator/(.*)",
+      "dest": "/toolkit/DOE-Navigator/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/$1"
+    }
+  ]
+}
