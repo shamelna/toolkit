@@ -4,7 +4,17 @@ A comprehensive collection of professional tools and calculators for continuous 
 
 ## 🚀 Available Tools
 
-### 📊 VSM Calculator - **Available Now**
+### 📊 7 QC Tools - **Available Now**
+Complete quality control toolkit with professional Kaizen Academy branding
+- **Histogram & Cpk Analysis** - Process capability and distribution analysis
+- **Pareto Chart** - 80/20 rule and priority analysis
+- **Control Charts** - SPC and process monitoring
+- **Fishbone Diagram** - Root cause analysis
+- **Scatter Diagrams** - Correlation analysis
+- **Check Sheets** - Data collection templates
+- **PDF Reports** - Professional reporting with Kaizen Academy branding
+
+### 🗺️ VSM Calculator - **Available Now**
 Complete Value Stream Mapping calculator with professional Kaizen Academy branding
 - **Takt Time Calculator** - Production pace analysis
 - **Inventory & Lead Time Calculator** - Flow analysis and VA ratio
@@ -13,6 +23,14 @@ Complete Value Stream Mapping calculator with professional Kaizen Academy brandi
 - **Formulas Guide** - Complete reference from Learning to See
 - **How to Use** - Step-by-step instructions
 
+### 🧪 DOE Navigator - **Available Now**
+Complete Design of Experiments wizard with 7-stage methodology
+- **7-Stage Wizard** - From problem definition through analysis
+- **Design Recommendation** - Based on Montgomery's framework
+- **Statistical Analysis** - ANOVA and effects analysis
+- **Response Surface** - Optimization and prediction
+- **Professional Reports** - PDF export with Kaizen Academy branding
+
 ### ⚙️ TPM Calculator - **Coming Soon**
 Total Productive Maintenance calculator for:
 - OEE (Overall Equipment Effectiveness) analysis
@@ -20,12 +38,12 @@ Total Productive Maintenance calculator for:
 - Maintenance planning and scheduling
 - Equipment reliability metrics
 
-### ✅ Quality Tools - **Coming Soon**
-Quality management calculators including:
-- Cp/Cpk process capability analysis
-- Control chart calculations
-- Statistical process control tools
-- Quality improvement metrics
+### ⚡ Flow Simulation - **Available Now**
+Interactive simulation comparing one-piece flow vs batch processing
+- **Real-time Animation** - Visualize flow efficiency impact
+- **Lead Time Analysis** - Compare batch vs one-piece flow
+- **WIP Visualization** - Work-in-progress tracking
+- **Throughput Metrics** - Performance measurement
 
 ### 📈 Productivity Calculator - **Coming Soon**
 Productivity analysis tools for:
@@ -65,14 +83,27 @@ Open `index.html` in your browser to access all tools
 ```
 Kaizen-Academy-Toolkit/
 ├── index.html                    # Main toolkit welcome page
+├── 7-QC-Tools/                  # 7 QC Tools (Available)
+│   ├── src/                     # React components
+│   ├── public/                   # Static assets and PDFs
+│   ├── package.json              # Dependencies
+│   └── README.md                # 7 QC Tools documentation
 ├── VSM/                         # VSM Calculator (Available)
 │   ├── src/                     # React components
 │   ├── public/                   # Static assets and PDFs
 │   ├── package.json              # Dependencies
 │   └── README.md                # VSM documentation
+├── DOE-Navigator/               # DOE Navigator (Available)
+│   ├── src/                     # React components
+│   ├── assets/                   # Built assets
+│   ├── package.json              # Dependencies
+│   └── README.md                # DOE Navigator documentation
+├── Flow Simulation/              # Flow Simulation (Available)
+│   └── index.html               # Simulation app
 ├── TPM/                         # TPM Calculator (Coming Soon)
-├── Quality/                     # Quality Tools (Coming Soon)
-├── Productivity/                # Productivity Tools (Coming Soon)
+│   ├── src/                     # React components
+│   ├── package.json              # Dependencies
+│   └── README.md                # TPM documentation
 └── README.md                   # Main toolkit documentation
 ```
 
@@ -122,8 +153,11 @@ For questions, training, or consulting:
 
 ## 🌐 Live Demo
 
-**Main Toolkit**: [Kaizen Academy Toolkit](https://yourusername.github.io/Kaizen-Academy-Toolkit/)
-**VSM Calculator**: [VSM Tool](https://yourusername.github.io/Kaizen-Academy-Toolkit/VSM/)
+**Main Toolkit**: [Kaizen Academy Toolkit](https://shamelna.github.io/Kaizen-Academy-Toolkit/)
+**7 QC Tools**: [7 QC Tools](https://shamelna.github.io/Kaizen-Academy-Toolkit/7-QC-Tools/)
+**VSM Calculator**: [VSM Tool](https://shamelna.github.io/Kaizen-Academy-Toolkit/VSM/)
+**DOE Navigator**: [DOE Navigator](https://doe-navigator-kaizen.vercel.app/) *(Standalone Vercel Deployment)*
+**Flow Simulation**: [Flow Simulation](https://shamelna.github.io/Kaizen-Academy-Toolkit/Flow%20Simulation/)
 
 ---
 
