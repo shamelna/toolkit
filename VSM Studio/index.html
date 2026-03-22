@@ -1,0 +1,1920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kaizen VSM Studio</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Barlow+Condensed:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root{
+  --kai:#ffd559;--kai-dark:#e6bf3a;--red:#E63329;--dark:#1A1A1A;
+  --orange:#F07D26;--yellow:#ffd559;--blue:#1B6CA8;--green:#2E8B57;--purple:#7B3FC4;
+  --mid:#E8E8E8;--border:#DDDDDD;--light:#FFFFFF;
+  --sb:224px;--pr:292px;--tb:58px;--tl:94px;
+  --shadow:0 2px 10px rgba(0,0,0,.08);--shadowL:0 8px 32px rgba(0,0,0,.15);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Barlow',sans-serif;background:#FFFFFF;color:var(--dark);overflow:hidden;height:100vh;display:flex;flex-direction:column;user-select:none}
+
+/* ── ONBOARDING ── */
+#onboarding{position:fixed;inset:0;background:linear-gradient(135deg,#111111 0%,#1A1A1A 50%,#111111 100%);z-index:9999;display:flex;align-items:center;justify-content:center}
+.ob-card{background:#fff;border-radius:16px;width:660px;max-height:92vh;display:flex;flex-direction:column;box-shadow:0 32px 80px rgba(0,0,0,.7);overflow:hidden;border-top:5px solid var(--kai)}
+.ob-header{padding:28px 32px 20px;background:#fff;flex-shrink:0}
+.ob-logo{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;color:var(--kai);text-transform:uppercase;margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.ob-title{font-family:'Barlow Condensed',sans-serif;font-size:30px;font-weight:900;color:var(--dark);line-height:1.1;margin-bottom:4px}
+.ob-sub{font-size:13px;color:#888;line-height:1.5}
+.ob-progress{display:flex;gap:6px;padding:0 32px 16px;flex-shrink:0}
+.ob-dot{height:4px;flex:1;border-radius:2px;background:var(--mid);transition:background .3s}
+.ob-dot.done{background:#1A1A1A}.ob-dot.active{background:var(--kai)}
+.ob-body{padding:0 32px 24px;overflow-y:auto;flex:1}
+.ob-step{display:none}.ob-step.active{display:block}
+.ob-section{margin-bottom:20px}
+.ob-section-title{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:#1A1A1A;margin-bottom:10px;padding-bottom:6px;border-bottom:2px solid var(--kai)}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:4px;letter-spacing:.3px}
+.field input,.field select,.field textarea{width:100%;padding:8px 10px;border:1.5px solid var(--border);border-radius:6px;font-family:'Barlow',sans-serif;font-size:13px;outline:none;transition:border-color .15s;background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--kai);box-shadow:0 0 0 3px rgba(230,51,41,.08)}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.field-row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.ob-footer{padding:16px 32px;background:#FAFAFA;border-top:1px solid var(--mid);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.ob-btn{padding:10px 24px;border:none;border-radius:7px;font-family:'Barlow',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px}
+.ob-btn.primary{background:var(--kai);color:#1A1A1A}.ob-btn.primary:hover{background:var(--kai-dark);color:#1A1A1A;transform:translateY(-1px)}
+.ob-btn.secondary{background:var(--mid);color:#555}.ob-btn.secondary:hover{background:#D0D0D0}
+.ob-btn.ghost{background:transparent;color:#888;font-size:12px}.ob-btn.ghost:hover{color:var(--dark)}
+
+/* process builder rows */
+.proc-row{background:#F8F8F8;border:1.5px solid var(--mid);border-radius:8px;padding:12px;margin-bottom:8px;position:relative;transition:all .15s}
+.proc-row:hover{border-color:var(--kai);background:#FFFBEE;background:#EEF4FF}
+.proc-row-title{font-size:11px;font-weight:800;color:var(--blue);letter-spacing:.5px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.proc-row-num{background:var(--blue);color:#fff;border-radius:50%;width:18px;height:18px;font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center}
+.proc-del{background:none;border:none;cursor:pointer;color:#CCC;font-size:16px;transition:color .15s;padding:0}.proc-del:hover{color:var(--red)}
+.add-proc-btn{width:100%;padding:10px;border:2px dashed var(--border);background:transparent;border-radius:7px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;color:#888;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;gap:6px}
+.add-proc-btn:hover{border-color:var(--kai);color:#1A1A1A;background:#FFFBEE;background:#FFF5F5}
+.hint{font-size:10px;color:#AAA;margin-top:3px;font-style:italic;line-height:1.4}
+
+/* ── TOOLBAR ── */
+#toolbar{height:var(--tb);background:var(--dark);display:flex;align-items:center;padding:0 10px;gap:0;box-shadow:0 3px 14px rgba(0,0,0,.5);z-index:100;flex-shrink:0;border-bottom:3px solid var(--kai)}
+.logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:800;color:#fff;margin-right:14px;white-space:nowrap;display:flex;align-items:center;gap:7px}
+.logo span{color:var(--red)}.logo .tag{font-size:9px;font-weight:700;background:var(--red);color:#fff;padding:2px 5px;border-radius:3px;letter-spacing:1.2px}
+.tsep{width:1px;background:#2E2E2E;height:28px;margin:0 5px}
+.tbtn{display:flex;align-items:center;gap:5px;padding:5px 9px;border:none;cursor:pointer;border-radius:5px;font-family:'Barlow',sans-serif;font-size:11px;font-weight:700;transition:all .15s;background:transparent;color:#AAA;white-space:nowrap}
+.tbtn:hover{background:#2A2A2A;color:#fff}.tbtn.on{background:var(--kai);color:#1A1A1A}
+.tbtn.blu{background:rgba(27,108,168,.25);color:#7AB8E0}.tbtn.blu:hover{background:var(--blue);color:#fff}
+.tbtn.grn{background:rgba(46,139,87,.25);color:#7ACA9A}.tbtn.grn:hover{background:var(--green);color:#fff}
+.tbtn svg{width:13px;height:13px;flex-shrink:0}
+.map-ttl{flex:1;display:flex;align-items:center;justify-content:center}
+.map-ttl input{background:transparent;border:none;border-bottom:1px solid #3A3A3A;color:#CCC;font-family:'Barlow',sans-serif;font-size:13px;font-weight:600;text-align:center;padding:3px 8px;width:300px;outline:none}
+.map-ttl input:focus{border-color:var(--red);color:#fff}
+
+/* ── WORKSPACE ── */
+#ws{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+#sb{width:var(--sb);background:#FAFAFA;border-right:1px solid #E0E0E0;display:flex;flex-direction:column;z-index:10;flex-shrink:0;overflow-y:auto}
+.sbh{padding:8px 11px;font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:800;letter-spacing:2px;color:var(--kai-dark);text-transform:uppercase;background:#FAFAFA;border-bottom:1px solid var(--mid);flex-shrink:0}
+.sg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;padding:7px}
+.sg.cols2{grid-template-columns:1fr 1fr}
+.si{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 3px;border:1.5px solid var(--mid);border-radius:5px;cursor:grab;background:#fff;transition:all .15s;font-size:8px;font-weight:700;color:#555;text-align:center}
+.si:hover{border-color:var(--kai);background:#FFFBEE;color:#1A1A1A;transform:translateY(-1px);box-shadow:0 2px 8px rgba(230,51,41,.15)}
+.si:active{cursor:grabbing}.si svg{width:44px;height:32px}
+
+/* ── CANVAS AREA ── */
+#cw{flex:1;position:relative;overflow:hidden;display:flex;flex-direction:column;background:#EBEBEB}
+#cc{flex:1;position:relative;overflow:hidden}
+#cv{position:absolute;top:0;left:0;background:#FFFFFF;transform-origin:0 0;cursor:default}
+.grid-bg{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,#E0E0E0 1px,transparent 1px);background-size:20px 20px}
+
+/* floating mini toolbar */
+#minit{position:absolute;top:10px;left:50%;transform:translateX(-50%);display:flex;gap:3px;z-index:20;background:#fff;border:1.5px solid #DDD;border-radius:7px;padding:3px 4px;box-shadow:var(--shadow)}
+.mb{padding:4px 9px;border:none;background:transparent;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;color:#666;transition:all .15s;display:flex;align-items:center;gap:4px}
+.mb:hover{background:#F5F5F5;color:var(--dark)}.mb.on{background:var(--kai);color:#1A1A1A}
+.msep{width:1px;background:#EEE;margin:0 2px}
+
+/* zoom */
+#zc{position:absolute;bottom:10px;right:10px;display:flex;flex-direction:column;gap:3px;z-index:20}
+.zb{width:28px;height:28px;background:#fff;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;box-shadow:var(--shadow);transition:all .15s}
+.zb:hover{background:var(--kai);color:#1A1A1A;border-color:var(--kai)}
+.zl{background:#fff;border:1.5px solid var(--border);border-radius:5px;text-align:center;font-size:9px;font-weight:800;color:#888;padding:3px 0;box-shadow:var(--shadow)}
+
+/* ── TIMELINE BAR ── */
+#tl{height:var(--tl);background:#1A1A1A;border-top:3px solid var(--kai);padding:8px 14px 7px;display:flex;flex-direction:column;gap:5px;flex-shrink:0;z-index:10}
+.tlh{display:flex;align-items:center;justify-content:space-between}
+.tll{font-family:'Barlow Condensed',sans-serif;font-size:9.5px;font-weight:800;letter-spacing:2.5px;color:var(--kai);text-transform:uppercase}
+.tls{display:flex;gap:20px}
+.tlst{display:flex;flex-direction:column;align-items:center;line-height:1}
+.tlst .v{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:#fff}
+.tlst .k{font-size:8px;font-weight:700;color:#666;letter-spacing:1.2px;text-transform:uppercase;margin-top:1px}
+.tlst .v.good{color:var(--green)}.tlst .v.bad{color:var(--red)}.tlst .v.warn{color:var(--orange)}
+.tl-formula{font-family:'JetBrains Mono',monospace;font-size:8.5px;color:#555;margin-top:1px}
+#tlt{height:22px;background:#1E1E1E;border-radius:3px;display:flex;overflow:hidden;position:relative}
+.ts{height:100%;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;overflow:hidden;padding:0 2px;white-space:nowrap;transition:all .4s;cursor:pointer;min-width:2px}
+.ts:hover{filter:brightness(1.3)}.ts.va{background:var(--blue)}.ts.wt{background:#3A3A3A}.ts.ct{background:var(--green)}
+.ts.hot{background:var(--red);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+/* ── RIGHT PANEL ── */
+#rp{width:var(--pr);background:#FAFAFA;border-left:1px solid #E0E0E0;display:flex;flex-direction:column;overflow:hidden;flex-shrink:0;z-index:10}
+.rph{padding:10px 13px;background:var(--dark);color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:1px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.rph .x{cursor:pointer;opacity:.7;font-size:16px}.rph .x:hover{opacity:1}
+.rp-tabs{display:flex;border-bottom:2px solid var(--mid);flex-shrink:0}
+.rpt{flex:1;padding:8px 6px;text-align:center;font-size:10px;font-weight:800;letter-spacing:.5px;cursor:pointer;color:#999;border-bottom:3px solid transparent;margin-bottom:-2px;transition:all .15s}
+.rpt:hover{color:#1A1A1A;background:#FFFBEE}.rpt.on{color:#1A1A1A;border-color:var(--kai);background:#FFFBEE}
+.rp-body{flex:1;overflow-y:auto}
+.rp-tab-content{display:none;padding:12px 13px}.rp-tab-content.on{display:block}
+.pg{margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--mid)}
+.pg:last-child{border-bottom:none}
+.pgt{font-size:9px;font-weight:800;color:#AAA;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.pf{margin-bottom:8px}.pf label{display:block;font-size:10px;font-weight:700;color:#666;margin-bottom:3px}
+.pf input,.pf select{width:100%;padding:6px 8px;border:1.5px solid var(--mid);border-radius:4px;font-family:'Barlow',sans-serif;font-size:11px;outline:none;transition:border-color .15s}
+.pf input:focus,.pf select:focus{border-color:var(--kai)}
+.pf-2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.pf-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+.calc-box{background:#FFFBEE;border:1.5px solid var(--kai);border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.calc-box .ct{font-size:8.5px;font-weight:800;color:#1A1A1A;letter-spacing:1px;text-transform:uppercase;margin-bottom:5px}
+.calc-box .cl{font-family:'JetBrains Mono',monospace;font-size:9.5px;color:#333;margin-bottom:2px;line-height:1.5}
+.calc-box .cr{font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;color:#1A1A1A;margin-top:5px;padding-top:5px;border-top:1px solid #C4DAEF}
+.warn-box{background:#FFF8F0;border:1.5px solid #FFDCB8;border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.warn-box .wt{font-size:8.5px;font-weight:800;color:var(--orange);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.warn-box .wd{font-size:10px;color:#555;line-height:1.5}
+.err-box{background:#FFF5F5;border:1.5px solid #FFCDC8;border-radius:6px;padding:8px 10px;margin-bottom:8px}
+.err-box .et{font-size:8.5px;font-weight:800;color:var(--red);letter-spacing:1px;text-transform:uppercase;margin-bottom:4px}
+.err-box .ed{font-size:10px;color:#555;line-height:1.5}
+
+/* opportunities */
+.opp-hdr{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:800;letter-spacing:1px;color:#1A1A1A;text-transform:uppercase;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.badge{background:var(--kai);color:#1A1A1A;color:#fff;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:800}
+.badge.blue{background:var(--blue)}.badge.grn{background:var(--green)}
+.oi{border:1.5px solid var(--mid);border-radius:6px;padding:8px 10px;margin-bottom:6px;cursor:pointer;transition:all .15s;background:#FAFAFA}
+.oi:hover{border-color:var(--kai);background:#FFFBEE}
+.oi.crit{border-color:var(--red);background:#FFF8F8}.oi.mod{border-color:var(--orange);background:#FFF9F0}.oi.ok{border-color:var(--green);background:#F5FFF8}
+.oi-type{font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;margin-bottom:3px}
+.oi-type.crit{color:var(--red)}.oi-type.mod{color:var(--orange)}.oi-type.ok{color:var(--green)}
+.oi-desc{font-size:10px;color:#444;line-height:1.5}
+.oi-save{font-size:10px;font-weight:700;color:var(--green);margin-top:3px}
+.oi-apply{margin-top:5px;padding:4px 10px;background:var(--dark);color:#fff;border:none;border-radius:4px;font-size:10px;font-weight:700;cursor:pointer;transition:background .15s}
+.oi-apply:hover{background:#1558870}
+.gl-box{background:#FFFBEE;border:1.5px solid var(--kai);border-radius:6px;padding:8px 10px;margin-bottom:6px}
+.gl-num{font-size:9px;font-weight:800;color:#1A1A1A;letter-spacing:1px;text-transform:uppercase;margin-bottom:2px}
+.gl-text{font-size:10px;color:#333;line-height:1.5}
+
+/* context menu */
+#ctx{position:fixed;background:#fff;border:1.5px solid var(--border);border-radius:8px;box-shadow:var(--shadowL);z-index:9999;min-width:160px;padding:4px 0;display:none}
+.ci{padding:7px 13px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:7px;transition:background .1s}
+.ci:hover{background:#FFFBEE;color:#1A1A1A}.csep{height:1px;background:var(--mid);margin:3px 0}
+
+/* modals */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:8000;display:none;align-items:center;justify-content:center}
+.moverlay.show{display:flex}
+.mbox{background:#fff;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,.15);border-top:4px solid var(--kai);overflow:hidden;max-height:92vh;display:flex;flex-direction:column}
+.mhdr{padding:18px 22px 12px;display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.mtitle{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:800;color:var(--dark)}
+.msub{font-size:11px;color:#888;margin-top:2px}
+.mcls{background:none;border:none;font-size:22px;cursor:pointer;color:#AAA;margin-top:-4px}.mcls:hover{color:var(--dark)}
+.mbody{padding:0 22px 22px;overflow-y:auto}
+.ex-tabs{display:flex;border-bottom:2px solid var(--mid);padding:0 22px;flex-shrink:0}
+.et{padding:9px 15px;font-size:12px;font-weight:700;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px;color:#888;transition:all .15s}
+.et:hover{color:var(--dark)}.et.on{border-color:var(--kai);color:#1A1A1A;font-weight:800}
+.ec{display:none;padding:16px 0}.ec.on{display:block}
+.ex-desc{font-size:12px;color:#555;line-height:1.65;margin-bottom:14px;padding:12px 14px;background:#FFFBEE;border-radius:6px;border-left:4px solid var(--kai)}
+.ex-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.em{background:#F5F5F5;border-radius:6px;padding:10px;text-align:center}
+.em .v{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;color:var(--blue)}
+.em .k{font-size:8.5px;font-weight:700;color:#999;letter-spacing:1px;text-transform:uppercase;margin-top:2px}
+.em .v.bad{color:var(--red)}.em .v.good{color:var(--green)}
+table.xt{width:100%;border-collapse:collapse;font-size:10.5px;margin-bottom:14px}
+table.xt th{background:var(--dark);color:#fff;padding:6px 9px;text-align:left;font-weight:700;font-size:9.5px;letter-spacing:.5px}
+table.xt td{padding:6px 9px;border-bottom:1px solid var(--mid)}
+table.xt tr:hover td{background:#F8F8F8}
+table.xt .good{color:var(--green);font-weight:700}.bad{color:var(--red);font-weight:700}
+.load-btn{background:var(--kai);color:#1A1A1A;color:#fff;border:none;border-radius:6px;padding:9px 18px;font-family:'Barlow',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s;display:inline-flex;align-items:center;gap:6px}
+.load-btn:hover{background:var(--kai-dark);color:#1A1A1A}.load-btn.blu{background:#1A1A1A;color:#fff}.load-btn.blu:hover{background:#333;color:#fff}
+.imp-zone{border:2.5px dashed var(--border);border-radius:8px;padding:28px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px}
+.imp-zone:hover,.imp-zone.drag{border-color:var(--kai);background:#FFFBEE}
+.imp-zone .ico{font-size:36px;margin-bottom:8px}
+.imp-zone .lb{font-size:13px;font-weight:700;color:#666}.imp-zone .sb{font-size:11px;color:#AAA;margin-top:3px}
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.xo{border:2px solid var(--mid);border-radius:7px;padding:14px;cursor:pointer;transition:all .15s;text-align:center}
+.xo:hover{border-color:var(--kai);background:#FFFBEE}
+.xo .ico{font-size:28px;margin-bottom:5px}.xo .n{font-size:13px;font-weight:700}.xo .d{font-size:10px;color:#999;margin-top:2px}
+
+/* toast */
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--dark);color:#fff;padding:9px 18px;border-radius:7px;font-size:12px;font-weight:700;z-index:9999;opacity:0;pointer-events:none;transition:opacity .3s;border-left:4px solid var(--kai);white-space:nowrap}
+#toast.show{opacity:1}
+
+/* SVG node animations */
+.vsm-node{cursor:move}.vsm-node.selected .sel{display:block!important}
+.sel{display:none}
+.bottleneck-glow{animation:bglow 1.8s ease-in-out infinite}
+@keyframes bglow{0%,100%{filter:drop-shadow(0 0 4px rgba(230,51,41,.3))}50%{filter:drop-shadow(0 0 12px rgba(230,51,41,.9))}}
+.warning-glow{animation:wglow 2s ease-in-out infinite}
+@keyframes wglow{0%,100%{filter:drop-shadow(0 0 3px rgba(240,125,38,.2))}50%{filter:drop-shadow(0 0 9px rgba(240,125,38,.8))}}
+.kburst{cursor:pointer;transition:transform .2s;filter:drop-shadow(0 2px 5px rgba(230,51,41,.35))}
+.kburst:hover{transform:scale(1.15) rotate(10deg)}
+.arrow-connector{cursor:pointer}
+.arrow-connector:hover .aline{stroke-opacity:.65}
+
+/* scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:#F0F0F0}::-webkit-scrollbar-thumb{background:#CCC;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:var(--kai)}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  ONBOARDING                                              -->
+<!-- ══════════════════════════════════════════════════════════ -->
+<div id="onboarding">
+<div class="ob-card">
+  <div class="ob-header">
+    <div class="ob-logo" style="display:flex;align-items:center;gap:9px">
+      <img src="http://practitioner.kaizenacademy.education/logo_round.png" style="width:32px;height:32px;border-radius:50%;object-fit:cover" onerror="this.style.display='none'"/>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:800;letter-spacing:2px;color:var(--kai-dark);text-transform:uppercase">Kaizen Academy · VSM Studio</span>
+    </div>
+    <div class="ob-title" id="ob-title">Welcome to VSM Studio</div>
+    <div class="ob-sub" id="ob-sub">Map your value stream in minutes. We'll guide you through setting up your processes, then draw your current state map automatically.</div>
+  </div>
+  <div class="ob-progress">
+    <div class="ob-dot active" id="dp0"></div>
+    <div class="ob-dot" id="dp1"></div>
+    <div class="ob-dot" id="dp2"></div>
+  </div>
+
+  <div class="ob-body">
+    <!-- STEP 0: Start screen -->
+    <div class="ob-step active" id="step0">
+      <div style="display:flex;gap:12px;margin-bottom:20px">
+        <div onclick="startWizard()" style="flex:1;border:2px solid var(--kai);border-radius:10px;padding:18px 14px;cursor:pointer;transition:all .15s;text-align:center;background:#FFFBEE" onmouseover="this.style.background='#FFF0C0'" onmouseout="this.style.background='#FFFBEE'">
+          <div style="font-size:32px;margin-bottom:8px">🧙</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#1A1A1A">Guided Setup</div>
+          <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">Answer a few questions about your processes — we'll draw the map for you</div>
+          <div style="margin-top:10px;font-size:11px;font-weight:700;color:var(--kai-dark);background:var(--kai);padding:3px 8px;border-radius:3px;display:inline-block">Recommended →</div>
+        </div>
+        <div onclick="loadCurrentState();closeOnboarding()" style="flex:1;border:2px solid var(--blue);border-radius:10px;padding:18px 14px;cursor:pointer;transition:all .15s;text-align:center;background:#EEF4FF" onmouseover="this.style.background='#DDE9F8'" onmouseout="this.style.background='#EEF4FF'">
+          <div style="font-size:32px;margin-bottom:8px">📋</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#1A1A1A">Acme Example</div>
+          <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">Load the Acme Stamping case study from <em>Learning to See</em></div>
+        </div>
+        <div onclick="closeOnboarding()" style="flex:1;border:2px solid var(--mid);border-radius:10px;padding:18px 14px;cursor:pointer;transition:all .15s;text-align:center;background:#F8F8F8" onmouseover="this.style.background='#F0F0F0'" onmouseout="this.style.background='#F8F8F8'">
+          <div style="font-size:32px;margin-bottom:8px">✏️</div>
+          <div style="font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:800;color:#555">Draw from Scratch</div>
+          <div style="font-size:11px;color:#888;margin-top:4px;line-height:1.5">Start with a blank canvas and drag shapes to build your map</div>
+        </div>
+      </div>
+      <div style="background:#F8F8F8;border-radius:8px;padding:12px 14px">
+        <div style="font-size:10px;font-weight:800;color:#AAA;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:6px">What you'll get</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:11px;color:#555">
+          <div>✅ Faithful LtS symbols &amp; icons</div><div>✅ Live timeline with PCE calc</div>
+          <div>✅ Bottleneck detection</div><div>✅ Contextual recommendations</div>
+          <div>✅ Future state guidance</div><div>✅ Export SVG / PNG / JSON</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 1: Product & Customer -->
+    <div class="ob-step" id="step1">
+      <div class="ob-section">
+        <div class="ob-section-title">Your Product</div>
+        <div class="field-row">
+          <div class="field"><label>Product / Part Name *</label><input type="text" id="w-product" placeholder="e.g. Steering Bracket, PCB Assembly…"/></div>
+          <div class="field"><label>Product Family</label><input type="text" id="w-family" placeholder="e.g. Left + Right hand variants"/></div>
+        </div>
+        <div class="field"><label>Brief description of what this product is</label><input type="text" id="w-desc" placeholder="e.g. Metal bracket welded and assembled for automotive steering column"/></div>
+      </div>
+      <div class="ob-section">
+        <div class="ob-section-title">Customer Requirements</div>
+        <div class="field-row">
+          <div class="field"><label>Customer Name</label><input type="text" id="w-customer" placeholder="e.g. State Street Assembly"/></div>
+          <div class="field"><label>Monthly Demand (pcs/mo)</label><input type="number" id="w-monthly" placeholder="18400" value="18400"/></div>
+        </div>
+        <div class="field-row3">
+          <div class="field"><label>Shifts per Day</label><select id="w-shifts"><option value="1">1 Shift</option><option value="2" selected>2 Shifts</option><option value="3">3 Shifts</option></select></div>
+          <div class="field"><label>Available Time / Shift (sec)</label><input type="number" id="w-avail" value="27600" placeholder="27600"/></div>
+          <div class="field"><label>Working Days / Month</label><input type="number" id="w-days" value="20" placeholder="20"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Container / Tray Size (pcs)</label><input type="number" id="w-tray" value="20" placeholder="20"/></div>
+          <div class="field"><label>Delivery Frequency from Customer</label><select id="w-dfreq"><option>Daily</option><option>Weekly</option><option>Multiple per day</option></select></div>
+        </div>
+      </div>
+      <div class="ob-section">
+        <div class="ob-section-title">Supplier</div>
+        <div class="field-row">
+          <div class="field"><label>Supplier Name</label><input type="text" id="w-supplier" placeholder="e.g. Michigan Steel Co."/></div>
+          <div class="field"><label>Raw Material Description</label><input type="text" id="w-rawmat" placeholder="e.g. 500 ft coils, Steel sheets…"/></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Supplier Delivery Frequency</label><input type="text" id="w-sfreq" placeholder="e.g. Tues. + Thurs., Daily"/></div>
+          <div class="field"><label>Raw Material Lead Time (days)</label><input type="number" id="w-slt" value="5" placeholder="5"/></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Processes -->
+    <div class="ob-step" id="step2">
+      <div style="background:#EEF4FF;border-radius:7px;padding:10px 13px;margin-bottom:14px;font-size:11px;color:#444;line-height:1.55">
+        Add each production process <strong>in order</strong> (left to right in your value stream). For each, enter the cycle time, changeover time, uptime, and number of operators. These will be drawn as process boxes with data boxes below them.
+      </div>
+      <div id="proc-list"></div>
+      <button class="add-proc-btn" onclick="addProcRow()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+        Add Process Step
+      </button>
+      <div class="hint" style="margin-top:8px;text-align:center">Typical sequence: Fabrication → Welding → Assembly → Shipping. You can reorder and add more on the canvas after generation.</div>
+    </div>
+  </div>
+
+  <div class="ob-footer">
+    <button class="ob-btn ghost" id="ob-back" onclick="obBack()" style="display:none">← Back</button>
+    <div id="ob-step-label" style="font-size:10px;color:#888;font-style:italic">Kaizen Academy Australia — VSM Studio</div>
+    <div style="display:flex;gap:8px">
+      <button class="ob-btn secondary" onclick="closeOnboarding()">Skip — blank canvas</button>
+      <button class="ob-btn primary" id="ob-next" onclick="obNext()" style="display:none">Next →</button>
+      <button class="ob-btn primary" id="ob-gen" onclick="generateFromWizard();closeOnboarding()" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+        Generate My Map
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════ -->
+<!--  MAIN APP                                                 -->
+<!-- ══════════════════════════════════════════════════════════ -->
+
+<!-- TOOLBAR -->
+<div id="toolbar">
+  <div class="logo" style="gap:10px">
+    <img src="http://practitioner.kaizenacademy.education/logo_round.png" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0" onerror="this.style.display='none'"/>
+    <div style="display:flex;flex-direction:column;line-height:1">
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:#AAA;letter-spacing:1.5px;text-transform:uppercase">Kaizen Academy</span>
+      <span style="font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:.5px">VSM <span style="color:var(--kai)">STUDIO</span></span>
+    </div>
+  </div>
+  <div class="tsep"></div>
+  <button class="tbtn" onclick="reopenWizard()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>New / Setup</button>
+  <button class="tbtn" onclick="showEx()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>Examples</button>
+  <button class="tbtn" onclick="showImport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>Import</button>
+  <div class="tsep"></div>
+  <button class="tbtn" id="btn-sel" onclick="setMode('sel')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4l6 16 3-7 7-3z"/></svg>Select</button>
+  <button class="tbtn" id="btn-conn" onclick="setMode('conn')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>Connect</button>
+  <button class="tbtn" id="btn-kz" onclick="setMode('kz')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>Kaizen</button>
+  <div class="tsep"></div>
+  <button class="tbtn blu" onclick="autoArrange()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/></svg>Auto Arrange</button>
+  <button class="tbtn grn" onclick="runAnalysis()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Analyze</button>
+  <button class="tbtn blu" onclick="toggleFSGuide()" id="btn-guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>FS Guide</button>
+  <div class="map-ttl"><input type="text" id="map-title" value="Value Stream Map" placeholder="Map Title…"/></div>
+  <button class="tbtn" style="background:var(--kai);color:#1A1A1A;font-weight:800;border-radius:6px;padding:7px 14px" onclick="showExport()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Export</button>
+</div>
+
+<!-- WORKSPACE -->
+<div id="ws">
+
+<!-- SIDEBAR -->
+<div id="sb">
+  <div class="sbh">Material Flow</div>
+  <div class="sg" id="pal-mat"></div>
+  <div class="sbh">Information Flow</div>
+  <div class="sg cols2" id="pal-inf"></div>
+  <div class="sbh">Lean Symbols</div>
+  <div class="sg" id="pal-sym"></div>
+  <div class="sbh">Connectors</div>
+  <div class="sg cols2" id="pal-conn"></div>
+</div>
+
+<!-- CANVAS -->
+<div id="cw">
+  <!-- floating toolbar -->
+  <div id="minit">
+    <button class="mb on" id="md-sel" onclick="setMode('sel')">▶ Select</button>
+    <button class="mb" id="md-pan" onclick="setMode('pan')">✋ Pan</button>
+    <div class="msep"></div>
+    <button class="mb" onclick="undo()">↩ Undo</button>
+    <button class="mb" onclick="redo()">↪ Redo</button>
+    <div class="msep"></div>
+    <button class="mb" onclick="delSel()">🗑 Del</button>
+    <button class="mb" onclick="fitView()">⊞ Fit</button>
+  </div>
+
+  <div id="cc">
+    <div id="cv">
+      <div class="grid-bg" id="grid-bg"></div>
+      <svg id="vsmSvg" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;overflow:visible;z-index:1">
+        <defs>
+          <marker id="ah-push" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1A1A1A"/></marker>
+          <marker id="ah-pull" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#2E8B57"/></marker>
+          <marker id="ah-info" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#1B6CA8"/></marker>
+          <marker id="ah-elec" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#7B3FC4"/></marker>
+          <marker id="ah-truck" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0,8 3,0 6" fill="#E63329"/></marker>
+          <filter id="glow-red"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          <filter id="glow-orange"><feGaussianBlur stdDeviation="2" result="cb"/><feMerge><feMergeNode in="cb"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        <g id="layer-lane"></g>
+        <g id="layer-conn"></g>
+        <g id="layer-node"></g>
+        <g id="layer-kz"></g>
+        <g id="layer-tl"></g>
+      </svg>
+    </div>
+  </div>
+
+  <!-- Future State Guide floating panel -->
+  <div id="fs-guide" style="position:absolute;right:calc(var(--pr)+14px);top:10px;width:290px;background:#fff;border-radius:10px;box-shadow:var(--shadowL);z-index:50;display:none;border-top:4px solid var(--kai);max-height:calc(100vh - 200px);overflow-y:auto">
+    <div style="padding:12px 14px;background:#FFFBEE;border-bottom:1px solid var(--kai);display:flex;align-items:center;justify-content:space-between">
+      <div><div style="font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:800;color:#1A1A1A;letter-spacing:.5px">📋 Future State Guide</div><div style="font-size:9px;color:#888;margin-top:1px">8 Guidelines — Learning to See</div></div>
+      <span style="cursor:pointer;color:#AAA;font-size:18px" onclick="toggleFSGuide()">×</span>
+    </div>
+    <div id="guide-steps" style="padding:10px 12px"></div>
+  </div>
+
+  <!-- Zoom -->
+  <div id="zc">
+    <button class="zb" onclick="doZoom(1.15)">+</button>
+    <div class="zl" id="zpct">100%</div>
+    <button class="zb" onclick="doZoom(0.87)">−</button>
+    <button class="zb" onclick="fitView()" style="font-size:12px">⊞</button>
+  </div>
+
+  <!-- Timeline -->
+  <div id="tl">
+    <div class="tlh">
+      <span class="tll">⏱ Value Stream Timeline</span>
+      <div class="tls" id="tl-stats"></div>
+    </div>
+    <div id="tlt"></div>
+    <div class="tl-formula" id="tl-formula"></div>
+  </div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div id="rp">
+  <div class="rph"><span id="rp-title">Analysis &amp; Properties</span><span class="x" onclick="clearSel()">×</span></div>
+  <div class="rp-tabs">
+    <div class="rpt on" onclick="switchRPTab('props')">Properties</div>
+    <div class="rpt" onclick="switchRPTab('analysis')">🎯 Analysis</div>
+    <div class="rpt" onclick="switchRPTab('future')">🔮 Future</div>
+  </div>
+  <div class="rp-body">
+    <div class="rp-tab-content on" id="rptab-props">
+      <div id="props-content"><div style="color:#BBB;font-size:11px;text-align:center;padding:28px 14px;line-height:1.7">Select any shape on the canvas to view and edit its properties.<br><span style="font-size:10px">Cycle times, changeover, uptime, operators…</span></div></div>
+    </div>
+    <div class="rp-tab-content" id="rptab-analysis">
+      <div class="opp-hdr">Opportunities <span class="badge" id="opp-count">0</span></div>
+      <div id="opp-list"><div style="color:#BBB;font-size:10px;line-height:1.7">Click <strong>Analyze</strong> to detect waste, bottlenecks, and improvement opportunities based on your value stream data.</div></div>
+    </div>
+    <div class="rp-tab-content" id="rptab-future">
+      <div id="future-content"><div style="color:#BBB;font-size:10px;line-height:1.7;padding:8px 0">Future state recommendations will appear here after analysis. They'll be tailored to your specific product and value stream.</div></div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /ws -->
+
+<!-- Context Menu -->
+<div id="ctx">
+  <div class="ci" onclick="ctxDup()">⧉ Duplicate</div>
+  <div class="ci" onclick="ctxKaizen()">💥 Add Kaizen Burst</div>
+  <div class="csep"></div>
+  <div class="ci" onclick="ctxDel()">🗑 Delete</div>
+</div>
+
+<!-- Export Modal -->
+<div class="moverlay" id="m-export">
+  <div class="mbox" style="width:480px">
+    <div class="mhdr"><div><div class="mtitle">Export Map</div><div class="msub">Save or share your value stream map</div></div><button class="mcls" onclick="closeM('m-export')">×</button></div>
+    <div class="mbody">
+      <div class="export-grid">
+        <div class="xo" onclick="exportSVG()"><div class="ico">🖼</div><div class="n">SVG</div><div class="d">Scalable vector, editable</div></div>
+        <div class="xo" onclick="exportPNG()"><div class="ico">📷</div><div class="n">PNG (2×)</div><div class="d">High-res for printing</div></div>
+        <div class="xo" onclick="exportJSON()"><div class="ico">💾</div><div class="n">JSON (Re-import)</div><div class="d">Continue editing later</div></div>
+        <div class="xo" onclick="exportCSV()"><div class="ico">📊</div><div class="n">CSV Metrics</div><div class="d">All process data</div></div>
+      </div>
+      <button onclick="closeM('m-export')" style="width:100%;padding:9px;background:#EEE;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;color:#555">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Import Modal -->
+<div class="moverlay" id="m-import">
+  <div class="mbox" style="width:420px">
+    <div class="mhdr"><div><div class="mtitle">Import Map</div><div class="msub">Load a previously saved VSM JSON file</div></div><button class="mcls" onclick="closeM('m-import')">×</button></div>
+    <div class="mbody">
+      <div class="imp-zone" id="imp-zone" onclick="document.getElementById('file-in').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="dropImport(event)">
+        <div class="ico">📂</div><div class="lb">Click or drop JSON file here</div><div class="sb">Supports VSM Studio exports</div>
+      </div>
+      <input type="file" id="file-in" accept=".json" style="display:none" onchange="fileImport(event)">
+      <button onclick="closeM('m-import')" style="width:100%;padding:9px;background:#EEE;border:none;border-radius:6px;cursor:pointer;font-size:12px;font-weight:700;color:#555">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Examples Modal -->
+<div class="moverlay" id="m-ex">
+  <div class="mbox" style="width:740px">
+    <div class="mhdr" style="padding-bottom:0"><div><div class="mtitle">Acme Stamping — Learning to See</div><div class="msub">Steering bracket value stream · Rother &amp; Shook (exact book data)</div></div><button class="mcls" onclick="closeM('m-ex')">×</button></div>
+    <div class="ex-tabs">
+      <div class="et on" onclick="exTab('cur')">Current State</div>
+      <div class="et" onclick="exTab('fut')">Future State</div>
+      <div class="et" onclick="exTab('cmp')">Before vs After</div>
+    </div>
+    <div class="mbody" style="padding-top:0">
+      <div class="ec on" id="ec-cur">
+        <div class="ex-desc"><strong>Current State:</strong> Acme Stamping uses MRP push scheduling to all 5 processes. Large batches, 1-hour changeover at stamping, 7.6 days of WIP downstream of stamping. Total lead time <strong>23.6 days</strong> to make a part with only <strong>188 seconds</strong> of processing time.</div>
+        <div class="ex-metrics">
+          <div class="em"><div class="v bad">23.6d</div><div class="k">Lead Time</div></div>
+          <div class="em"><div class="v">188s</div><div class="k">Process Time</div></div>
+          <div class="em"><div class="v bad">0.009%</div><div class="k">PCE</div></div>
+          <div class="em"><div class="v">60s</div><div class="k">Takt Time</div></div>
+        </div>
+        <table class="xt"><tr><th>Process</th><th>C/T</th><th>C/O</th><th>Uptime</th><th>Ops</th><th>Shifts</th><th>WIP ↓stream</th><th>Days</th></tr>
+          <tr><td>Stamping</td><td>1s</td><td class="bad">1 hour</td><td class="bad">85%</td><td>1</td><td>2</td><td>4,600L / 2,400R</td><td class="bad">7.6d</td></tr>
+          <tr><td>Spot Weld #1</td><td>39s</td><td>10 min</td><td class="good">100%</td><td>1</td><td>2</td><td>1,100L / 600R</td><td>1.8d</td></tr>
+          <tr><td>Spot Weld #2</td><td>46s</td><td>10 min</td><td class="bad">80%</td><td>1</td><td>2</td><td>1,600L / 850R</td><td>2.7d</td></tr>
+          <tr><td>Assembly #1</td><td>62s</td><td>0</td><td class="good">100%</td><td>1</td><td>2</td><td>1,200L / 640R</td><td>2.0d</td></tr>
+          <tr><td>Assembly #2</td><td>40s</td><td>0</td><td class="good">100%</td><td>1</td><td>2</td><td>2,700L / 1,440R</td><td class="bad">4.5d</td></tr>
+        </table>
+        <div style="font-size:10px;color:#888;margin-bottom:12px">Inventory days = pieces ÷ daily demand (920/day). 5d + 7.6d + 1.8d + 2.7d + 2.0d + 4.5d = 23.6 days. Processing: 1+39+46+62+40 = 188s.</div>
+        <button class="load-btn" onclick="loadCurrentState();closeM('m-ex')">📋 Load Current State</button>
+      </div>
+      <div class="ec" id="ec-fut">
+        <div class="ex-desc"><strong>Future State:</strong> Pull system with supermarket after Stamping. Spot Weld #1, #2 + Assembly #1, #2 merge into a single Weld+Assy continuous flow cell (3 operators). Stamping EPE = 1 shift (SMED: C/O &lt;10 min). Daily milk run from supplier. Lead time drops to <strong>4.5 days</strong>.</div>
+        <div class="ex-metrics">
+          <div class="em"><div class="v good">4.5d</div><div class="k">Lead Time</div></div>
+          <div class="em"><div class="v">169s</div><div class="k">Process Time</div></div>
+          <div class="em"><div class="v good">0.043%</div><div class="k">PCE (4.75×↑)</div></div>
+          <div class="em"><div class="v">60s</div><div class="k">Takt Time</div></div>
+        </div>
+        <table class="xt"><tr><th>Process</th><th>C/T</th><th>C/O</th><th>Uptime</th><th>EPE</th><th>Notes</th></tr>
+          <tr><td>Stamping</td><td>1s</td><td class="good">&lt;10 min</td><td>85%</td><td class="good">1 Shift</td><td>Signal kanban → supermarket</td></tr>
+          <tr><td>Weld + Assy Cell</td><td class="good">56s</td><td class="good">0</td><td class="good">100%</td><td>—</td><td>3 ops; total work ≤168s; takt=60s</td></tr>
+        </table>
+        <div style="font-size:10px;color:#888;margin-bottom:12px">Timeline: 2d coils + 1.5d supermarket + 1d cell + 2d FG staging = 4.5 days (book p.88)</div>
+        <button class="load-btn blu" onclick="loadFutureState();closeM('m-ex')">🔮 Load Future State</button>
+      </div>
+      <div class="ec" id="ec-cmp">
+        <div class="ex-desc">Lead time improvement results (per Learning to See p.78 — Acme Stamping Lead Time Improvement table)</div>
+        <table class="xt"><tr><th>Metric</th><th>Current State</th><th>Future State</th><th>Change</th></tr>
+          <tr><td>Raw Material Inventory</td><td class="bad">5 days</td><td class="good">2 days</td><td class="good">−60%</td></tr>
+          <tr><td>Stamped Parts WIP</td><td class="bad">7.6 days</td><td class="good">1.5 days</td><td class="good">−80%</td></tr>
+          <tr><td>Weld / Assembly WIP</td><td class="bad">6.5 days</td><td class="good">0 (flow)</td><td class="good">−100%</td></tr>
+          <tr><td>Finished Goods</td><td>4.5 days</td><td class="good">2.0 days</td><td class="good">−56%</td></tr>
+          <tr><td><strong>Production Lead Time</strong></td><td class="bad"><strong>23.6 days</strong></td><td class="good"><strong>4.5 days</strong></td><td class="good"><strong>−81%</strong></td></tr>
+          <tr><td>Inventory Turns</td><td class="bad">10 / year</td><td class="good">30 / year</td><td class="good">3× better</td></tr>
+          <tr><td>Scheduling Points</td><td class="bad">6 processes</td><td class="good">1 (pacemaker)</td><td class="good">Simplified</td></tr>
+          <tr><td>EPE — Stamping</td><td class="bad">2 weeks</td><td class="good">1 shift</td><td class="good">SMED needed</td></tr>
+        </table>
+        <div style="display:flex;gap:8px">
+          <button class="load-btn" style="flex:1" onclick="loadCurrentState();closeM('m-ex')">Load Current State</button>
+          <button class="load-btn blu" style="flex:1" onclick="loadFutureState();closeM('m-ex')">Load Future State</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════
+// CONSTANTS & STATE
+// ═══════════════════════════════════════════════════════════════════════
+const CW=2800, CH=1200;
+let nodes=[], conns=[], kzs=[], meta={product:'',customer:'',supplier:'',dailyDemand:920,taktTime:60,availSec:27600,shifts:2,traySize:20};
+let nid=1,cid=1;
+let selNode=null;
+let mode='sel';
+let sc=1,px=0,py=0;
+let isDrag=false,dragN=null,dOff={x:0,y:0};
+let isPan=false,panS={x:0,y:0};
+let connFrom=null,activeConn='push';
+let hist=[],hIdx=-1;
+let obStep=0, wizProcs=[];
+
+const svg=document.getElementById('vsmSvg');
+svg.setAttribute('width',CW);svg.setAttribute('height',CH);
+document.getElementById('cv').style.width=CW+'px';
+document.getElementById('cv').style.height=CH+'px';
+document.getElementById('grid-bg').style.width=CW+'px';
+document.getElementById('grid-bg').style.height=CH+'px';
+
+// ═══════════════════════════════════════════════════════════════════════
+// BOOK-FAITHFUL SVG SHAPE RENDERERS
+// Each renders faithfully to Learning to See visual language
+// ═══════════════════════════════════════════════════════════════════════
+const SHAPES = {
+
+// FACTORY / SUPPLIER — jagged roof silhouette (book icon)
+factory:{name:'Factory',w:110,h:75,cat:'mat',
+  icon:`<path d="M4,28 L4,12 L10,6 L16,12 L22,6 L28,12 L34,6 L38,12 L38,28 Z" fill="white" stroke="#333" stroke-width="1.5"/>`,
+  render(n){const jag=`M${n.x},${n.y+n.h} L${n.x},${n.y+18} L${n.x+12},${n.y+8} L${n.x+22},${n.y+18} L${n.x+32},${n.y+8} L${n.x+42},${n.y+18} L${n.x+52},${n.y+8} L${n.x+62},${n.y+18} L${n.x+72},${n.y+8} L${n.x+82},${n.y+18} L${n.x+n.w},${n.y+18} L${n.x+n.w},${n.y+n.h} Z`;
+  return`<path d="${jag}" fill="white" stroke="#333" stroke-width="1.8" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+38}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="11" font-weight="700" fill="#333">${n.d.name||n.label}</text>
+<text x="${n.x+n.w/2}" y="${n.y+52}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.detail||''}</text>
+<text x="${n.x+n.w/2}" y="${n.y+65}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.detail2||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// PROCESS BOX — rectangle + operator circles + data box below (faithful to book)
+process:{name:'Process',w:140,h:120,cat:'mat',
+  icon:`<rect x="2" y="2" width="38" height="20" rx="1" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.5"/><circle cx="12" cy="26" r="4" fill="none" stroke="#333" stroke-width="1.2"/><circle cx="26" cy="26" r="4" fill="none" stroke="#333" stroke-width="1.2"/>`,
+  render(n){
+    const ops=parseInt(n.d.operators)||1;
+    const opSpacing=n.w/(ops+1);
+    let opCircles='';
+    for(let i=1;i<=ops;i++){
+      const ox=n.x+opSpacing*i;
+      const oy=n.y+n.h-38;
+      opCircles+=`<circle cx="${ox}" cy="${oy}" r="7" fill="white" stroke="#333" stroke-width="1.5"/>
+<line x1="${ox-4}" y1="${oy+7}" x2="${ox+4}" y2="${oy+7}" stroke="#333" stroke-width="1.2"/>`;
+    }
+    // Bottleneck / warning indicators
+    const ct=parseFloat(n.d.ct)||0;
+    const takt=meta.taktTime||60;
+    const isBottleneck=ct>takt;
+    const isWarn=ct>takt*0.85&&!isBottleneck;
+    const borderCol=isBottleneck?'#E63329':isWarn?'#F07D26':'#333';
+    const borderW=isBottleneck?2.5:1.8;
+    const animClass=isBottleneck?'bottleneck-glow':isWarn?'warning-glow':'';
+    return`<g class="${animClass}">
+<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h-42}" rx="2" fill="white" stroke="${borderCol}" stroke-width="${borderW}" class="node-body"/>
+${isBottleneck?`<text x="${n.x+n.w-4}" y="${n.y+12}" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" font-weight="800" fill="#E63329">⚠ BOTTLENECK</text>`:''}
+${isWarn?`<text x="${n.x+n.w-4}" y="${n.y+12}" text-anchor="end" font-family="Barlow,sans-serif" font-size="8" font-weight="800" fill="#F07D26">▲ NEAR TAKT</text>`:''}
+<text x="${n.x+n.w/2}" y="${n.y+22}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="13" font-weight="800" fill="#1B6CA8">${n.label}</text>
+<text x="${n.x+n.w/2}" y="${n.y+36}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#555">${n.d.machine||''}</text>
+${opCircles}
+</g>
+<!-- DATA BOX -->
+<rect x="${n.x}" y="${n.y+n.h-42}" width="${n.w}" height="42" fill="white" stroke="#555" stroke-width="1.2"/>
+<line x1="${n.x}" y1="${n.y+n.h-32}" x2="${n.x+n.w}" y2="${n.y+n.h-32}" stroke="#DDD" stroke-width=".8"/>
+<line x1="${n.x}" y1="${n.y+n.h-22}" x2="${n.x+n.w}" y2="${n.y+n.h-22}" stroke="#DDD" stroke-width=".8"/>
+<line x1="${n.x}" y1="${n.y+n.h-12}" x2="${n.x+n.w}" y2="${n.y+n.h-12}" stroke="#DDD" stroke-width=".8"/>
+<text x="${n.x+5}" y="${n.y+n.h-34}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#333">C/T = ${n.d.ct||'?'} sec</text>
+<text x="${n.x+5}" y="${n.y+n.h-24}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#333">C/O = ${n.d.co||'?'}</text>
+<text x="${n.x+5}" y="${n.y+n.h-14}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="${parseFloat(n.d.uptime)<80?'#E63329':parseFloat(n.d.uptime)<90?'#F07D26':'#333'}">Uptime = ${n.d.uptime||'?'}%</text>
+<text x="${n.x+5}" y="${n.y+n.h-4}" font-family="JetBrains Mono,monospace" font-size="8.5" fill="#333">${n.d.shifts||2} Shifts / ${n.d.avail||'27,600'}s${n.d.epe?' / EPE='+n.d.epe:''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// INVENTORY TRIANGLE — exact LtS style
+inventory:{name:'Inventory',w:88,h:74,cat:'mat',
+  icon:`<path d="M21,3 L37,27 L5,27 Z" fill="#FFF8E1" stroke="#F5C800" stroke-width="1.5"/><line x1="15" y1="17" x2="27" y2="17" stroke="#333" stroke-width="1.5"/><line x1="21" y1="11" x2="21" y2="23" stroke="#333" stroke-width="1.5"/>`,
+  render(n){
+    const days=parseFloat(n.d.days)||0;
+    const col=days>4?'#E63329':days>2?'#F07D26':'#555';
+    const tw=n.w-8, th=n.h-22;
+    const tx=n.x+4, ty=n.y;
+    return`<path d="M${tx+tw/2},${ty+4} L${tx+tw-2},${ty+th-2} L${tx+2},${ty+th-2} Z" fill="#FFF8E1" stroke="#F5C800" stroke-width="2" class="node-body"/>
+<!-- I beam inside -->
+<line x1="${tx+tw/2-9}" y1="${ty+th*0.35}" x2="${tx+tw/2+9}" y2="${ty+th*0.35}" stroke="#888" stroke-width="1.5"/>
+<line x1="${tx+tw/2}" y1="${ty+th*0.35}" x2="${tx+tw/2}" y2="${ty+th*0.72}" stroke="#888" stroke-width="1.5"/>
+<line x1="${tx+tw/2-9}" y1="${ty+th*0.72}" x2="${tx+tw/2+9}" y2="${ty+th*0.72}" stroke="#888" stroke-width="1.5"/>
+<text x="${tx+tw/2}" y="${ty+th+10}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#555">${n.d.qtyL?n.d.qtyL+'L/'+n.d.qtyR+'R':n.d.qty||'?'}</text>
+<text x="${tx+tw/2}" y="${ty+th+20}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" font-weight="700" fill="${col}">${days}d</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// PRODUCTION CONTROL
+prodctrl:{name:'Prod. Control',w:130,h:65,cat:'mat',
+  icon:`<rect x="2" y="3" width="38" height="23" rx="1" fill="white" stroke="#333" stroke-width="1.5"/><line x1="8" y1="10" x2="32" y2="10" stroke="#333" stroke-width="1.2"/><line x1="8" y1="15" x2="26" y2="15" stroke="#333" stroke-width="1.2"/><line x1="8" y1="20" x2="30" y2="20" stroke="#333" stroke-width="1.2"/>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" fill="white" stroke="#333" stroke-width="1.8" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+18}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="12" font-weight="800">${n.label}</text>
+<text x="${n.x+n.w/2}" y="${n.y+31}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.system||'MRP'}</text>
+<text x="${n.x+n.w/2}" y="${n.y+43}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.detail||''}</text>
+<text x="${n.x+n.w/2}" y="${n.y+55}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.detail2||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// SUPERMARKET (shelves)
+supermarket:{name:'Supermarket',w:105,h:65,cat:'mat',
+  icon:`<rect x="2" y="6" width="12" height="20" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/><rect x="16" y="6" width="12" height="20" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/><rect x="30" y="6" width="10" height="20" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" fill="white" stroke="#1B6CA8" stroke-width="1.8" stroke-dasharray="7,3" class="node-body"/>
+<rect x="${n.x+6}" y="${n.y+6}" width="26" height="24" rx="1" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/>
+<rect x="${n.x+38}" y="${n.y+6}" width="26" height="24" rx="1" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/>
+<rect x="${n.x+70}" y="${n.y+6}" width="29" height="24" rx="1" fill="#EEF4FB" stroke="#1B6CA8" stroke-width="1.2"/>
+<text x="${n.x+n.w/2}" y="${n.y+44}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="800" fill="#1B6CA8">SUPERMARKET</text>
+<text x="${n.x+n.w/2}" y="${n.y+56}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" fill="#555">${n.d.qtyL?n.d.qtyL+'L / '+n.d.qtyR+'R':(n.d.qty||'?')+' pcs'} · ${n.d.days||'?'}d</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// SHIPPING
+shipping:{name:'Shipping',w:110,h:60,cat:'mat',
+  icon:`<rect x="2" y="4" width="36" height="22" rx="2" fill="#F5F5F5" stroke="#555" stroke-width="1.5"/><text x="20" y="18" text-anchor="middle" font-size="8" font-family="Barlow,sans-serif" font-weight="700" fill="#333">SHIPPING</text>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="3" fill="#F5F5F5" stroke="#555" stroke-width="1.8" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+22}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="13" font-weight="800" fill="#333">SHIPPING</text>
+<text x="${n.x+n.w/2}" y="${n.y+38}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9.5" fill="#666">${n.d.detail||'Staging Area'}</text>
+<text x="${n.x+n.w/2}" y="${n.y+51}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#888">${n.d.detail2||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// TRUCK (exact LtS drawn truck)
+truck:{name:'Truck',w:80,h:56,cat:'mat',
+  icon:`<rect x="2" y="8" width="28" height="16" rx="1" fill="#EEE" stroke="#555" stroke-width="1.2"/><path d="M30,10 L38,10 L38,20 L30,20 Z" fill="#DDD" stroke="#555" stroke-width="1.2"/><circle cx="10" cy="26" r="4" fill="#555"/><circle cx="30" cy="26" r="4" fill="#555"/>`,
+  render(n){return`<!-- truck cab -->
+<rect x="${n.x}" y="${n.y+12}" width="${n.w*0.65}" height="${n.h*0.5}" rx="2" fill="#F0F0F0" stroke="#555" stroke-width="1.5" class="node-body"/>
+<path d="M${n.x+n.w*0.65},${n.y+16} L${n.x+n.w},${n.y+16} L${n.x+n.w},${n.y+12+n.h*0.5} L${n.x+n.w*0.65},${n.y+12+n.h*0.5} Z" fill="#DDD" stroke="#555" stroke-width="1.5"/>
+<rect x="${n.x+n.w*0.68}" y="${n.y+18}" width="${n.w*0.25}" height="${n.h*0.25}" rx="1" fill="#AAD4F0"/>
+<circle cx="${n.x+14}" cy="${n.y+n.h-8}" r="7" fill="#333"/><circle cx="${n.x+14}" cy="${n.y+n.h-8}" r="3.5" fill="#888"/>
+<circle cx="${n.x+n.w*0.65-12}" cy="${n.y+n.h-8}" r="7" fill="#333"/><circle cx="${n.x+n.w*0.65-12}" cy="${n.y+n.h-8}" r="3.5" fill="#888"/>
+<text x="${n.x+n.w*0.3}" y="${n.y+9}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" font-weight="700" fill="#555">${n.label||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// KANBAN CARD
+kanban:{name:'Kanban Card',w:90,h:52,cat:'sym',
+  icon:`<rect x="2" y="4" width="38" height="24" rx="3" fill="white" stroke="#F07D26" stroke-width="1.5"/><line x1="8" y1="13" x2="32" y2="13" stroke="#F07D26" stroke-width="1.5"/><line x1="8" y1="20" x2="26" y2="20" stroke="#F07D26" stroke-width="1"/>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="4" fill="white" stroke="#F07D26" stroke-width="2" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+16}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="11" font-weight="800" fill="#F07D26">KANBAN</text>
+<text x="${n.x+n.w/2}" y="${n.y+28}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#555">${n.d.qty||'?'} pcs · ${n.d.type||'Production'}</text>
+<text x="${n.x+n.w/2}" y="${n.y+40}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#888">${n.d.part||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// HEIJUNKA / OXOX LEVELLING BOX
+heijunka:{name:'OXOX / Heijunka',w:100,h:55,cat:'sym',
+  icon:`<rect x="2" y="6" width="38" height="18" rx="1" fill="white" stroke="#333" stroke-width="1.5"/><text x="21" y="18" text-anchor="middle" font-size="10" font-family="Barlow,sans-serif" font-weight="700">OXOX</text>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" fill="white" stroke="#333" stroke-width="1.8" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+22}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="18" font-weight="900" fill="#333">OXOX</text>
+<text x="${n.x+n.w/2}" y="${n.y+38}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" fill="#666">Heijunka / Levelling</text>
+<text x="${n.x+n.w/2}" y="${n.y+50}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8" fill="#888">${n.d.pitch||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// FIFO LANE
+fifo:{name:'FIFO Lane',w:110,h:48,cat:'sym',
+  icon:`<rect x="2" y="9" width="38" height="12" fill="#F0F0F0" stroke="#555" stroke-width="1.5"/><text x="21" y="19" text-anchor="middle" font-size="7.5" font-family="Barlow,sans-serif" font-weight="700">FIFO →</text><line x1="38" y1="9" x2="38" y2="21" stroke="red" stroke-width="2"/>`,
+  render(n){return`<rect x="${n.x}" y="${n.y+10}" width="${n.w}" height="28" rx="1" fill="#F5F5F5" stroke="#555" stroke-width="1.5" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+20}" text-anchor="middle" font-family="Barlow Condensed,sans-serif" font-size="10" font-weight="800" fill="#333">FIFO →</text>
+<text x="${n.x+n.w/2}" y="${n.y+31}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" fill="#555">max. ${n.d.max||'?'} pcs</text>
+<line x1="${n.x+n.w}" y1="${n.y+10}" x2="${n.x+n.w}" y2="${n.y+38}" stroke="#E63329" stroke-width="3"/>
+<text x="${n.x+n.w+6}" y="${n.y+26}" font-family="Barlow,sans-serif" font-size="8" font-weight="800" fill="#E63329">STOP</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+
+// INFO NODE (small box)
+infobox:{name:'Info Box',w:90,h:42,cat:'inf',
+  icon:`<rect x="4" y="6" width="34" height="18" rx="1" fill="white" stroke="#1B6CA8" stroke-width="1.5"/><path d="M4,12 L0,14 L4,16" fill="none" stroke="#1B6CA8" stroke-width="1.2"/>`,
+  render(n){return`<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="2" fill="white" stroke="#1B6CA8" stroke-width="1.5" class="node-body"/>
+<text x="${n.x+n.w/2}" y="${n.y+16}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="10" font-weight="700" fill="#1B6CA8">${n.label}</text>
+<text x="${n.x+n.w/2}" y="${n.y+30}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="9" fill="#666">${n.d.detail||''}</text>
+<rect class="sel" x="${n.x-3}" y="${n.y-3}" width="${n.w+6}" height="${n.h+6}" rx="4" fill="none" stroke="#E63329" stroke-width="2" stroke-dasharray="5,3"/>`;
+}},
+};
+
+const CONN_TYPES={
+  push:{name:'Push Arrow',color:'#1A1A1A',dash:'',marker:'ah-push',lbl:'➡ PUSH'},
+  pull:{name:'Pull / Kanban',color:'#2E8B57',dash:'8,4',marker:'ah-pull',lbl:'← PULL'},
+  info:{name:'Manual Info',color:'#1B6CA8',dash:'',marker:'ah-info',lbl:'ℹ INFO'},
+  elec:{name:'Electronic Info',color:'#7B3FC4',dash:'3,5',marker:'ah-elec',lbl:'⚡ ELEC'},
+  truck:{name:'Truck / Ship',color:'#E63329',dash:'',marker:'ah-truck',lbl:'🚛 SHIP'},
+};
+
+// ═══════════════════════════════════════════════════════════════════════
+// BUILD PALETTES
+// ═══════════════════════════════════════════════════════════════════════
+function buildPalettes(){
+  const cats={mat:'pal-mat',inf:'pal-inf',sym:'pal-sym'};
+  Object.entries(SHAPES).forEach(([k,s])=>{
+    const pal=document.getElementById(cats[s.cat]||'pal-sym');
+    if(!pal) return;
+    const el=document.createElement('div');
+    el.className='si'; el.draggable=true; el.dataset.shape=k;
+    el.innerHTML=`<svg viewBox="0 0 42 32">${s.icon}</svg><span>${s.name}</span>`;
+    el.addEventListener('dragstart',e=>e.dataTransfer.setData('shape',k));
+    el.addEventListener('click',()=>addNode(k,(CW/2-px/sc)-s.w/2,300+Math.random()*80));
+    pal.appendChild(el);
+  });
+  const cp=document.getElementById('pal-conn');
+  Object.entries(CONN_TYPES).forEach(([k,c])=>{
+    const el=document.createElement('div');
+    el.className='si';
+    el.innerHTML=`<svg viewBox="0 0 42 32"><line x1="2" y1="16" x2="32" y2="16" stroke="${c.color}" stroke-width="2" stroke-dasharray="${c.dash||''}"/><polygon points="28,12 36,16 28,20" fill="${c.color}"/></svg><span style="font-size:8px">${c.name}</span>`;
+    el.addEventListener('click',()=>{activeConn=k;setMode('conn');toast(`Draw ${c.name}: click source → target`);});
+    cp.appendChild(el);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ONBOARDING WIZARD
+// ═══════════════════════════════════════════════════════════════════════
+let procCount=0;
+function addProcRow(data){
+  procCount++;
+  const num=procCount;
+  const d=data||{};
+  const html=`<div class="proc-row" id="pr${num}">
+    <div class="proc-row-title">
+      <div style="display:flex;align-items:center;gap:6px">
+        <div class="proc-row-num">${num}</div>
+        <span style="font-size:11px;font-weight:800;color:#333">Process ${num}</span>
+      </div>
+      <button class="proc-del" onclick="delProcRow(${num})">×</button>
+    </div>
+    <div class="field-row" style="margin-bottom:7px">
+      <div class="field"><label>Process Name *</label><input type="text" id="pn${num}" value="${d.name||''}" placeholder="e.g. Stamping, Welding…"/></div>
+      <div class="field"><label>Machine / Equipment</label><input type="text" id="pm${num}" value="${d.machine||''}" placeholder="e.g. 200T Press"/></div>
+    </div>
+    <div class="field-row3">
+      <div class="field"><label>Cycle Time (sec) *</label><input type="number" id="pct${num}" value="${d.ct||''}" placeholder="e.g. 45"/></div>
+      <div class="field"><label>Changeover</label><input type="text" id="pco${num}" value="${d.co||'0'}" placeholder="0, 10 min…"/></div>
+      <div class="field"><label>Uptime (%)</label><input type="number" id="put${num}" value="${d.uptime||100}" min="0" max="100"/></div>
+    </div>
+    <div class="field-row3">
+      <div class="field"><label>Operators</label><input type="number" id="pop${num}" value="${d.operators||1}" min="1"/></div>
+      <div class="field"><label>WIP After (pcs)</label><input type="number" id="pwip${num}" value="${d.wip||0}" placeholder="0"/></div>
+      <div class="field"><label>EPE</label><input type="text" id="pepe${num}" value="${d.epe||''}" placeholder="2 weeks…"/></div>
+    </div>
+  </div>`;
+  document.getElementById('proc-list').insertAdjacentHTML('beforeend',html);
+}
+function delProcRow(n){const el=document.getElementById('pr'+n);if(el)el.remove();}
+function startWizard(){obStep=0;obNext();}
+
+let _obStep=0;
+function obNext(){
+  if(_obStep===0){
+    document.getElementById('step0').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('ob-title').textContent='Your Product & Customer';
+    document.getElementById('ob-sub').textContent='Tell us about what you make and who your customer is.';
+    document.getElementById('ob-next').style.display='flex';
+    document.getElementById('ob-back').style.display='flex';
+    document.getElementById('ob-step-label').textContent='Step 1 of 2';
+    document.getElementById('dp0').className='ob-dot done';
+    document.getElementById('dp1').className='ob-dot active';
+    _obStep=1;
+    return;
+  }
+  if(_obStep===1){
+    const prod=document.getElementById('w-product').value.trim();
+    if(!prod){alert('Please enter a product name to continue.');return;}
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step2').classList.add('active');
+    document.getElementById('ob-title').textContent='Your Production Processes';
+    document.getElementById('ob-sub').textContent=`Add each step in your ${prod} value stream, in order.`;
+    document.getElementById('ob-next').style.display='none';
+    document.getElementById('ob-gen').style.display='flex';
+    document.getElementById('ob-step-label').textContent='Step 2 of 2';
+    document.getElementById('dp1').className='ob-dot done';
+    document.getElementById('dp2').className='ob-dot active';
+    // Add default 3 processes if list is empty
+    if(document.getElementById('proc-list').children.length===0){
+      addProcRow({name:'Process 1',ct:'60',co:'0',uptime:'100',operators:1,wip:0});
+      addProcRow({name:'Process 2',ct:'60',co:'0',uptime:'100',operators:1,wip:0});
+      addProcRow({name:'Process 3',ct:'60',co:'0',uptime:'100',operators:1,wip:0});
+    }
+    _obStep=2;
+    return;
+  }
+}
+function obBack(){
+  if(_obStep===1){
+    document.getElementById('step1').classList.remove('active');
+    document.getElementById('step0').classList.add('active');
+    document.getElementById('ob-next').style.display='none';
+    document.getElementById('ob-back').style.display='none';
+    document.getElementById('ob-title').textContent='Welcome to VSM Studio';
+    document.getElementById('ob-sub').textContent='Map your value stream in minutes.';
+    document.getElementById('dp0').className='ob-dot active';
+    document.getElementById('dp1').className='ob-dot';
+    _obStep=0;
+  } else if(_obStep===2){
+    document.getElementById('step2').classList.remove('active');
+    document.getElementById('step1').classList.add('active');
+    document.getElementById('ob-next').style.display='flex';
+    document.getElementById('ob-gen').style.display='none';
+    document.getElementById('ob-title').textContent='Your Product & Customer';
+    document.getElementById('ob-step-label').textContent='Step 1 of 2';
+    document.getElementById('dp1').className='ob-dot active';
+    document.getElementById('dp2').className='ob-dot';
+    _obStep=1;
+  }
+}
+function closeOnboarding(){document.getElementById('onboarding').style.display='none';}
+function reopenWizard(){document.getElementById('onboarding').style.display='flex';}
+
+// ═══════════════════════════════════════════════════════════════════════
+// GENERATE MAP FROM WIZARD
+// ═══════════════════════════════════════════════════════════════════════
+function generateFromWizard(){
+  const product=document.getElementById('w-product').value||'Product';
+  const customer=document.getElementById('w-customer').value||'Customer';
+  const supplier=document.getElementById('w-supplier').value||'Supplier';
+  const monthly=parseFloat(document.getElementById('w-monthly').value)||18400;
+  const shifts=parseFloat(document.getElementById('w-shifts').value)||2;
+  const avail=parseFloat(document.getElementById('w-avail').value)||27600;
+  const wdays=parseFloat(document.getElementById('w-days').value)||20;
+  const traySize=parseFloat(document.getElementById('w-tray').value)||20;
+  const rawmat=document.getElementById('w-rawmat').value||'Raw material';
+  const sfreq=document.getElementById('w-sfreq').value||'Weekly';
+  const slt=parseFloat(document.getElementById('w-slt').value)||5;
+  const dfreq=document.getElementById('w-dfreq').value||'Daily';
+
+  const dailyDemand=monthly/wdays;
+  const demandPerShift=dailyDemand/shifts;
+  const takt=Math.round(avail/demandPerShift);
+
+  // Collect processes
+  const procRows=document.querySelectorAll('.proc-row');
+  const procs=[];
+  procRows.forEach(row=>{
+    const num=row.id.replace('pr','');
+    const name=document.getElementById('pn'+num)?.value||'Process';
+    if(!name) return;
+    procs.push({
+      name,machine:document.getElementById('pm'+num)?.value||'',
+      ct:document.getElementById('pct'+num)?.value||60,
+      co:document.getElementById('pco'+num)?.value||'0',
+      uptime:document.getElementById('put'+num)?.value||100,
+      operators:document.getElementById('pop'+num)?.value||1,
+      wip:parseFloat(document.getElementById('pwip'+num)?.value)||0,
+      epe:document.getElementById('pepe'+num)?.value||''
+    });
+  });
+
+  if(!procs.length){toast('Add at least one process');return;}
+
+  // Update meta
+  meta={product,customer,supplier,dailyDemand,taktTime:takt,availSec:avail,shifts,traySize,monthly,rawmat,sfreq,slt,wdays};
+
+  // Clear and build
+  nodes=[]; conns=[]; kzs=[]; nid=1; cid=1;
+  document.getElementById('map-title').value=`${product} — Current State`;
+
+  // Layout constants
+  const PROC_SPACING=190, START_X=220;
+  const PROC_Y=390, INV_Y=400, CTRL_Y=80, SUP_Y=90, CUST_Y=80;
+  const totalW=START_X+(procs.length)*PROC_SPACING+120;
+  const CUST_X=Math.max(totalW, START_X+procs.length*PROC_SPACING+60);
+
+  // Supplier
+  nodes.push({id:nid++,type:'factory',x:60,y:SUP_Y,w:SHAPES.factory.w,h:SHAPES.factory.h,
+    label:supplier,d:{name:supplier,detail:rawmat,detail2:`Ships: ${sfreq}`}});
+
+  // Production Control
+  nodes.push({id:nid++,type:'prodctrl',x:Math.round(totalW/2-65),y:CTRL_Y,w:SHAPES.prodctrl.w,h:SHAPES.prodctrl.h,
+    label:'Production Control',d:{system:'MRP',detail:'Push Scheduling',detail2:''}});
+
+  // Customer
+  nodes.push({id:nid++,type:'factory',x:CUST_X,y:CUST_Y,w:SHAPES.factory.w,h:SHAPES.factory.h,
+    label:customer,d:{name:customer,detail:`${monthly.toLocaleString()} pcs/mo`,detail2:`${shifts} Shifts / Takt≈${takt}s`}});
+
+  // Shipping
+  nodes.push({id:nid++,type:'shipping',x:CUST_X-140,y:PROC_Y+10,w:SHAPES.shipping.w,h:SHAPES.shipping.h,
+    label:'Shipping',d:{detail:'Staging',detail2:''}});
+
+  // Processes + Inventories
+  let lastProcId=null;
+  const procIds=[], invIds=[];
+
+  procs.forEach((p,i)=>{
+    const px2=START_X+i*PROC_SPACING;
+    const procNode={id:nid++,type:'process',x:px2,y:PROC_Y,w:SHAPES.process.w,h:SHAPES.process.h,
+      label:p.name,
+      d:{ct:String(p.ct),co:p.co,uptime:String(p.uptime),operators:String(p.operators),
+         avail:'27,600',shifts:String(shifts),machine:p.machine,epe:p.epe}};
+    nodes.push(procNode);
+    procIds.push(procNode.id);
+
+    // Inventory after process (except last)
+    if(i<procs.length-1){
+      const wipDays=p.wip>0?(p.wip/dailyDemand).toFixed(1):'?';
+      const invNode={id:nid++,type:'inventory',x:px2+SHAPES.process.w+14,y:INV_Y,
+        w:SHAPES.inventory.w,h:SHAPES.inventory.h,
+        label:'',d:{qty:String(p.wip||0),days:String(wipDays),qtyL:'',qtyR:''}};
+      nodes.push(invNode);
+      invIds.push(invNode.id);
+    }
+  });
+
+  // Raw material inventory
+  const rawInvDays=slt;
+  nodes.push({id:nid++,type:'inventory',x:60,y:PROC_Y+10,w:SHAPES.inventory.w,h:SHAPES.inventory.h,
+    label:'',d:{qty:rawmat,days:String(rawInvDays),qtyL:'',qtyR:''}});
+  const rawInvId=nid-1;
+
+  // FG Inventory before shipping
+  const fgInv={id:nid++,type:'inventory',x:CUST_X-250,y:INV_Y,w:SHAPES.inventory.w,h:SHAPES.inventory.h,
+    label:'',d:{qty:'FG',days:'?',qtyL:'',qtyR:''}};
+  nodes.push(fgInv);
+
+  // CONNECTORS
+  // Supplier truck to raw inv
+  conns.push({id:cid++,from:1,to:rawInvId,type:'truck',label:sfreq});
+  // Raw inv to first process
+  conns.push({id:cid++,from:rawInvId,to:procIds[0],type:'push',label:''});
+  // Process → inv → process chain
+  let pairIdx=0;
+  for(let i=0;i<procIds.length-1;i++){
+    conns.push({id:cid++,from:procIds[i],to:invIds[pairIdx],type:'push',label:''});
+    conns.push({id:cid++,from:invIds[pairIdx],to:procIds[i+1],type:'push',label:''});
+    pairIdx++;
+  }
+  // Last process → FG inv → shipping → customer
+  conns.push({id:cid++,from:procIds[procIds.length-1],to:fgInv.id,type:'push',label:''});
+  conns.push({id:cid++,from:fgInv.id,to:4,type:'push',label:''});// 4=shipping
+  conns.push({id:cid++,from:4,to:3,type:'truck',label:dfreq});// 3=customer
+
+  // Info flows: Production Control → each process (MRP push)
+  procIds.forEach(pid=>{
+    conns.push({id:cid++,from:2,to:pid,type:'info',label:''});
+  });
+  // Customer → Prod Control (electronic forecast)
+  conns.push({id:cid++,from:3,to:2,type:'elec',label:'Forecasts'});
+  conns.push({id:cid++,from:3,to:2,type:'info',label:'Daily Order'});
+  // Prod Control → Supplier
+  conns.push({id:cid++,from:2,to:1,type:'info',label:'Order'});
+
+  saveHist(); render(); runAnalysis();
+  setTimeout(fitView,120);
+  toast(`✅ Generated: ${product} current state map with ${procs.length} processes`);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ACME STAMPING TEMPLATES (exact book data)
+// ═══════════════════════════════════════════════════════════════════════
+function loadCurrentState(){
+  nodes=[]; conns=[]; kzs=[]; nid=1; cid=1;
+  meta={product:'Steering Bracket',customer:'State Street Assembly',supplier:'Michigan Steel Co.',
+        dailyDemand:920,taktTime:60,availSec:27600,shifts:2,traySize:20,monthly:18400,
+        rawmat:'500 ft coils',sfreq:'Tues. + Thurs.',slt:5,wdays:20};
+  document.getElementById('map-title').value='Acme Stamping Steering Bracket — Current State';
+
+  // IDs: 1=supplier,2=prodctrl,3=customer,4=rawInv,5=stamping,6=inv1,7=sweld1,8=inv2,9=sweld2,10=inv3,11=assy1,12=inv4,13=assy2,14=fgInv,15=shipping
+  nodes.push({id:1,type:'factory',x:55,y:80,w:SHAPES.factory.w,h:SHAPES.factory.h,label:'Michigan Steel Co.',d:{name:'Michigan Steel Co.',detail:'500 ft coils',detail2:''}});
+  nodes.push({id:2,type:'prodctrl',x:590,y:58,w:SHAPES.prodctrl.w,h:SHAPES.prodctrl.h,label:'Production Control',d:{system:'MRP',detail:'6-wk Forecast →',detail2:'Weekly Schedule ↓'}});
+  nodes.push({id:3,type:'factory',x:1380,y:80,w:SHAPES.factory.w,h:SHAPES.factory.h,label:'State Street Assembly',d:{name:'State Street Assembly',detail:'18,400 pcs/mo · 12,000L+6,400R',detail2:'Tray=20 · 2 Shifts · Takt≈60s'}});
+  // Raw material inv
+  nodes.push({id:4,type:'inventory',x:55,y:280,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qty:'Coils',days:'5',qtyL:'',qtyR:''}});
+  // Stamping
+  nodes.push({id:5,type:'process',x:190,y:370,w:SHAPES.process.w,h:SHAPES.process.h,label:'STAMPING',d:{ct:'1',co:'1 hour',uptime:'85',operators:'1',avail:'27,600',shifts:'2',machine:'200T Press',epe:'2 weeks'}});
+  // WIP1
+  nodes.push({id:6,type:'inventory',x:356,y:380,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'4600',qtyR:'2400',days:'7.6',qty:''}});
+  // Spot Weld 1
+  nodes.push({id:7,type:'process',x:470,y:370,w:SHAPES.process.w,h:SHAPES.process.h,label:'S. WELD #1',d:{ct:'39',co:'10 min',uptime:'100',operators:'1',avail:'27,600',shifts:'2',machine:'',epe:''}});
+  // WIP2
+  nodes.push({id:8,type:'inventory',x:636,y:380,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'1100',qtyR:'600',days:'1.8',qty:''}});
+  // Spot Weld 2
+  nodes.push({id:9,type:'process',x:750,y:370,w:SHAPES.process.w,h:SHAPES.process.h,label:'S. WELD #2',d:{ct:'46',co:'10 min',uptime:'80',operators:'1',avail:'27,600',shifts:'2',machine:'',epe:''}});
+  // WIP3
+  nodes.push({id:10,type:'inventory',x:916,y:380,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'1600',qtyR:'850',days:'2.7',qty:''}});
+  // Assembly 1
+  nodes.push({id:11,type:'process',x:1030,y:370,w:SHAPES.process.w,h:SHAPES.process.h,label:'ASSEMBLY #1',d:{ct:'62',co:'0',uptime:'100',operators:'1',avail:'27,600',shifts:'2',machine:'',epe:''}});
+  // WIP4
+  nodes.push({id:12,type:'inventory',x:1196,y:380,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'1200',qtyR:'640',days:'2.0',qty:''}});
+  // Assembly 2
+  nodes.push({id:13,type:'process',x:1310,y:370,w:SHAPES.process.w,h:SHAPES.process.h,label:'ASSEMBLY #2',d:{ct:'40',co:'0',uptime:'100',operators:'1',avail:'27,600',shifts:'2',machine:'',epe:''}});
+  // FG inv
+  nodes.push({id:14,type:'inventory',x:1476,y:380,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'2700',qtyR:'1440',days:'4.5',qty:''}});
+  // Shipping
+  nodes.push({id:15,type:'shipping',x:1590,y:380,w:SHAPES.shipping.w,h:SHAPES.shipping.h,label:'Shipping',d:{detail:'Staging',detail2:'1x Daily →'}});
+  nid=16;
+
+  // Material flow
+  [[1,4,'truck','Tues.+Thurs.'],[4,5,'push',''],[5,6,'push',''],[6,7,'push',''],[7,8,'push',''],[8,9,'push',''],[9,10,'push',''],[10,11,'push',''],[11,12,'push',''],[12,13,'push',''],[13,14,'push',''],[14,15,'push',''],[15,3,'truck','1× Daily']].forEach(([f,t,ty,lb])=>conns.push({id:cid++,from:f,to:t,type:ty,label:lb}));
+  // Info
+  [[3,2,'elec','90/60/30d Forecasts'],[3,2,'info','Daily Order'],[2,1,'info','6-wk Forecast'],[2,1,'info','Weekly Fax']].forEach(([f,t,ty,lb])=>conns.push({id:cid++,from:f,to:t,type:ty,label:lb}));
+  // MRP push to each process
+  [5,7,9,11,13].forEach(pid=>conns.push({id:cid++,from:2,to:pid,type:'info',label:'Weekly Schedule'}));
+  // Kaizen on bottlenecks
+  kzs.push({id:Date.now()+1,x:260,y:358,type:'burst',label:'C/O=1hr!'});
+  kzs.push({id:Date.now()+2,x:820,y:358,type:'warning',label:'80% uptime'});
+  saveHist(); render(); runAnalysis(); setTimeout(fitView,120);
+  toast('✅ Loaded: Acme Stamping Current State (Learning to See)');
+}
+
+function loadFutureState(){
+  nodes=[]; conns=[]; kzs=[]; nid=1; cid=1;
+  meta={product:'Steering Bracket',customer:'State Street Assembly',supplier:'Michigan Steel Co.',
+        dailyDemand:920,taktTime:60,availSec:27600,shifts:2,traySize:20,monthly:18400};
+  document.getElementById('map-title').value='Acme Stamping Steering Bracket — Future State';
+
+  nodes.push({id:1,type:'factory',x:55,y:80,w:SHAPES.factory.w,h:SHAPES.factory.h,label:'Michigan Steel Co.',d:{name:'Michigan Steel Co.',detail:'Daily Milk Run',detail2:''}});
+  nodes.push({id:2,type:'prodctrl',x:500,y:58,w:SHAPES.prodctrl.w,h:SHAPES.prodctrl.h,label:'Production Control',d:{system:'',detail:'6-wk Forecast',detail2:'Daily Order'}});
+  nodes.push({id:3,type:'factory',x:1050,y:80,w:SHAPES.factory.w,h:SHAPES.factory.h,label:'State Street Assembly',d:{name:'State Street Assembly',detail:'18,400 pcs/mo',detail2:'Tray=20 · 2 Shifts · Takt=60s'}});
+  // Coils (2 days - milk run)
+  nodes.push({id:4,type:'inventory',x:55,y:280,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qty:'Coils',days:'2',qtyL:'',qtyR:''}});
+  // Stamping with SMED
+  nodes.push({id:5,type:'process',x:185,y:360,w:SHAPES.process.w,h:SHAPES.process.h,label:'STAMPING',d:{ct:'1',co:'< 10 min',uptime:'85',operators:'1',avail:'27,600',shifts:'2',machine:'200T Press',epe:'1 Shift'}});
+  // Supermarket
+  nodes.push({id:6,type:'supermarket',x:370,y:362,w:SHAPES.supermarket.w,h:SHAPES.supermarket.h,label:'',d:{qtyL:'~900',qtyR:'~480',days:'1.5',qty:''}});
+  // Weld + Assembly combined cell
+  nodes.push({id:7,type:'process',x:530,y:360,w:155,h:SHAPES.process.h,label:'WELD + ASSY.',d:{ct:'56',co:'0',uptime:'100',operators:'3',avail:'27,600',shifts:'2',machine:'Cell (3 ops)',epe:'Takt=60s; total≤168s'}});
+  // Heijunka
+  nodes.push({id:8,type:'heijunka',x:720,y:280,w:SHAPES.heijunka.w,h:SHAPES.heijunka.h,label:'OXOX',d:{pitch:'Pitch=20min'}});
+  // FG inv
+  nodes.push({id:9,type:'inventory',x:740,y:370,w:SHAPES.inventory.w,h:SHAPES.inventory.h,label:'',d:{qtyL:'',qtyR:'',qty:'FG',days:'2.0'}});
+  // Shipping
+  nodes.push({id:10,type:'shipping',x:860,y:372,w:SHAPES.shipping.w,h:SHAPES.shipping.h,label:'Shipping',d:{detail:'Staging',detail2:''}});
+  nid=11;
+
+  conns.push({id:cid++,from:1,to:4,type:'truck',label:'Daily Milk Run'});
+  conns.push({id:cid++,from:4,to:5,type:'push',label:''});
+  conns.push({id:cid++,from:5,to:6,type:'pull',label:'Signal Kanban'});
+  conns.push({id:cid++,from:6,to:7,type:'pull',label:'Withdrawal Kanban'});
+  conns.push({id:cid++,from:7,to:9,type:'push',label:''});
+  conns.push({id:cid++,from:9,to:10,type:'push',label:''});
+  conns.push({id:cid++,from:10,to:3,type:'truck',label:'1× Daily'});
+  conns.push({id:cid++,from:3,to:2,type:'elec',label:'90/60/30d Forecasts'});
+  conns.push({id:cid++,from:3,to:2,type:'info',label:'Daily Order'});
+  conns.push({id:cid++,from:2,to:1,type:'info',label:'Daily Order'});
+  conns.push({id:cid++,from:2,to:7,type:'info',label:'Daily Ship Schedule'});// pacemaker only
+  kzs.push({id:Date.now()+1,x:252,y:348,type:'burst',label:'SMED: C/O<10min'});
+  kzs.push({id:Date.now()+2,x:607,y:345,type:'burst',label:'Combine cells'});
+  kzs.push({id:Date.now()+3,x:607,y:470,type:'lightning',label:'Welder uptime↑'});
+  saveHist(); render(); runAnalysis(); setTimeout(fitView,120);
+  toast('✅ Loaded: Acme Stamping Future State (Learning to See)');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// RENDER ENGINE
+// ═══════════════════════════════════════════════════════════════════════
+function render(){
+  renderLanes();
+  renderConns();
+  renderNodes();
+  renderKaizen();
+  renderTimeline();
+}
+
+function renderLanes(){
+  document.getElementById('layer-lane').innerHTML=`
+    <rect x="0" y="30" width="${CW}" height="130" fill="#FFFDF5" opacity=".7"/>
+    <rect x="0" y="330" width="${CW}" height="280" fill="#FAFAFA" opacity=".9"/>
+    <line x1="0" y1="330" x2="${CW}" y2="330" stroke="#D0D8E8" stroke-width="1" stroke-dasharray="12,6"/>
+    <line x1="0" y1="610" x2="${CW}" y2="610" stroke="#D0D8E8" stroke-width="1" stroke-dasharray="12,6"/>
+    <text x="12" y="102" font-family="Barlow Condensed,sans-serif" font-size="9.5" font-weight="800" fill="#2E8B57" letter-spacing="1.8" transform="rotate(-90,12,102)">EXTERNAL</text>
+    <text x="12" y="510" font-family="Barlow Condensed,sans-serif" font-size="9.5" font-weight="800" fill="#1B6CA8" letter-spacing="1.8" transform="rotate(-90,12,510)">PRODUCTION</text>`;
+}
+
+function renderConns(){
+  const layer=document.getElementById('layer-conn');
+  layer.innerHTML='';
+  conns.forEach(c=>{
+    const fn=nodes.find(n=>n.id===c.from);
+    const tn=nodes.find(n=>n.id===c.to);
+    if(!fn||!tn) return;
+    const ct=CONN_TYPES[c.type]||CONN_TYPES.push;
+    const isInfo=['info','elec'].includes(c.type);
+    let fx,fy,tx,ty,pathD;
+
+    if(isInfo){
+      // Info flows: from center-bottom of source to center-top of target (or center depending on relative position)
+      const srcCY=fn.y+fn.h/2, dstCY=tn.y+tn.h/2;
+      if(srcCY>dstCY){// src below dst — go up
+        fx=fn.x+fn.w/2; fy=fn.y;
+        tx=tn.x+tn.w/2; ty=tn.y+tn.h;
+      } else {
+        fx=fn.x+fn.w/2; fy=fn.y+fn.h;
+        tx=tn.x+tn.w/2; ty=tn.y;
+      }
+      // Stagger if multiple info flows to same target
+      const sameConns=conns.filter(cc=>cc.type===c.type&&cc.to===c.to&&cc.id<c.id);
+      const off=sameConns.length*16-8;
+      pathD=`M ${fx+off} ${fy} L ${tx+off} ${ty}`;
+    } else {
+      // Material flow: right of source to left of target
+      fx=fn.x+fn.w; fy=fn.y+(fn.type==='process'?fn.h/2-21:fn.h/2);
+      tx=tn.x; ty=tn.y+(tn.type==='process'?tn.h/2-21:tn.h/2);
+      const mx=(fx+tx)/2;
+      pathD=`M ${fx} ${fy} C ${mx} ${fy}, ${mx} ${ty}, ${tx} ${ty}`;
+    }
+
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','arrow-connector');
+    const pid=`cp-${c.id}`;
+
+    // Electronic info gets zigzag
+    if(c.type==='elec'){
+      // draw zigzag instead of straight
+      const numZigs=6;
+      const dx=(tx-fx), dy=(ty-fy);
+      const len=Math.sqrt(dx*dx+dy*dy);
+      const steps=numZigs*2;
+      let zPath=`M ${fx} ${fy}`;
+      for(let i=1;i<=steps;i++){
+        const t=i/steps;
+        const bx=fx+dx*t, by=fy+dy*t;
+        const side=(i%2===0?1:-1)*6;
+        const nx=-dy/len*side, ny=dx/len*side;
+        zPath+=` L ${bx+nx} ${by+ny}`;
+      }
+      g.innerHTML=`<path d="${zPath}" fill="none" stroke="${ct.color}" stroke-width="1.8" marker-end="url(#${ct.marker})" class="aline"/>
+      <path d="${zPath}" fill="none" stroke="transparent" stroke-width="10"/>
+      ${c.label?`<text><textPath href="#${pid}" startOffset="50%" text-anchor="middle" font-size="8.5" fill="${ct.color}" font-weight="700" font-family="Barlow,sans-serif" dy="-4">${c.label}</textPath></text>`:''}`;
+      const zigPath=g.querySelector('.aline'); zigPath.id=pid;
+    } else {
+      g.innerHTML=`<path id="${pid}" d="${pathD}" fill="none" stroke="${ct.color}" stroke-width="${isInfo?1.6:2.2}" stroke-dasharray="${ct.dash||''}" marker-end="url(#${ct.marker})" class="aline"/>
+      <path d="${pathD}" fill="none" stroke="transparent" stroke-width="12"/>
+      ${c.label?`<text><textPath href="#${pid}" startOffset="50%" text-anchor="middle" font-size="8.5" fill="${ct.color}" font-weight="700" font-family="Barlow,sans-serif" dy="-4">${c.label}</textPath></text>`:''}`;
+    }
+    layer.appendChild(g);
+  });
+}
+
+function renderNodes(){
+  const layer=document.getElementById('layer-node');
+  layer.innerHTML='';
+  nodes.forEach(n=>{
+    const sh=SHAPES[n.type]; if(!sh) return;
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class',`vsm-node${selNode===n.id?' selected':''}`);
+    g.setAttribute('data-id',n.id);
+    g.innerHTML=sh.render(n);
+    g.addEventListener('mousedown',e=>startDrag(e,n));
+    g.addEventListener('contextmenu',e=>showCtx(e,n));
+    g.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(mode==='conn') handleConnClick(n.id);
+      else { selectNode(n.id); switchRPTab('props'); }
+    });
+    layer.appendChild(g);
+  });
+}
+
+function renderKaizen(){
+  const layer=document.getElementById('layer-kz');
+  layer.innerHTML='';
+  kzs.forEach(k=>{
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    g.setAttribute('class','kburst');
+    const cols={burst:'#E63329',warning:'#F07D26',lightning:'#F5C800',idea:'#1B6CA8'};
+    const col=cols[k.type]||'#E63329';
+    const pts=k.type==='lightning'?12:9;
+    const outerR=k.type==='lightning'?28:26, innerR=k.type==='lightning'?14:12;
+    const starP=genStar(k.x,k.y,pts,outerR,innerR);
+    const ico=k.type==='warning'?'⚠':k.type==='lightning'?'⚡':k.type==='idea'?'!':'KZ';
+    g.innerHTML=`<path d="${starP}" fill="${col}" opacity=".92"/>
+<text x="${k.x}" y="${k.y+4}" text-anchor="middle" font-size="10" fill="white" font-weight="900" font-family="Barlow,sans-serif">${ico}</text>
+<text x="${k.x}" y="${k.y+outerR+10}" text-anchor="middle" font-size="8.5" fill="${col}" font-weight="700" font-family="Barlow,sans-serif">${k.label||''}</text>`;
+    g.addEventListener('click',()=>{const l=prompt('Kaizen note:',k.label);if(l!==null){k.label=l;render();}});
+    layer.appendChild(g);
+  });
+}
+
+function genStar(cx,cy,pts,or,ir){
+  let p='';
+  for(let i=0;i<pts*2;i++){
+    const r=i%2===0?or:ir;
+    const a=(Math.PI/pts)*i-Math.PI/2;
+    p+=(i===0?'M':'L')+`${(cx+r*Math.cos(a)).toFixed(1)},${(cy+r*Math.sin(a)).toFixed(1)} `;
+  }
+  return p+'Z';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TIMELINE RENDERING (faithful to book — stepped ladder)
+// ═══════════════════════════════════════════════════════════════════════
+function renderTimeline(){
+  const layer=document.getElementById('layer-tl');
+  layer.innerHTML='';
+
+  // Collect ordered material flow sequence
+  const procs=nodes.filter(n=>n.type==='process');
+  const invs=nodes.filter(n=>n.type==='inventory');
+  const sm=nodes.filter(n=>n.type==='supermarket');
+
+  let totalPT=0, totalLT=0;
+  const segs=[];
+
+  invs.forEach(inv=>{
+    const d=parseFloat(inv.d.days)||0;
+    if(d>0){ segs.push({type:'wt',val:d,label:`${d}d`}); totalLT+=d; }
+  });
+  sm.forEach(s=>{
+    const d=parseFloat(s.d.days)||0;
+    if(d>0){ segs.push({type:'wt',val:d,label:`${d}d`}); totalLT+=d; }
+  });
+  procs.forEach(p=>{
+    const ct=parseFloat(p.d.ct)||0;
+    totalPT+=ct;
+    const ctDays=ct/86400;
+    segs.push({type:'ct',val:ctDays,label:`${ct}s`,proc:p.label});
+  });
+
+  const ptDays=totalPT/86400;
+  totalLT+=ptDays;
+  const pce=totalLT>0?(ptDays/totalLT*100):0;
+  const pceClass=pce>0.5?'good':pce>0.1?'warn':'bad';
+
+  // Update timeline bar
+  const track=document.getElementById('tlt');
+  track.innerHTML='';
+  segs.sort((a,b)=>b.val-a.val).slice(0,20).forEach(seg=>{
+    const pct=Math.max((seg.val/totalLT)*100,0.5);
+    const div=document.createElement('div');
+    div.className=`ts ${seg.type}${seg.type==='ct'&&parseFloat(seg.label)>meta.taktTime?' hot':''}`;
+    div.style.width=pct+'%';
+    div.title=`${seg.proc||seg.type}: ${seg.label}`;
+    if(pct>5) div.textContent=seg.label;
+    track.appendChild(div);
+  });
+
+  const fmtLT=totalLT>=1?totalLT.toFixed(1)+'d':(totalLT*24).toFixed(1)+'h';
+  document.getElementById('tl-stats').innerHTML=`
+    <div class="tlst"><div class="v bad">${fmtLT}</div><div class="k">Lead Time</div></div>
+    <div class="tlst"><div class="v">${totalPT}s</div><div class="k">Process Time</div></div>
+    <div class="tlst"><div class="v">${(totalLT-ptDays).toFixed(1)}d</div><div class="k">Waste (WIP)</div></div>
+    <div class="tlst"><div class="v ${pceClass}">${pce.toFixed(3)}%</div><div class="k">PCE</div></div>`;
+  document.getElementById('tl-formula').textContent=`PCE = ${totalPT}s ÷ (${totalLT.toFixed(1)}d × 86,400s) × 100 = ${pce.toFixed(4)}%  |  Takt = ${meta.availSec}s ÷ ${(meta.dailyDemand/meta.shifts).toFixed(0)} pcs/shift = ${meta.taktTime}s`;
+
+  // Draw ladder timeline in SVG at bottom of production area
+  const tlY=590; const tlLeft=50; const tlRight=CW-50;
+  const tlH=50;
+  // background
+  layer.innerHTML+=`<rect x="${tlLeft}" y="${tlY}" width="${tlRight-tlLeft}" height="${tlH}" fill="#F8F8F8" rx="2" opacity=".8"/>
+  <text x="${tlLeft}" y="${tlY-4}" font-family="Barlow Condensed,sans-serif" font-size="9" font-weight="800" fill="#888" letter-spacing="1.5">PRODUCTION LEAD TIME</text>`;
+
+  // Draw steps under each process node
+  const allOrderedNodes=[...invs,...sm,...procs].sort((a,b)=>a.x-b.x);
+  let xCursor=tlLeft+10;
+  const totalLTDisplay=totalLT||1;
+  const tlWidth=tlRight-tlLeft-20;
+
+  let stepX=tlLeft+10;
+  invs.concat(sm).sort((a,b)=>a.x-b.x).forEach(inv=>{
+    const d=parseFloat(inv.d.days)||0;
+    const w=(d/totalLTDisplay)*tlWidth;
+    if(w<2) return;
+    // top step (wait time)
+    layer.innerHTML+=`<rect x="${stepX}" y="${tlY+4}" width="${w-2}" height="${tlH*0.45}" fill="#E8E8E8" rx="1"/>
+    <text x="${stepX+w/2}" y="${tlY+14}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" fill="#555">${d}d</text>`;
+    stepX+=w;
+  });
+  procs.sort((a,b)=>a.x-b.x).forEach(p=>{
+    const ct=parseFloat(p.d.ct)||0;
+    const ctD=ct/86400;
+    const w=Math.max((ctD/totalLTDisplay)*tlWidth, 40);
+    // bottom step (process time)
+    layer.innerHTML+=`<rect x="${stepX}" y="${tlY+tlH*0.45+4}" width="${w-2}" height="${tlH*0.45}" fill="${ct>meta.taktTime?'#FFD0CD':'#C8E6C9'}" rx="1"/>
+    <text x="${stepX+w/2}" y="${tlY+tlH*0.45+17}" text-anchor="middle" font-family="Barlow,sans-serif" font-size="8.5" fill="${ct>meta.taktTime?'#E63329':'#2E8B57'}">${ct}s</text>`;
+    stepX+=w;
+  });
+
+  // totals box
+  layer.innerHTML+=`<rect x="${tlRight-130}" y="${tlY+4}" width="120" height="42" fill="#FFFBEE" stroke="#ffd559" stroke-width="1.8" rx="3"/>
+  <text x="${tlRight-125}" y="${tlY+17}" font-family="Barlow,sans-serif" font-size="8.5" fill="#333" font-weight="600">Prod. Lead Time = ${totalLT.toFixed(1)} days</text>
+  <line x1="${tlRight-130}" y1="${tlY+22}" x2="${tlRight-10}" y2="${tlY+22}" stroke="#EEE" stroke-width="1"/>
+  <text x="${tlRight-125}" y="${tlY+33}" font-family="Barlow,sans-serif" font-size="8.5" fill="#333" font-weight="600">Processing Time = ${totalPT} sec.</text>`;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ANALYSIS ENGINE — context-aware, product-specific
+// ═══════════════════════════════════════════════════════════════════════
+function runAnalysis(){
+  const procs=nodes.filter(n=>n.type==='process');
+  const invs=nodes.filter(n=>n.type==='inventory');
+  const sm=nodes.filter(n=>n.type==='supermarket');
+  const product=meta.product||'your product';
+  const takt=meta.taktTime||60;
+  const DD=meta.dailyDemand||920;
+
+  const opps=[];
+
+  // Find bottleneck
+  let maxCT=0, bottleneckProc=null;
+  procs.forEach(p=>{
+    const ct=parseFloat(p.d.ct)||0;
+    if(ct>maxCT){maxCT=ct;bottleneckProc=p;}
+  });
+
+  // 1. Bottleneck & Takt analysis
+  procs.forEach(p=>{
+    const ct=parseFloat(p.d.ct)||0;
+    const up=parseFloat(p.d.uptime)||100;
+    const effCT=ct/(up/100);
+    if(ct>takt){
+      opps.push({sev:'crit',nid:p.id,type:'🔴 BOTTLENECK — Exceeds Takt',
+        desc:`${p.label} has C/T=${ct}s vs Takt=${takt}s — it cannot keep pace with customer demand for ${product}. This will cause starvation downstream and late deliveries.`,
+        save:`Reduce C/T by ${(ct-takt)}s, split the process, or add capacity. Min. operators needed: ${Math.ceil(ct/takt)}.`,
+        applyFn:()=>{kzs.push({id:Date.now(),x:p.x+p.w/2,y:p.y-30,type:'burst',label:`C/T>${takt}s BOTTLENECK`});render();toast('Kaizen burst added on bottleneck');}
+      });
+    } else if(effCT>takt){
+      opps.push({sev:'mod',nid:p.id,type:'🟠 Effective C/T Exceeds Takt',
+        desc:`${p.label}: with ${up}% uptime, effective C/T=${effCT.toFixed(0)}s > Takt=${takt}s. Even though the cycle time is OK, downtime prevents keeping pace.`,
+        save:`Improve uptime to ≥${Math.ceil(ct/takt*100)}% via TPM. Every 5% uptime gain = ${(meta.availSec*0.05/3600).toFixed(1)}h extra capacity/shift.`
+      });
+    }
+  });
+
+  // 2. Starvation / WIP imbalance
+  const sortedProcs=procs.sort((a,b)=>a.x-b.x);
+  for(let i=0;i<sortedProcs.length-1;i++){
+    const p1=sortedProcs[i], p2=sortedProcs[i+1];
+    const ct1=parseFloat(p1.d.ct)||0, ct2=parseFloat(p2.d.ct)||0;
+    // Find WIP between
+    const wipBetween=invs.find(inv=>inv.x>p1.x&&inv.x<p2.x);
+    const wipDays=wipBetween?parseFloat(wipBetween.d.days)||0:0;
+    if(ct1<ct2*0.6){
+      opps.push({sev:'mod',nid:p2.id,type:'⚠ WIP Buildup Risk',
+        desc:`${p1.label} (${ct1}s) feeds ${p2.label} (${ct2}s). ${p1.label} is ${((ct2/ct1-1)*100).toFixed(0)}% faster — overproduction will pile up ${wipDays>0?wipDays+'d of WIP':'significant WIP'} between them under push scheduling.`,
+        save:`Implement pull/kanban between these processes to prevent overproduction. Consider a FIFO lane or supermarket.`,
+        applyFn:()=>{
+          const wn=wipBetween||nodes.find(n=>n.type==='inventory'&&n.x>p1.x&&n.x<p2.x);
+          if(wn){kzs.push({id:Date.now(),x:wn.x+wn.w/2,y:wn.y-25,type:'warning',label:'Overproduction!'});render();toast('Warning added on WIP');}
+        }
+      });
+    }
+    if(ct2>ct1*1.5&&wipDays<0.5){
+      opps.push({sev:'mod',nid:p2.id,type:'⚠ Starvation Risk',
+        desc:`${p2.label} (${ct2}s) is much slower than ${p1.label} (${ct1}s). With only ${wipDays}d WIP buffer, ${p2.label} will starve if ${p1.label} has any downtime.`,
+        save:`Add a small FIFO buffer or supermarket between these processes.`
+      });
+    }
+  }
+
+  // 3. Excess inventory
+  invs.forEach(inv=>{
+    const days=parseFloat(inv.d.days)||0;
+    if(days>4){
+      opps.push({sev:'crit',nid:inv.id,type:'🔴 Excess WIP Inventory',
+        desc:`${days} days of WIP for ${product}. Per LtS Guideline #3: this indicates a push system causing overproduction. ${days} days of inventory hides problems and ties up working capital.`,
+        save:`Target ≤1d WIP. Install supermarket pull between disconnected processes. ${product} inventory at ${(days*DD).toFixed(0)} pcs = ${days} days of cash tied up.`,
+        applyFn:()=>{kzs.push({id:Date.now(),x:inv.x+inv.w/2,y:inv.y-28,type:'burst',label:`${days}d WIP!`});render();toast('Kaizen burst added on WIP');}
+      });
+    } else if(days>2){
+      opps.push({sev:'mod',nid:inv.id,type:'🟠 High WIP',
+        desc:`${days} days of WIP. LtS recommends using supermarkets to limit WIP. ${(days*DD).toFixed(0)} pieces sitting between processes.`,
+        save:`Install kanban cards with maximum ${(1.5*DD).toFixed(0)} piece limit for ${product}.`
+      });
+    }
+  });
+
+  // 4. Scheduling complexity
+  const infoToProcConns=conns.filter(c=>c.type==='info'&&nodes.find(n=>n.id===c.to&&n.type==='process'));
+  if(infoToProcConns.length>1){
+    opps.push({sev:'crit',nid:null,type:'🔴 Multiple Scheduling Points (LtS G4)',
+      desc:`${infoToProcConns.length} processes each receive their own schedule. LtS Guideline #4: send the schedule to only ONE pacemaker process. All others should be controlled via pull/supermarket — not MRP.`,
+      save:`Identify your pacemaker (most downstream continuous-flow process). Remove schedule arrows to upstream processes. For ${product}, this is likely ${sortedProcs[sortedProcs.length-1]?.label||'the final assembly'}.`
+    });
+  }
+
+  // 5. Changeover / EPE
+  procs.forEach(p=>{
+    const coSec=parseCO(p.d.co);
+    if(coSec>3600){
+      opps.push({sev:'crit',nid:p.id,type:'🔴 Long Changeover (LtS G7)',
+        desc:`${p.label} has ${p.d.co} changeover for ${product}. EPE=${p.d.epe||'unknown'}. This forces large batches, drives excess inventory, and prevents "every part every day".`,
+        save:`Apply SMED: separate internal/external setup. Target <10 min C/O for ${product}. Current EPE=${p.d.epe||'?'} → target EPE=1 shift.`,
+        applyFn:()=>{kzs.push({id:Date.now(),x:p.x+p.w/2,y:p.y-30,type:'burst',label:`SMED: ${p.d.co}`});render();}
+      });
+    } else if(coSec>600){
+      opps.push({sev:'mod',nid:p.id,type:'🟠 Changeover Reduction Opportunity',
+        desc:`${p.label}: ${p.d.co} changeover. Reducing this for ${product} will allow smaller batches and faster response to demand.`,
+        save:`Apply internal/external SMED separation. Target sub-5-minute changeover.`
+      });
+    }
+  });
+
+  // 6. Uptime
+  procs.forEach(p=>{
+    const up=parseFloat(p.d.uptime)||100;
+    if(up<70){
+      opps.push({sev:'crit',nid:p.id,type:'🔴 Critical Equipment Reliability',
+        desc:`${p.label} uptime is ${up}% — this directly prevents takt-time production of ${product}. Unplanned downtime = missed customer shipments.`,
+        save:`Implement Total Productive Maintenance (TPM): autonomous maintenance, planned maintenance schedule, OEE tracking. Target ≥85%.`
+      });
+    } else if(up<85){
+      opps.push({sev:'mod',nid:p.id,type:'🟠 Low Uptime — TPM Needed',
+        desc:`${p.label} uptime ${up}% — below the 85% threshold needed for reliable flow for ${product}.`,
+        save:`TPM: involve operators in daily cleaning/checking. Each +5% uptime = ${(meta.availSec*0.05/60).toFixed(0)} extra min/shift of capacity.`
+      });
+    }
+  });
+
+  // 7. PCE assessment
+  const totalPT=procs.reduce((a,p)=>a+(parseFloat(p.d.ct)||0),0);
+  const totalInvD=invs.reduce((a,i)=>a+(parseFloat(i.d.days)||0),0)+sm.reduce((a,s)=>a+(parseFloat(s.d.days)||0),0);
+  const totalLT=totalInvD+totalPT/86400;
+  const pce=totalLT>0?(totalPT/86400/totalLT*100):0;
+
+  if(pce<0.05&&procs.length>0){
+    opps.push({sev:'crit',nid:null,type:'🔴 Extremely Low PCE',
+      desc:`PCE=${pce.toFixed(4)}% — only ${pce.toFixed(4)}% of lead time is value-adding for ${product}. ${totalPT}s of work takes ${totalLT.toFixed(1)} days. This is >99.9% waste.`,
+      save:`Eliminating just half the WIP inventory would cut lead time to ${(totalLT/2).toFixed(1)} days and triple PCE. Focus on continuous flow and pull systems.`
+    });
+  } else if(pce<1&&procs.length>0){
+    opps.push({sev:'mod',nid:null,type:'🟠 Low PCE',
+      desc:`PCE=${pce.toFixed(3)}% for ${product}. Industry lean benchmark is >10%. Significant improvement possible through waste elimination.`,
+      save:`Each day removed from lead time improves PCE by ${(totalPT/(86400*(totalLT-1)*totalLT)*100).toFixed(4)}%.`
+    });
+  }
+
+  // Render
+  const list=document.getElementById('opp-list');
+  document.getElementById('opp-count').textContent=opps.length;
+  const order={crit:0,mod:1,ok:2};
+  if(opps.length===0){list.innerHTML='<div style="color:#2E8B57;font-size:11px;padding:8px 0;line-height:1.7">✅ No major issues detected. Your value stream looks balanced. Continue monitoring PCE and lead time trends.</div>';return;}
+
+  list.innerHTML=opps.sort((a,b)=>(order[a.sev]||1)-(order[b.sev]||1)).map((o,i)=>`
+    <div class="oi ${o.sev}" onclick="o_hl(${o.nid})">
+      <div class="oi-type ${o.sev}">${o.type}</div>
+      <div class="oi-desc">${o.desc}</div>
+      ${o.save?`<div class="oi-save">💡 ${o.save}</div>`:''}
+      ${o.applyFn?`<button class="oi-apply" onclick="event.stopPropagation();oppApply(${i})">Apply to Map</button>`:''}
+    </div>`).join('');
+
+  // Store for apply callbacks
+  window._opps=opps;
+
+  // Build future state recommendations
+  buildFutureRecs(opps,procs,invs,product,takt,totalLT,totalPT);
+  render(); // re-render nodes with updated bottleneck indicators
+}
+
+window.oppApply=function(i){if(window._opps&&window._opps[i]&&window._opps[i].applyFn)window._opps[i].applyFn();};
+
+function o_hl(nid){
+  if(!nid) return;
+  selectNode(nid);
+  const n=nodes.find(x=>x.id===nid);
+  if(n){px=-n.x*sc+300;py=-n.y*sc+250;applyTransform();renderNodes();}
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// FUTURE STATE RECOMMENDATIONS (product-specific)
+// ═══════════════════════════════════════════════════════════════════════
+function buildFutureRecs(opps,procs,invs,product,takt,totalLT,totalPT){
+  const critCount=opps.filter(o=>o.sev==='crit').length;
+  const html=`
+    <div style="background:#EEF4FF;border-radius:7px;padding:10px 12px;margin-bottom:12px;font-size:11px;line-height:1.6;color:#444">
+      Based on your <strong>${product}</strong> value stream analysis: <strong>${critCount} critical</strong> issue${critCount!==1?'s':''} found. Estimated lead time reduction potential: <strong>${((1-0.2)*totalLT).toFixed(1)}–${((1-0.85)*totalLT).toFixed(1)} days</strong> (20%–85%).
+    </div>
+    ${GUIDELINES.map(g=>`
+    <div class="gl-box">
+      <div class="gl-num">LtS Guideline #${g.num}</div>
+      <div style="font-size:11px;font-weight:700;color:#333;margin-bottom:3px">${g.title}</div>
+      <div class="gl-text">${g.genText(meta,procs,invs,takt,totalLT,totalPT)}</div>
+    </div>`).join('')}`;
+  document.getElementById('future-content').innerHTML=html;
+}
+
+const GUIDELINES=[
+  {num:1,title:'Produce to Takt Time',
+   genText:(m,procs,invs,takt)=>{
+     const bt=procs.find(p=>parseFloat(p.d.ct)>takt);
+     return bt?`⚠ <strong>${bt.label}</strong> (C/T=${bt.d.ct}s) exceeds your ${m.product||'product'} takt time of ${takt}s. Reduce by ${parseFloat(bt.d.ct)-takt}s or add capacity to meet customer demand.`
+       :`✅ All ${m.product||'product'} process cycle times are within takt time of ${takt}s. Maintain this and monitor for drift.`;
+   }},
+  {num:2,title:'Develop Continuous Flow',
+   genText:(m,procs)=>{
+     const pairs=[];
+     const sp=procs.sort((a,b)=>a.x-b.x);
+     for(let i=0;i<sp.length-1;i++){if(Math.abs(parseFloat(sp[i].d.ct)-parseFloat(sp[i+1].d.ct))<20)pairs.push(`${sp[i].label}+${sp[i+1].label}`);}
+     return pairs.length?`Consider combining ${pairs[0]} into a single continuous-flow cell for ${m.product||'product'}. Similar cycle times suggest physical proximity is feasible.`
+       :`Identify which consecutive ${m.product||'product'} processes could share a U-shaped or linear cell to eliminate WIP between them.`;
+   }},
+  {num:3,title:'Use Supermarkets to Control Upstream',
+   genText:(m,procs,invs)=>{
+     const bigWIP=invs.filter(i=>parseFloat(i.d.days)>2);
+     return bigWIP.length?`Replace ${bigWIP.length} WIP triangle${bigWIP.length>1?'s':''} with supermarket pull systems. Customer process withdraws ${m.traySize||20}-piece trays; upstream process replenishes only what was taken.`
+       :`Where your ${m.product||'product'} flow breaks (batch processes, shared equipment), install a supermarket with kanban cards instead of MRP scheduling.`;
+   }},
+  {num:4,title:'Schedule Only the Pacemaker',
+   genText:(m,procs,invs,takt,totalLT)=>{
+     const sp=procs.sort((a,b)=>a.x-b.x);
+     const pm=sp[sp.length-1];
+     return `For ${m.product||'product'}, your pacemaker should be <strong>${pm?.label||'the final process'}</strong> (most downstream continuous-flow step). Remove MRP schedules from all upstream processes — control them via supermarket pull. This alone can cut scheduling complexity by ${Math.max(1,procs.length-1)}×.`;
+   }},
+  {num:5,title:'Level the Production Mix (Heijunka)',
+   genText:(m)=>{
+     const pitch=Math.round((m.taktTime||60)*(m.traySize||20)/60);
+     return `Level ${m.product||'product'} production using a heijunka box. Release work in ${m.traySize||20}-piece tray increments every ${pitch} minutes (pitch = ${m.taktTime||60}s × ${m.traySize||20} pcs). This creates a predictable rhythm and reduces WIP variability.`;
+   }},
+  {num:6,title:'Paced Withdrawal',
+   genText:(m)=>{
+     const pitch=Math.round((m.taktTime||60)*(m.traySize||20));
+     return `At your ${m.product||'product'} pacemaker, release AND withdraw exactly one tray (${m.traySize||20} pcs) every ${pitch}s (${(pitch/60).toFixed(1)} min). This "pitch" is your basic production scheduling increment — every ${(pitch/60).toFixed(1)} min, one container in, one container out.`;
+   }},
+  {num:7,title:'"Every Part Every Day" in Upstream Processes',
+   genText:(m,procs)=>{
+     const longCO=procs.find(p=>parseCO(p.d.co)>600);
+     return longCO?`${longCO.label} has ${longCO.d.co} changeover — preventing daily production of all ${m.product||'product'} variants. Apply SMED to reduce to <10 min, enabling EPE=1 shift. This reduces supermarket size by ~${Math.round((1-10/(parseCO(longCO.d.co)/60))*100)||85}%.`
+       :`✅ Changeover times look manageable. Focus on achieving EPE=1 shift (every part every shift) for maximum flexibility in your ${m.product||'product'} value stream.`;
+   }},
+  {num:8,title:'Process Improvements Required',
+   genText:(m,procs,invs,takt,totalLT,totalPT)=>{
+     const items=[];
+     procs.forEach(p=>{if(parseCO(p.d.co)>600)items.push(`SMED on ${p.label}`);if(parseFloat(p.d.uptime)<85)items.push(`TPM for ${p.label}`);if(parseFloat(p.d.ct)>takt)items.push(`Reduce ${p.label} C/T`);});
+     const targetLT=(totalLT*0.3).toFixed(1);
+     return items.length?`Required kaizen events for ${m.product||'product'}: ${items.join('; ')}. Mark these on your future state map with lightning burst icons. Target lead time: ${targetLT} days (70% reduction).`
+       :`Mark process improvements on your ${m.product||'product'} future state map using kaizen burst icons. Target: ${(totalLT*0.3).toFixed(1)} day lead time from current ${totalLT.toFixed(1)} days.`;
+   }},
+];
+
+function parseCO(co){
+  if(!co) return 0;
+  co=String(co).toLowerCase();
+  if(co.includes('hour')||co.includes('hr')) return (parseFloat(co)||1)*3600;
+  if(co.includes('min')) return (parseFloat(co)||1)*60;
+  return parseFloat(co)||0;
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// FUTURE STATE GUIDE PANEL
+// ═══════════════════════════════════════════════════════════════════════
+function buildFSGuide(){
+  document.getElementById('guide-steps').innerHTML=GUIDELINES.map(g=>`
+    <div style="border:1.5px solid var(--mid);border-radius:6px;padding:8px 10px;margin-bottom:7px;cursor:pointer;transition:all .15s" onclick="this.style.borderColor='var(--kai)';this.style.background='#FFFBEE'" onmouseout="this.style.borderColor='var(--mid)';this.style.background='white'">
+      <div style="font-size:9px;font-weight:800;color:var(--blue);letter-spacing:1.2px;text-transform:uppercase">Guideline #${g.num}</div>
+      <div style="font-size:12px;font-weight:700;color:var(--dark);margin:2px 0">${g.title}</div>
+      <div style="font-size:10px;color:#555;line-height:1.5">${g.num===1?'Takt = Available time ÷ demand per shift. All processes should target this rate.':g.num===2?'Link processes that can flow directly — one piece at a time, no stagnation between.':g.num===3?'Where batch processes can\'t flow, use supermarket + kanban instead of MRP scheduling.':g.num===4?'Schedule only the pacemaker process. Upstream processes replenish via pull.':g.num===5?'Level production mix over time using heijunka box at the pacemaker.':g.num===6?'Release/withdraw work in small, consistent pitch increments at pacemaker.':g.num===7?'Reduce upstream changeovers via SMED to enable "every part every day".':'Mark required kaizen events on future state map with lightning burst icons.'}</div>
+    </div>`).join('');
+}
+
+function toggleFSGuide(){
+  const p=document.getElementById('fs-guide');
+  const show=p.style.display!=='block';
+  p.style.display=show?'block':'none';
+  document.getElementById('btn-guide').classList.toggle('on',show);
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// PROPERTIES PANEL
+// ═══════════════════════════════════════════════════════════════════════
+function showProps(n){
+  if(!n){document.getElementById('props-content').innerHTML='<div style="color:#BBB;font-size:11px;text-align:center;padding:28px 14px;line-height:1.7">Select any shape on the canvas to edit its properties.</div>';return;}
+  document.getElementById('rp-title').textContent=n.label;
+  const takt=meta.taktTime||60;
+  const avail=parseFloat((n.d.avail||'27600').replace(/,/g,''))||27600;
+  const DD=meta.dailyDemand||920;
+  const shifts=parseFloat(n.d.shifts||meta.shifts||2);
+  let html='';
+
+  if(n.type==='process'){
+    const ct=parseFloat(n.d.ct)||0;
+    const up=parseFloat(n.d.uptime)||100;
+    const ops=parseFloat(n.d.operators)||1;
+    const coSec=parseCO(n.d.co);
+    const effCT=(ct/(up/100)).toFixed(1);
+    const demPS=(DD/shifts).toFixed(0);
+    const minOps=Math.ceil(ct/takt);
+    const isBottleneck=ct>takt;
+    html+=`<div class="pg">
+      <div class="pgt">Process Identity</div>
+      <div class="pf"><label>Name</label><input value="${esc(n.label)}" onchange="upN(${n.id},'label',this.value)"/></div>
+      <div class="pf"><label>Machine / Equipment</label><input value="${esc(n.d.machine||'')}" onchange="upD(${n.id},'machine',this.value)" placeholder="e.g. 200T Press"/></div>
+    </div>
+    <div class="pg">
+      <div class="pgt">Cycle & Changeover</div>
+      <div class="pf-2">
+        <div class="pf"><label>Cycle Time (sec)</label><input type="number" value="${n.d.ct||''}" onchange="upD(${n.id},'ct',this.value)"/></div>
+        <div class="pf"><label>Uptime (%)</label><input type="number" value="${n.d.uptime||''}" onchange="upD(${n.id},'uptime',this.value)"/></div>
+      </div>
+      <div class="pf"><label>Changeover Time</label><input value="${esc(n.d.co||'')}" onchange="upD(${n.id},'co',this.value)" placeholder="e.g. 1 hour, 10 min, 0"/></div>
+      <div class="pf"><label>EPE (Every Part Every…)</label><input value="${esc(n.d.epe||'')}" onchange="upD(${n.id},'epe',this.value)" placeholder="2 weeks, 1 day, 1 shift…"/></div>
+    </div>
+    <div class="pg">
+      <div class="pgt">Staffing & Schedule</div>
+      <div class="pf-3">
+        <div class="pf"><label>Operators</label><input type="number" value="${n.d.operators||1}" onchange="upD(${n.id},'operators',this.value)"/></div>
+        <div class="pf"><label>Shifts</label><input type="number" value="${n.d.shifts||2}" onchange="upD(${n.id},'shifts',this.value)"/></div>
+        <div class="pf"><label>Avail. (s/shift)</label><input value="${n.d.avail||'27,600'}" onchange="upD(${n.id},'avail',this.value)"/></div>
+      </div>
+    </div>
+    <div class="calc-box">
+      <div class="ct">📐 Live Calculations</div>
+      <div class="cl">Takt = ${avail}s ÷ ${demPS} pcs/shift = <strong>${takt}s</strong></div>
+      <div class="cl">Effective C/T = ${ct}s ÷ ${up}% = ${effCT}s</div>
+      <div class="cl">vs Takt: ${ct<=takt?'✅ Within takt ('+Math.round(ct/takt*100)+'% utilised)':'❌ Exceeds by '+(ct-takt)+'s'}</div>
+      <div class="cl">Min operators @ takt: ⌈${ct}÷${takt}⌉ = ${minOps}</div>
+      ${coSec>0?`<div class="cl">C/O: ${n.d.co} = ${coSec}s = ${(coSec/60).toFixed(1)} min</div>`:''}
+      <div class="cr">${isBottleneck?'⚠ BOTTLENECK — action needed':'✅ Capacity OK'}</div>
+    </div>`;
+    if(isBottleneck){html+=`<div class="err-box"><div class="et">Bottleneck Action</div><div class="ed">C/T ${ct}s > Takt ${takt}s. Options: split process, reduce C/T by ${ct-takt}s, add ${minOps-ops} more operator${minOps-ops>1?'s':''}.</div></div>`;}
+  }
+
+  if(n.type==='inventory'){
+    const qtyL=parseFloat(n.d.qtyL)||0, qtyR=parseFloat(n.d.qtyR)||0;
+    const qty=parseFloat(n.d.qty)||qtyL+qtyR;
+    const days=qty>0?(qty/DD).toFixed(1):n.d.days;
+    const daysN=parseFloat(days)||0;
+    html+=`<div class="pg">
+      <div class="pgt">Inventory Data</div>
+      <div class="pf-2">
+        <div class="pf"><label>Qty Left</label><input type="number" value="${n.d.qtyL||''}" onchange="upD(${n.id},'qtyL',this.value);recalcDays(${n.id})"/></div>
+        <div class="pf"><label>Qty Right</label><input type="number" value="${n.d.qtyR||''}" onchange="upD(${n.id},'qtyR',this.value);recalcDays(${n.id})"/></div>
+      </div>
+      <div class="pf"><label>Or Total Qty (pcs)</label><input type="number" value="${n.d.qty||''}" onchange="upD(${n.id},'qty',this.value);recalcDays(${n.id})"/></div>
+      <div class="pf"><label>Days of Inventory</label><input type="number" step="0.1" value="${n.d.days||''}" onchange="upD(${n.id},'days',this.value)"/></div>
+    </div>
+    <div class="calc-box">
+      <div class="ct">📐 Inventory Days (LtS)</div>
+      <div class="cl">qty ÷ daily demand = ${qty||'?'} ÷ ${DD}/day</div>
+      <div class="cr">${days} days <span style="color:${daysN>3?'var(--red)':daysN>1?'var(--orange)':'var(--green)'}">${daysN>3?'⚠ HIGH WASTE':daysN>1?'~ MODERATE':'✅ LOW'}</span></div>
+    </div>`;
+  }
+
+  if(n.type==='factory'){
+    html+=`<div class="pg">
+      <div class="pgt">Factory / Entity</div>
+      <div class="pf"><label>Name</label><input value="${esc(n.label)}" onchange="upN(${n.id},'label',this.value);upD(${n.id},'name',this.value)"/></div>
+      <div class="pf"><label>Detail Line 1</label><input value="${esc(n.d.detail||'')}" onchange="upD(${n.id},'detail',this.value)"/></div>
+      <div class="pf"><label>Detail Line 2</label><input value="${esc(n.d.detail2||'')}" onchange="upD(${n.id},'detail2',this.value)"/></div>
+    </div>`;
+    if(nodes.indexOf(n)>0&&n.d.detail2?.includes('Takt')){
+      html+=`<div class="pg"><div class="pgt">Customer Demand</div>
+        <div class="pf-2">
+          <div class="pf"><label>Monthly Volume</label><input type="number" value="${meta.monthly||18400}" onchange="meta.monthly=+this.value;updateMeta();"/></div>
+          <div class="pf"><label>Working Days</label><input type="number" value="${meta.wdays||20}" onchange="meta.wdays=+this.value;updateMeta();"/></div>
+        </div>
+        <div class="pf-2">
+          <div class="pf"><label>Shifts/Day</label><input type="number" value="${meta.shifts||2}" onchange="meta.shifts=+this.value;updateMeta();"/></div>
+          <div class="pf"><label>Avail. s/shift</label><input type="number" value="${meta.availSec||27600}" onchange="meta.availSec=+this.value;updateMeta();"/></div>
+        </div>
+      </div>
+      <div class="calc-box"><div class="ct">Takt Calculation</div>
+      <div class="cl">Daily demand = ${meta.monthly||18400}÷${meta.wdays||20} = ${meta.dailyDemand?.toFixed(0)||920}/day</div>
+      <div class="cl">Per shift = ${(meta.dailyDemand/meta.shifts).toFixed(0)} pcs</div>
+      <div class="cr">Takt = ${meta.availSec}÷${(meta.dailyDemand/meta.shifts).toFixed(0)} = <strong>${meta.taktTime}s</strong></div>
+      </div>`;
+    }
+  }
+
+  // Position
+  html+=`<div class="pg"><div class="pgt">Position</div><div class="pf-2">
+    <div class="pf"><label>X</label><input type="number" value="${Math.round(n.x)}" onchange="updPos(${n.id},'x',this.value)"/></div>
+    <div class="pf"><label>Y</label><input type="number" value="${Math.round(n.y)}" onchange="updPos(${n.id},'y',this.value)"/></div>
+  </div></div>`;
+
+  document.getElementById('props-content').innerHTML=html;
+}
+
+function updateMeta(){
+  meta.dailyDemand=(meta.monthly||18400)/(meta.wdays||20);
+  meta.taktTime=Math.round((meta.availSec||27600)/((meta.dailyDemand)/(meta.shifts||2)));
+  render();
+}
+function recalcDays(id){const n=nodes.find(x=>x.id===id);if(!n)return;const t=(parseFloat(n.d.qtyL)||0)+(parseFloat(n.d.qtyR)||0)||(parseFloat(n.d.qty)||0);if(t>0){n.d.days=(t/(meta.dailyDemand||920)).toFixed(1);render();showProps(n);}}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+function upN(id,k,v){const n=nodes.find(x=>x.id===id);if(n){n[k]=v;render();}}
+function upD(id,k,v){const n=nodes.find(x=>x.id===id);if(n){n.d[k]=v;render();runAnalysis();saveHist();}}
+function updPos(id,ax,v){const n=nodes.find(x=>x.id===id);if(n){n[ax]=parseFloat(v)||0;render();}}
+
+// ═══════════════════════════════════════════════════════════════════════
+// NODE OPERATIONS
+// ═══════════════════════════════════════════════════════════════════════
+function addNode(type,x,y){
+  const sh=SHAPES[type];
+  const n={id:nid++,type,x,y,w:sh.w,h:sh.h,label:sh.name,
+    d:{ct:'60',co:'0',uptime:'100',operators:'1',shifts:'2',avail:'27,600',machine:'',epe:'',
+       qty:'0',days:'0',qtyL:'',qtyR:'',detail:'',detail2:'',name:sh.name,system:'MRP',max:'50',pitch:''}};
+  nodes.push(n); saveHist(); render(); selectNode(n.id); return n;
+}
+function selectNode(id){selNode=id;renderNodes();const n=nodes.find(x=>x.id===id);showProps(n);}
+function clearSel(){selNode=null;renderNodes();showProps(null);document.getElementById('rp-title').textContent='Analysis & Properties';}
+function delSel(){if(selNode){nodes=nodes.filter(x=>x.id!==selNode);conns=conns.filter(c=>c.from!==selNode&&c.to!==selNode);selNode=null;render();showProps(null);runAnalysis();saveHist();}}
+
+let _ctxNode=null;
+function showCtx(e,n){e.preventDefault();e.stopPropagation();_ctxNode=n;selectNode(n.id);const m=document.getElementById('ctx');m.style.display='block';m.style.left=e.clientX+'px';m.style.top=e.clientY+'px';}
+function closeCtx(){document.getElementById('ctx').style.display='none';}
+function ctxDup(){if(_ctxNode){addNode(_ctxNode.type,_ctxNode.x+30,_ctxNode.y+30);}closeCtx();}
+function ctxKaizen(){if(_ctxNode){kzs.push({id:Date.now(),x:_ctxNode.x+_ctxNode.w/2,y:_ctxNode.y-30,type:'burst',label:'Improve!'});render();}closeCtx();}
+function ctxDel(){delSel();closeCtx();}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EVENTS
+// ═══════════════════════════════════════════════════════════════════════
+function setupEvents(){
+  const cc=document.getElementById('cc');
+  cc.addEventListener('mousedown',e=>{
+    if(e.button===1||mode==='pan'){isPan=true;panS={x:e.clientX-px,y:e.clientY-py};cc.style.cursor='grabbing';return;}
+    if(e.target.closest('#cv')&&(e.target.id==='cv'||e.target.classList.contains('grid-bg')||e.target===document.getElementById('vsmSvg'))){
+      if(mode==='kz'){const p=cvPt(e);kzs.push({id:Date.now(),x:p.x,y:p.y,type:window._kType||'burst',label:'Improve!'});window._kType=null;render();return;}
+      clearSel();
+    }
+  });
+  cc.addEventListener('mousemove',e=>{
+    if(isPan){px=e.clientX-panS.x;py=e.clientY-panS.y;applyTransform();return;}
+    if(isDrag&&dragN){const p=cvPt(e);dragN.x=Math.max(0,p.x-dOff.x);dragN.y=Math.max(0,p.y-dOff.y);render();}
+  });
+  cc.addEventListener('mouseup',()=>{if(isPan){isPan=false;document.getElementById('cc').style.cursor='';}if(isDrag){isDrag=false;dragN=null;runAnalysis();saveHist();}});
+  cc.addEventListener('wheel',e=>{e.preventDefault();const f=e.deltaY<0?1.1:0.91;const r=cc.getBoundingClientRect();const mx=e.clientX-r.left,my=e.clientY-r.top;px=mx-(mx-px)*f;py=my-(my-py)*f;sc=Math.min(Math.max(sc*f,.1),3);applyTransform();},{passive:false});
+  cc.addEventListener('dragover',e=>e.preventDefault());
+  cc.addEventListener('drop',e=>{e.preventDefault();const t=e.dataTransfer.getData('shape');if(!t||!SHAPES[t])return;const p=cvPt(e);addNode(t,p.x-SHAPES[t].w/2,p.y-SHAPES[t].h/2);});
+  document.addEventListener('keydown',e=>{
+    if(['INPUT','TEXTAREA','SELECT'].includes(document.activeElement.tagName))return;
+    if(e.key==='Delete'||e.key==='Backspace')delSel();
+    if(e.key==='v')setMode('sel');if(e.key==='c')setMode('conn');if(e.key==='h')setMode('pan');
+    if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();undo();}
+    if((e.ctrlKey||e.metaKey)&&(e.key==='y'||e.key==='Y')){e.preventDefault();redo();}
+    if(e.key==='Escape'){setMode('sel');closeCtx();connFrom=null;}
+  });
+  document.addEventListener('click',closeCtx);
+}
+
+function startDrag(e,n){if(mode!=='sel')return;e.stopPropagation();e.preventDefault();isDrag=true;dragN=n;const p=cvPt(e);dOff={x:p.x-n.x,y:p.y-n.y};}
+function handleConnClick(id){
+  if(!connFrom){connFrom=id;toast('Now click the target node to connect');return;}
+  if(connFrom!==id){conns.push({id:cid++,from:connFrom,to:id,type:activeConn,label:''});saveHist();render();runAnalysis();}
+  connFrom=null;
+}
+function cvPt(e){const r=document.getElementById('cc').getBoundingClientRect();return{x:(e.clientX-r.left-px)/sc,y:(e.clientY-r.top-py)/sc};}
+
+function setMode(m){
+  mode=m;connFrom=null;
+  ['sel','conn','kz','pan'].forEach(x=>{const b=document.getElementById('btn-'+x);const mb=document.getElementById('md-'+x);if(b)b.classList.toggle('on',x===m);if(mb)mb.classList.toggle('on',x===m);});
+  const cursors={sel:'default',conn:'crosshair',kz:'cell',pan:'grab'};
+  document.getElementById('cv').style.cursor=cursors[m]||'default';
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// ZOOM / PAN
+// ═══════════════════════════════════════════════════════════════════════
+function applyTransform(){document.getElementById('cv').style.transform=`translate(${px}px,${py}px) scale(${sc})`;document.getElementById('zpct').textContent=Math.round(sc*100)+'%';}
+function doZoom(f){const cc=document.getElementById('cc');const cx=cc.clientWidth/2,cy=cc.clientHeight/2;px=cx-(cx-px)*f;py=cy-(cy-py)*f;sc=Math.min(Math.max(sc*f,.1),3);applyTransform();}
+function fitView(){if(!nodes.length)return;const cc=document.getElementById('cc');const minX=Math.min(...nodes.map(n=>n.x))-60;const minY=Math.min(...nodes.map(n=>n.y))-60;const maxX=Math.max(...nodes.map(n=>n.x+n.w))+60;const maxY=Math.max(...nodes.map(n=>n.y+n.h))+80;const w=maxX-minX,h=maxY-minY;sc=Math.min(cc.clientWidth/w,cc.clientHeight/h,1.2)*.88;px=-minX*sc+(cc.clientWidth-w*sc)/2;py=-minY*sc+(cc.clientHeight-h*sc)/2;applyTransform();}
+
+// ═══════════════════════════════════════════════════════════════════════
+// AUTO ARRANGE
+// ═══════════════════════════════════════════════════════════════════════
+function autoArrange(){
+  if(!nodes.length){toast('No nodes to arrange');return;}
+  const adj={};nodes.forEach(n=>adj[n.id]=[]);
+  conns.forEach(c=>{if(['push','pull'].includes(c.type)&&adj[c.from])adj[c.from].push(c.to);});
+  const vis=new Set(),order=[];
+  function dfs(id){if(vis.has(id))return;vis.add(id);(adj[id]||[]).forEach(dfs);order.unshift(id);}
+  nodes.forEach(n=>dfs(n.id));
+
+  const supNodes=nodes.filter(n=>n.type==='factory'&&n.x<CW/2);
+  const custNodes=nodes.filter(n=>n.type==='factory'&&n.x>=CW/2);
+  const ctrlNodes=nodes.filter(n=>n.type==='prodctrl');
+  const matFlow=order.filter(id=>{const n=nodes.find(x=>x.id===id);return n&&!['factory','prodctrl'].includes(n.type);});
+
+  supNodes.forEach((n,i)=>{n.x=55;n.y=80+i*100;});
+  ctrlNodes.forEach((n,i)=>{n.x=Math.max(400,matFlow.length*190/2-65);n.y=55+i*80;});
+  const spacing=190;
+  matFlow.forEach((id,i)=>{
+    const n=nodes.find(x=>x.id===id);if(!n)return;
+    n.x=190+i*spacing;
+    n.y=n.type==='inventory'?388:n.type==='supermarket'?368:n.type==='shipping'?385:370;
+  });
+  const totalW=190+matFlow.length*spacing+100;
+  custNodes.forEach((n,i)=>{n.x=totalW;n.y=80+i*100;});
+  saveHist();render();runAnalysis();setTimeout(fitView,80);
+  toast('✅ Auto-arranged topology');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// HISTORY
+// ═══════════════════════════════════════════════════════════════════════
+function saveHist(){hist=hist.slice(0,hIdx+1);hist.push(JSON.stringify({nodes,conns,kzs,meta,title:document.getElementById('map-title').value}));hIdx=hist.length-1;}
+function undo(){if(hIdx>0){hIdx--;restH();toast('↩ Undone');}}
+function redo(){if(hIdx<hist.length-1){hIdx++;restH();toast('↪ Redone');}}
+function restH(){const s=JSON.parse(hist[hIdx]);nodes=s.nodes;conns=s.conns;kzs=s.kzs;meta=s.meta||meta;if(s.title)document.getElementById('map-title').value=s.title;nid=(nodes.length?Math.max(...nodes.map(n=>n.id)):0)+1;cid=(conns.length?Math.max(...conns.map(c=>c.id)):0)+1;render();runAnalysis();}
+
+// ═══════════════════════════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ═══════════════════════════════════════════════════════════════════════
+function exportSVG(){const t=document.getElementById('map-title').value;const c=document.getElementById('vsmSvg').cloneNode(true);c.setAttribute('xmlns','http://www.w3.org/2000/svg');c.setAttribute('width',CW);c.setAttribute('height',CH);const tEl=document.createElementNS('http://www.w3.org/2000/svg','text');tEl.setAttribute('x','20');tEl.setAttribute('y','24');tEl.setAttribute('font-family','Barlow Condensed,sans-serif');tEl.setAttribute('font-size','20');tEl.setAttribute('font-weight','800');tEl.setAttribute('fill','#E63329');tEl.textContent=t;c.insertBefore(tEl,c.firstChild);dl(URL.createObjectURL(new Blob([c.outerHTML],{type:'image/svg+xml'})),`VSM-${slug(t)}.svg`);closeM('m-export');toast('✅ SVG exported');}
+function exportPNG(){const t=document.getElementById('map-title').value;const sd=new XMLSerializer().serializeToString(document.getElementById('vsmSvg'));const img=new Image();const url=URL.createObjectURL(new Blob([sd],{type:'image/svg+xml'}));img.onload=()=>{const c=document.createElement('canvas');c.width=CW*2;c.height=CH*2;const ctx=c.getContext('2d');ctx.scale(2,2);ctx.fillStyle='#FAFAFA';ctx.fillRect(0,0,CW,CH);ctx.drawImage(img,0,0);dl(c.toDataURL('image/png'),`VSM-${slug(t)}.png`);URL.revokeObjectURL(url);};img.src=url;closeM('m-export');toast('✅ PNG exported (2×)');}
+function exportJSON(){const t=document.getElementById('map-title').value;dl(URL.createObjectURL(new Blob([JSON.stringify({_vsm:'kaizen-studio-v3',title:t,exportDate:new Date().toISOString(),nodes,conns,kzs,meta},null,2)],{type:'application/json'})),`VSM-${slug(t)}.json`);closeM('m-export');toast('✅ JSON saved — re-importable!');}
+function exportCSV(){const t=document.getElementById('map-title').value;let csv='ID,Type,Label,CT(s),C/O,Uptime%,Operators,Shifts,Avail,EPE,WIP_Days,QtyL,QtyR,X,Y\n';nodes.forEach(n=>{csv+=`${n.id},${n.type},"${n.label}",${n.d.ct||''},${n.d.co||''},${n.d.uptime||''},${n.d.operators||''},${n.d.shifts||''},${n.d.avail||''},${n.d.epe||''},${n.d.days||''},${n.d.qtyL||''},${n.d.qtyR||''},${Math.round(n.x)},${Math.round(n.y)}\n`;});dl(URL.createObjectURL(new Blob([csv],{type:'text/csv'})),`VSM-${slug(t)}.csv`);closeM('m-export');toast('✅ CSV exported');}
+function dl(url,name){const a=document.createElement('a');a.href=url;a.download=name;a.click();}
+function slug(s){return s.replace(/[^\w]/g,'-').replace(/-+/g,'-').slice(0,50);}
+function fileImport(e){const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(!d.nodes||!d.conns)throw new Error('Invalid VSM file');nodes=d.nodes;conns=d.conns;kzs=d.kzs||[];meta=d.meta||meta;if(d.title)document.getElementById('map-title').value=d.title;nid=(nodes.length?Math.max(...nodes.map(n=>n.id)):0)+1;cid=(conns.length?Math.max(...conns.map(c=>c.id)):0)+1;saveHist();render();runAnalysis();setTimeout(fitView,100);closeM('m-import');toast(`✅ Imported: ${d.title||f.name}`);}catch(err){toast('❌ Import failed: '+err.message);}};r.readAsText(f);e.target.value='';}
+function dropImport(e){e.preventDefault();document.getElementById('imp-zone').classList.remove('drag');const f=e.dataTransfer.files[0];if(f){const ev={target:{files:[f]}};fileImport(ev);}}
+
+// ═══════════════════════════════════════════════════════════════════════
+// MODALS & TABS
+// ═══════════════════════════════════════════════════════════════════════
+function showExport(){document.getElementById('m-export').classList.add('show');}
+function showImport(){document.getElementById('m-import').classList.add('show');}
+function showEx(){document.getElementById('m-ex').classList.add('show');}
+function closeM(id){document.getElementById(id).classList.remove('show');}
+document.querySelectorAll('.moverlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('show');}));
+
+function exTab(t){
+  document.querySelectorAll('.et').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.ec').forEach(el=>el.classList.remove('on'));
+  document.getElementById('ec-'+t).classList.add('on');
+  const idx={cur:0,fut:1,cmp:2}[t];
+  document.querySelectorAll('.et')[idx]?.classList.add('on');
+}
+
+function switchRPTab(t){
+  document.querySelectorAll('.rpt').forEach(el=>el.classList.remove('on'));
+  document.querySelectorAll('.rp-tab-content').forEach(el=>el.classList.remove('on'));
+  document.getElementById('rptab-'+t).classList.add('on');
+  const idx={props:0,analysis:1,future:2}[t];
+  document.querySelectorAll('.rpt')[idx]?.classList.add('on');
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════════════
+let _tt;
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(_tt);_tt=setTimeout(()=>el.classList.remove('show'),3200);}
+
+// ═══════════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════════
+buildPalettes();
+buildFSGuide();
+setupEvents();
+// Default 3 proc rows in wizard
+addProcRow({name:'Stamping',ct:'60',co:'10 min',uptime:'85',operators:1,wip:500});
+addProcRow({name:'Assembly',ct:'55',co:'0',uptime:'100',operators:2,wip:200});
+addProcRow({name:'Packaging',ct:'40',co:'0',uptime:'100',operators:1,wip:0});
+</script>
+</body>
+</html>
