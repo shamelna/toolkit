@@ -153,11 +153,11 @@ For questions, training, or consulting:
 
 ## 🌐 Live Demo
 
-**Main Toolkit**: [Kaizen Academy Toolkit](https://shamelna.github.io/Kaizen-Academy-Toolkit/)
-**7 QC Tools**: [7 QC Tools](https://shamelna.github.io/Kaizen-Academy-Toolkit/7-QC-Tools/)
-**VSM Calculator**: [VSM Tool](https://shamelna.github.io/Kaizen-Academy-Toolkit/VSM/)
-**DOE Navigator**: [DOE Navigator](https://doe-navigator-kaizen.vercel.app/) *(Standalone Vercel Deployment)*
-**Flow Simulation**: [Flow Simulation](https://shamelna.github.io/Kaizen-Academy-Toolkit/Flow%20Simulation/)
+**Main Toolkit**: [Kaizen Academy Toolkit](https://toolkit.kaizenacademy.education/)
+**7 QC Tools**: [7 QC Tools](https://toolkit.kaizenacademy.education/7-qc-tools/)
+**VSM Calculator**: [VSM Tool](https://toolkit.kaizenacademy.education/vsm/)
+**DOE Navigator**: [DOE Navigator](https://toolkit.kaizenacademy.education/doe-navigator/)
+**Flow Simulation**: [Flow Simulation](https://toolkit.kaizenacademy.education/flow-simulation/)
 
 ---
 

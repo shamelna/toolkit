@@ -305,6 +305,63 @@ body{font-family:var(--font-b);background:var(--white);color:var(--text);font-si
   .ka-footer__top{grid-template-columns:1fr;gap:2rem}
   .ka-hero h1{font-size:2rem}
 }
+
+/* ── ONBOARDING OVERLAY ─────────────────────────────────── */
+.ob-overlay{position:fixed;inset:0;z-index:9999;background:rgba(13,13,13,.85);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);opacity:0;animation:ob-in .3s ease forwards}
+@keyframes ob-in{to{opacity:1}}
+.ob-overlay.ob-out{animation:ob-fade .25s ease forwards;pointer-events:none}
+@keyframes ob-fade{to{opacity:0}}
+.ob-modal{background:var(--white);border-radius:16px;width:100%;max-width:660px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 24px 80px rgba(0,0,0,.45)}
+.ob-prog{height:3px;background:var(--border);flex-shrink:0}
+.ob-prog-fill{height:100%;background:var(--yellow);transition:width .35s ease;border-radius:0 2px 2px 0}
+.ob-body{flex:1;overflow-y:auto;padding:36px 40px 24px;scroll-behavior:smooth}
+.ob-step-pill{display:inline-flex;align-items:center;gap:7px;background:var(--black);color:var(--yellow);font-family:var(--font-d);font-size:.65rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:4px 12px;border-radius:20px;margin-bottom:18px}
+.ob-pill-dot{width:6px;height:6px;border-radius:50%;background:var(--yellow);display:inline-block}
+.ob-icon{width:56px;height:56px;border-radius:14px;background:rgba(255,213,89,.12);border:1.5px solid rgba(255,213,89,.3);display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px}
+.ob-h{font-family:var(--font-d);font-size:1.5rem;font-weight:800;color:var(--black);line-height:1.2;letter-spacing:-.03em;margin-bottom:10px}
+.ob-h em{color:var(--yellow);font-style:normal}
+.ob-p{font-size:.9rem;color:var(--text2);line-height:1.75;margin-bottom:18px}
+.ob-p strong{color:var(--black);font-weight:700}
+.ob-box{background:var(--light);border-radius:10px;padding:16px 20px;margin-bottom:14px;border-left:3px solid var(--yellow)}
+.ob-box-lbl{font-family:var(--font-d);font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--grey);margin-bottom:6px}
+.ob-box p{font-size:.84rem;color:var(--text2);line-height:1.6}
+.ob-cmp{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ob-cmp-col{border-radius:8px;overflow:hidden}
+.ob-cmp-col.t{border:1px solid var(--border)}
+.ob-cmp-col.l{border:2px solid var(--yellow)}
+.ob-cmp-hd{padding:8px 14px;font-family:var(--font-d);font-size:.72rem;font-weight:700}
+.ob-cmp-col.t .ob-cmp-hd{background:var(--light);color:var(--grey)}
+.ob-cmp-col.l .ob-cmp-hd{background:var(--black);color:var(--yellow)}
+.ob-cmp-rows{padding:10px 14px}
+.ob-cmp-row{font-size:.8rem;padding:5px 0;border-bottom:1px solid var(--border);color:var(--text2);display:flex;align-items:flex-start;gap:6px}
+.ob-cmp-row:last-child{border-bottom:none}
+.ob-cmp-row::before{content:'→';color:var(--yellow);flex-shrink:0;font-size:.72rem;margin-top:1px}
+.ob-capbar{display:flex;height:28px;border-radius:6px;overflow:hidden;margin:6px 0}
+.ob-cap-p{background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;width:25%;font-size:.7rem;font-weight:700}
+.ob-cap-np{background:var(--red);color:#fff;display:flex;align-items:center;justify-content:center;width:45%;font-size:.7rem;font-weight:700}
+.ob-cap-av{background:var(--yellow);color:var(--black);display:flex;align-items:center;justify-content:center;width:30%;font-size:.7rem;font-weight:700}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.ob-term{background:var(--light);border-radius:8px;padding:12px 14px;border:1px solid var(--border)}
+.ob-term.clickable{cursor:pointer;transition:border-color .15s}
+.ob-term.clickable:hover{border-color:var(--yellow)}
+.ob-term-n{font-family:var(--font-d);font-size:.78rem;font-weight:700;color:var(--black);margin-bottom:4px}
+.ob-term p{font-size:.78rem;color:var(--grey);line-height:1.5}
+.ob-dots{display:flex;gap:7px;justify-content:center;padding:12px 40px 16px;flex-shrink:0}
+.ob-db{width:8px;height:8px;border-radius:50%;background:var(--border);border:none;cursor:pointer;transition:all .2s;padding:0}
+.ob-db.active{background:var(--black);width:22px;border-radius:4px}
+.ob-foot{display:flex;align-items:center;justify-content:space-between;padding:14px 40px 22px;border-top:1px solid var(--border);gap:12px;flex-shrink:0}
+.ob-skip{font-family:var(--font-b);font-size:.82rem;color:var(--grey);background:none;border:none;cursor:pointer;transition:color .15s;white-space:nowrap}
+.ob-skip:hover{color:var(--text)}
+.ob-acts{display:flex;gap:10px;align-items:center}
+.ob-back{font-family:var(--font-d);font-size:.82rem;font-weight:700;background:transparent;color:var(--text2);border:1.5px solid var(--border-mid);padding:8px 18px;border-radius:6px;cursor:pointer;transition:all .15s}
+.ob-back:hover{border-color:var(--grey);color:var(--text)}
+.ob-next{font-family:var(--font-d);font-size:.88rem;font-weight:700;background:var(--yellow);color:var(--black);border:2px solid var(--yellow);padding:9px 24px;border-radius:6px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.ob-next:hover{background:transparent;color:var(--yellow)}
+#ob-revisit{position:fixed;bottom:24px;right:24px;z-index:500;background:var(--black);color:var(--yellow);font-family:var(--font-d);font-size:.78rem;font-weight:700;padding:8px 16px;border-radius:20px;border:1.5px solid rgba(255,213,89,.3);cursor:pointer;transition:all .2s;display:none;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.25)}
+#ob-revisit:hover{border-color:var(--yellow)}
+#ob-revisit.show{display:flex}
+@media(max-width:520px){.ob-body{padding:24px 20px 16px}.ob-foot{padding:12px 20px 18px}.ob-cmp,.ob-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -344,6 +401,131 @@ body{font-family:var(--font-b);background:var(--white);color:var(--text);font-si
 </header>
 
 <main class="page-content">
+<!-- ONBOARDING -->
+<div class="ob-overlay" id="ob-overlay" style="display:none">
+  <div class="ob-modal">
+    <div class="ob-prog"><div class="ob-prog-fill" id="ob-pf" style="width:20%"></div></div>
+    <div class="ob-body" id="ob-body">
+
+      <div class="ob-step" id="obs-1">
+        <div class="ob-step-pill"><span class="ob-pill-dot"></span>Step 1 of 5</div>
+        <div class="ob-icon">👋</div>
+        <h2 class="ob-h">New to <em>Lean Accounting</em>?<br>Start here.</h2>
+        <p class="ob-p">This toolkit simulates and calculates lean accounting concepts — but they're most powerful when you understand <strong>why</strong> they exist. This 5-step guide covers the essentials in under 3 minutes.</p>
+        <div class="ob-box">
+          <div class="ob-box-lbl">The Core Problem</div>
+          <p>Most companies doing lean are still using <strong>traditional accounting built for mass production</strong>. Those systems can make lean improvements look bad on paper — causing managers to cancel work that is genuinely succeeding. Lean accounting solves this.</p>
+        </div>
+        <div class="ob-box">
+          <div class="ob-box-lbl">Who This Is For</div>
+          <p>Operations managers, finance teams, lean practitioners, and anyone who needs to connect operational improvements to financial results — <strong>without a formal accounting background</strong>.</p>
+        </div>
+      </div>
+
+      <div class="ob-step" id="obs-2" style="display:none">
+        <div class="ob-step-pill"><span class="ob-pill-dot"></span>Step 2 of 5</div>
+        <div class="ob-icon">⚠️</div>
+        <h2 class="ob-h">Why Traditional Accounting <em>Misleads</em> Lean Companies</h2>
+        <p class="ob-p">Standard costing was built for mass production — large batches, high utilisation, maximum inventory. Lean does the opposite. Result: <strong>lean improvements can make the numbers look worse</strong>, not better.</p>
+        <div class="ob-cmp">
+          <div class="ob-cmp-col t">
+            <div class="ob-cmp-hd">Traditional Accounting Says…</div>
+            <div class="ob-cmp-rows">
+              <div class="ob-cmp-row">Large batches = lower cost per unit</div>
+              <div class="ob-cmp-row">More inventory = more absorbed overhead</div>
+              <div class="ob-cmp-row">Reduce inventory → profit drops</div>
+              <div class="ob-cmp-row">Freed capacity = invisible</div>
+            </div>
+          </div>
+          <div class="ob-cmp-col l">
+            <div class="ob-cmp-hd">Lean Accounting Shows…</div>
+            <div class="ob-cmp-rows">
+              <div class="ob-cmp-row">Small batches = better flow &amp; quality</div>
+              <div class="ob-cmp-row">Low inventory = released cash</div>
+              <div class="ob-cmp-row">Reduce inventory → cash improves</div>
+              <div class="ob-cmp-row">Freed capacity = growth opportunity</div>
+            </div>
+          </div>
+        </div>
+        <div class="ob-box">
+          <div class="ob-box-lbl">Real Example (Practical Lean Accounting, Ch. 1)</div>
+          <p>A company reduced inventory from 2,500 to 500 units. Traditional reporting showed profit <strong>dropped $43,000</strong>. Management cancelled the lean project. But lean accounting showed they'd actually <strong>released $43,000 in cash</strong> and improved the business. Same facts — completely different story.</p>
+        </div>
+      </div>
+
+      <div class="ob-step" id="obs-3" style="display:none">
+        <div class="ob-step-pill"><span class="ob-pill-dot"></span>Step 3 of 5</div>
+        <div class="ob-icon">🌊</div>
+        <h2 class="ob-h">What Is a <em>Value Stream</em>?</h2>
+        <p class="ob-p">A value stream is every step — from raw material to customer delivery — needed to create a product. Lean accounting <strong>organises costs and performance by value stream</strong>, not by department.</p>
+        <div class="ob-box">
+          <div class="ob-box-lbl">Value Stream Costing vs Standard Costing</div>
+          <p><strong>Standard costing</strong> allocates overhead to each product using labour hours or machine hours. Complex, distorted, and it motivates the wrong decisions.<br><br><strong>Value stream costing</strong> tracks all actual costs (people, materials, machines, space) for the whole value stream in a week. Divide by units shipped = average cost. Simple. Accurate. Actionable.</p>
+        </div>
+        <div class="ob-box">
+          <div class="ob-box-lbl">The Value Stream Income Statement</div>
+          <p>Revenue − Materials − Conversion Costs = <strong>Value Stream Profit</strong>. No overhead allocation. No absorption. Just the real numbers — understood by anyone, not just accountants.</p>
+        </div>
+      </div>
+
+      <div class="ob-step" id="obs-4" style="display:none">
+        <div class="ob-step-pill"><span class="ob-pill-dot"></span>Step 4 of 5</div>
+        <div class="ob-icon">📊</div>
+        <h2 class="ob-h">The <em>Box Score</em> — Lean's One-Page Dashboard</h2>
+        <p class="ob-p">The box score shows three dimensions of value stream performance on a single page — so operations and finance people can finally have the same conversation.</p>
+        <div class="ob-grid">
+          <div class="ob-term"><div class="ob-term-n">1. Operational</div><p>On-time delivery, quality, lead time, inventory days, productivity. How is the process performing?</p></div>
+          <div class="ob-term"><div class="ob-term-n">2. Capacity</div><p>Productive, non-productive, and available time. Where is your resource time actually going?</p></div>
+          <div class="ob-term"><div class="ob-term-n">3. Financial</div><p>Revenue, materials, conversion costs, value stream profit. Real numbers — no overhead allocation games.</p></div>
+          <div class="ob-term"><div class="ob-term-n">4. Future State</div><p>Project what the box score looks like after planned improvements. Evaluate decisions before committing.</p></div>
+        </div>
+        <div class="ob-box">
+          <div class="ob-box-lbl">The Capacity Bar — Often the Biggest Revelation</div>
+          <div class="ob-capbar">
+            <div class="ob-cap-p">25% Prod</div>
+            <div class="ob-cap-np">45% Waste</div>
+            <div class="ob-cap-av">30% Available</div>
+          </div>
+          <p style="font-size:.78rem;color:var(--grey);margin-top:8px">The yellow "available" zone is freed capacity — the bridge between operational improvement and financial results. Traditional accounting makes this completely invisible.</p>
+        </div>
+      </div>
+
+      <div class="ob-step" id="obs-5" style="display:none">
+        <div class="ob-step-pill"><span class="ob-pill-dot"></span>Step 5 of 5</div>
+        <div class="ob-icon">🧭</div>
+        <h2 class="ob-h">You're Ready. <em>Here's Where to Start.</em></h2>
+        <p class="ob-p">Click any card below to jump straight into that module, or close this guide and explore from the home page.</p>
+        <div class="ob-grid">
+          <div class="ob-term clickable" onclick="closeOB();showModule('simulation')"><div class="ob-term-n">⚖️ Simulation →</div><p>Watch how traditional vs lean accounting report the same improvement differently. Best first stop.</p></div>
+          <div class="ob-term clickable" onclick="closeOB();showModule('boxscore')"><div class="ob-term-n">📊 Box Score →</div><p>Build your value stream box score. Enter current and future state. Answer the 6 key questions.</p></div>
+          <div class="ob-term clickable" onclick="closeOB();showModule('linkage')"><div class="ob-term-n">🔗 Linkage Chart →</div><p>Click any lean goal to see how daily cell metrics connect to strategic financial outcomes.</p></div>
+          <div class="ob-term clickable" onclick="closeOB();showModule('waste')"><div class="ob-term-n">🗑️ Waste Audit →</div><p>Check which of the 8 accounting wastes exist in your organisation. Get a score and recommendations.</p></div>
+        </div>
+        <div class="ob-box">
+          <div class="ob-box-lbl">Source Material</div>
+          <p>All content is grounded in <strong>Practical Lean Accounting</strong> by Brian Maskell &amp; Bruce Baggaley, and the <strong>BMA Lean Accounting Certification</strong> course by Nick Katko.</p>
+        </div>
+      </div>
+
+    </div>
+    <div class="ob-dots" id="ob-dots">
+      <button class="ob-db active" onclick="goStep(1)"></button>
+      <button class="ob-db" onclick="goStep(2)"></button>
+      <button class="ob-db" onclick="goStep(3)"></button>
+      <button class="ob-db" onclick="goStep(4)"></button>
+      <button class="ob-db" onclick="goStep(5)"></button>
+    </div>
+    <div class="ob-foot">
+      <button class="ob-skip" id="ob-skip" onclick="closeOB()">Skip intro</button>
+      <div class="ob-acts">
+        <button class="ob-back" id="ob-back" onclick="obPrev()" style="display:none">← Back</button>
+        <button class="ob-next" id="ob-next" onclick="obNext()">Next →</button>
+      </div>
+    </div>
+  </div>
+</div>
+<button id="ob-revisit" onclick="openOB()">✦ Intro Guide</button>
+
 
 <!-- ════════════════════════════
      HOME
@@ -1199,6 +1381,61 @@ function updateWasteScore(){
 
 // ── INIT ───────────────────────────────────────────
 calcInventory();
+
+// ── ONBOARDING ──────────────────────────────────
+let _obStep = 1;
+const _OB_N = 5;
+
+function goStep(n) {
+  document.getElementById('obs-' + _obStep).style.display = 'none';
+  _obStep = Math.max(1, Math.min(_OB_N, n));
+  document.getElementById('obs-' + _obStep).style.display = 'block';
+  document.getElementById('ob-body').scrollTop = 0;
+  document.getElementById('ob-pf').style.width = (_obStep / _OB_N * 100) + '%';
+  document.querySelectorAll('.ob-db').forEach((d,i) => d.classList.toggle('active', i === _obStep-1));
+  document.getElementById('ob-back').style.display = _obStep > 1 ? 'block' : 'none';
+  document.getElementById('ob-next').textContent = _obStep === _OB_N ? 'Start Exploring →' : 'Next →';
+  document.getElementById('ob-skip').textContent = _obStep === _OB_N ? 'Close' : 'Skip intro';
+}
+function obNext() { if (_obStep < _OB_N) goStep(_obStep+1); else closeOB(); }
+function obPrev() { goStep(_obStep-1); }
+
+function closeOB() {
+  const ov = document.getElementById('ob-overlay');
+  ov.classList.add('ob-out');
+  setTimeout(() => { ov.style.display = 'none'; ov.classList.remove('ob-out'); }, 260);
+  document.getElementById('ob-revisit').classList.add('show');
+  try { sessionStorage.setItem('ob-done','1'); } catch(e){}
+}
+function openOB() {
+  const ov = document.getElementById('ob-overlay');
+  for (let i=1;i<=_OB_N;i++) document.getElementById('obs-'+i).style.display = i===1?'block':'none';
+  _obStep=1; goStep(1);
+  ov.style.display = 'flex';
+  ov.classList.remove('ob-out');
+  document.getElementById('ob-revisit').classList.remove('show');
+  document.getElementById('ob-body').scrollTop = 0;
+}
+
+// Auto-show
+(function() {
+  let seen=false; try{ seen=sessionStorage.getItem('ob-done'); }catch(e){}
+  if (!seen) { setTimeout(openOB, 350); }
+  else { document.getElementById('ob-revisit').classList.add('show'); }
+})();
+
+// Backdrop click
+document.getElementById('ob-overlay').addEventListener('click', function(e){ if(e.target===this) closeOB(); });
+
+// Keyboard
+document.addEventListener('keydown', function(e){
+  const ov=document.getElementById('ob-overlay');
+  if(ov.style.display==='none'||ov.classList.contains('ob-out')) return;
+  if(e.key==='ArrowRight'||e.key==='Enter') obNext();
+  else if(e.key==='ArrowLeft') obPrev();
+  else if(e.key==='Escape') closeOB();
+});
+
 </script>
 </body>
 </html>
