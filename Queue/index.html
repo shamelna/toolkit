@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Queue Theory Lab — Kaizen Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --yellow: #ffd559;
+    --yellow-dark: #e6a800;
+    --yellow-bg: rgba(255,213,89,0.13);
+    --yellow-border: rgba(200,155,0,0.3);
+    --dark-bg: #1a1a1a;
+    --surface: #ffffff;
+    --surface2: #f7f6f3;
+    --surface3: #eceae5;
+    --border: rgba(0,0,0,0.08);
+    --border-strong: rgba(0,0,0,0.14);
+    --text: #111111;
+    --text-muted: #6b6860;
+    --text-dim: #a09d98;
+    --green: #16a34a;
+    --green-bg: rgba(22,163,74,0.08);
+    --green-border: rgba(22,163,74,0.28);
+    --amber: #b45309;
+    --amber-bg: rgba(180,83,9,0.08);
+    --amber-border: rgba(180,83,9,0.28);
+    --red: #dc2626;
+    --red-bg: rgba(220,38,38,0.07);
+    --red-border: rgba(220,38,38,0.28);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'DM Sans',sans-serif; background:#f0ede6; color:var(--text); min-height:100vh; overflow-x:hidden; }
+
+  /* ── DARK HEADER ── */
+  .site-header { background:var(--dark-bg); border-bottom:3px solid var(--yellow); padding:0 32px; }
+  .site-header-inner { max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:68px; gap:24px; }
+
+  .brand { display:flex; align-items:center; gap:12px; text-decoration:none; flex-shrink:0; }
+  .brand img { width:44px; height:44px; border-radius:50%; object-fit:cover; display:block; }
+  .brand-name strong { display:block; font-family:'Syne',sans-serif; font-weight:800; font-size:15px; color:#fff; line-height:1; }
+  .brand-name span { display:block; font-size:10px; color:var(--yellow); letter-spacing:0.12em; text-transform:uppercase; font-weight:500; margin-top:2px; }
+
+  .header-nav { display:flex; align-items:center; gap:4px; }
+  .nav-link { font-size:13px; color:rgba(255,255,255,0.6); text-decoration:none; padding:7px 13px; border-radius:6px; transition:color 0.15s,background 0.15s; white-space:nowrap; }
+  .nav-link:hover { color:#fff; background:rgba(255,255,255,0.07); }
+  .header-tool-badge { background:rgba(255,213,89,0.12); border:1px solid rgba(255,213,89,0.25); color:var(--yellow); font-family:'DM Mono',monospace; font-size:11px; padding:5px 12px; border-radius:100px; letter-spacing:0.04em; margin:0 6px; }
+  .nav-cta { font-size:12px; font-weight:700; font-family:'Syne',sans-serif; color:var(--dark-bg); background:var(--yellow); padding:8px 18px; border-radius:100px; text-decoration:none; letter-spacing:0.03em; transition:background 0.15s; white-space:nowrap; }
+  .nav-cta:hover { background:var(--yellow-dark); }
+
+  /* ── PAGE BODY ── */
+  .page-body { position:relative; z-index:1; }
+  .page-body::before { content:''; position:fixed; inset:0; background-image:linear-gradient(rgba(0,0,0,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.022) 1px,transparent 1px); background-size:48px 48px; pointer-events:none; z-index:0; }
+  .app { position:relative; z-index:1; max-width:1280px; margin:0 auto; padding:36px 24px 60px; }
+
+  .page-title { margin-bottom:36px; }
+  .page-title h1 { font-family:'Syne',sans-serif; font-size:clamp(26px,4vw,44px); font-weight:800; line-height:1.1; letter-spacing:-0.02em; }
+  .page-title h1 em { font-style:normal; background:var(--yellow); padding:0 6px 2px; border-radius:4px; }
+  .page-title p { margin-top:10px; font-size:15px; color:var(--text-muted); max-width:560px; line-height:1.6; }
+
+  .main-grid { display:grid; grid-template-columns:380px 1fr; gap:20px; align-items:start; }
+  @media (max-width:900px) { .main-grid { grid-template-columns:1fr; } }
+
+  .panel { background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius); overflow:hidden; }
+  .panel-header { padding:13px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; background:var(--surface2); }
+  .panel-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-muted); }
+  .panel-body { padding:20px; }
+
+  .control-group { margin-bottom:22px; }
+  .control-group:last-child { margin-bottom:0; }
+  .control-label { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; }
+  .control-name { font-size:13px; color:var(--text-muted); }
+  .control-name strong { display:block; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); font-weight:400; margin-top:2px; }
+  .control-value { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; color:var(--text); }
+
+  input[type="range"] { -webkit-appearance:none; width:100%; height:3px; background:var(--surface3); border-radius:2px; outline:none; cursor:pointer; appearance:none; }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width:16px; height:16px; background:var(--dark-bg); border-radius:50%; cursor:pointer; transition:transform 0.15s; box-shadow:0 0 0 3px rgba(255,213,89,0.5); }
+  input[type="range"]::-webkit-slider-thumb:hover { transform:scale(1.2); }
+
+  .server-selector { display:flex; gap:6px; margin-top:4px; }
+  .server-btn { flex:1; padding:9px; background:var(--surface2); border:1px solid var(--border-strong); border-radius:var(--radius-sm); color:var(--text-muted); font-family:'DM Mono',monospace; font-size:14px; cursor:pointer; transition:all 0.15s; text-align:center; }
+  .server-btn:hover { background:var(--surface3); color:var(--text); }
+  .server-btn.active { background:var(--yellow); border-color:var(--yellow-dark); color:#111; font-weight:500; }
+
+  .rho-section { margin-top:20px; padding-top:20px; border-top:1px solid var(--border); }
+  .rho-label-row { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
+  .rho-label { font-size:12px; color:var(--text-muted); }
+  .rho-value { font-family:'DM Mono',monospace; font-size:30px; font-weight:500; transition:color 0.3s; }
+  .rho-track { height:6px; background:var(--surface3); border-radius:3px; overflow:hidden; margin-bottom:8px; }
+  .rho-fill { height:100%; border-radius:3px; transition:width 0.4s cubic-bezier(.4,0,.2,1),background 0.4s; }
+  .rho-zones { display:flex; justify-content:space-between; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); }
+
+  .metrics-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+  .metric-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm); padding:14px 16px; }
+  .metric-symbol { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); letter-spacing:0.05em; text-transform:uppercase; margin-bottom:3px; }
+  .metric-label { font-size:11px; color:var(--text-muted); margin-bottom:6px; }
+  .metric-value { font-family:'DM Mono',monospace; font-size:22px; font-weight:500; color:var(--text); transition:color 0.3s; line-height:1; }
+  .metric-unit { font-size:10px; color:var(--text-dim); margin-top:3px; }
+
+  .vis-container { position:relative; background:var(--surface2); border-radius:var(--radius-sm); min-height:220px; overflow:hidden; margin-bottom:14px; border:1px solid var(--border); }
+  .vis-label { position:absolute; font-size:10px; font-family:'DM Mono',monospace; color:var(--text-dim); letter-spacing:0.05em; text-transform:uppercase; top:10px; left:12px; z-index:2; }
+  .vis-label.right { left:auto; right:12px; }
+  .vis-divider { position:absolute; top:0; bottom:0; width:1px; background:var(--border-strong); border:none; }
+  .vis-divider::after { content:''; position:absolute; top:50%; left:-4px; width:8px; height:8px; border-radius:50%; background:var(--border-strong); transform:translateY(-50%); }
+
+  /* Person icon */
+  .person-icon { position:absolute; width:36px; height:44px; transition:left 0.5s cubic-bezier(.4,0,.2,1), top 0.4s cubic-bezier(.4,0,.2,1), opacity 0.35s; pointer-events:none; }
+  .person-icon svg { width:100%; height:100%; }
+
+  /* Server slot */
+  .server-slot { position:absolute; border-radius:var(--radius-sm); border:1.5px dashed var(--border-strong); display:flex; flex-direction:row; align-items:center; gap:8px; padding:6px 10px; transition:border-color 0.3s, background 0.3s, box-shadow 0.3s; background:var(--surface); }
+  .server-slot-icon { flex-shrink:0; }
+  .server-slot-info { display:flex; flex-direction:column; gap:3px; min-width:0; }
+  .server-slot-label { font-size:9px; font-family:'DM Mono',monospace; color:var(--text-dim); letter-spacing:0.05em; text-transform:uppercase; }
+  .server-slot-status { font-size:9px; font-family:'DM Mono',monospace; color:var(--text-dim); }
+  .server-progress-track { height:3px; background:var(--surface3); border-radius:2px; width:52px; overflow:hidden; }
+  .server-progress-fill { height:100%; background:var(--yellow-dark); border-radius:2px; transition:width 0.2s linear; }
+  .server-slot.busy { border-color:var(--yellow-dark); border-style:solid; background:var(--yellow-bg); box-shadow:0 0 0 3px rgba(255,213,89,0.15); }
+  .server-slot.busy .server-slot-status { color:var(--amber); }
+
+  .rec-panel { border-radius:var(--radius); border:1px solid var(--border-strong); overflow:hidden; transition:border-color 0.4s; background:var(--surface); }
+  .rec-panel.status-ok { border-color:var(--green-border); }
+  .rec-panel.status-warn { border-color:var(--amber-border); }
+  .rec-panel.status-bad { border-color:var(--red-border); }
+  .rec-header { padding:12px 16px; display:flex; align-items:center; gap:10px; transition:background 0.4s; border-bottom:1px solid var(--border); }
+  .rec-panel.status-ok .rec-header { background:var(--green-bg); }
+  .rec-panel.status-warn .rec-header { background:var(--amber-bg); }
+  .rec-panel.status-bad .rec-header { background:var(--red-bg); }
+  .rec-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; transition:background 0.4s; }
+  .rec-panel.status-ok .rec-dot { background:var(--green); }
+  .rec-panel.status-warn .rec-dot { background:var(--amber); animation:pulse 1.5s infinite; }
+  .rec-panel.status-bad .rec-dot { background:var(--red); animation:pulse 0.8s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+  .rec-status-text { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; letter-spacing:0.02em; transition:color 0.4s; }
+  .rec-panel.status-ok .rec-status-text { color:var(--green); }
+  .rec-panel.status-warn .rec-status-text { color:var(--amber); }
+  .rec-panel.status-bad .rec-status-text { color:var(--red); }
+  .rec-body { padding:14px 16px; }
+  .rec-insight { font-size:13px; color:var(--text-muted); line-height:1.6; margin-bottom:12px; }
+  .rec-insight strong { color:var(--text); }
+  .rec-actions { display:flex; flex-direction:column; gap:7px; }
+  .rec-action { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; background:var(--surface2); border-radius:var(--radius-sm); border:1px solid var(--border); }
+  .rec-action-icon { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:11px; margin-top:1px; }
+  .rec-action-icon.priority-high { background:var(--red-bg); color:var(--red); }
+  .rec-action-icon.priority-med  { background:var(--amber-bg); color:var(--amber); }
+  .rec-action-icon.priority-low  { background:var(--green-bg); color:var(--green); }
+  .rec-action-text { font-size:13px; color:var(--text-muted); line-height:1.5; }
+  .rec-action-text strong { color:var(--text); display:block; font-size:12px; margin-bottom:1px; }
+
+  .chart-wrap { background:var(--surface); border:1px solid var(--border-strong); border-radius:var(--radius); padding:18px 20px; }
+  .chart-title { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-muted); margin-bottom:14px; }
+  .chart-canvas-wrap { position:relative; height:200px; }
+
+  .littles-law { background:var(--yellow-bg); border:1px solid var(--yellow-border); border-radius:var(--radius-sm); padding:12px 14px; margin-top:12px; display:flex; align-items:center; gap:12px; }
+  .ll-formula { font-family:'DM Mono',monospace; font-size:14px; color:#111; white-space:nowrap; background:var(--yellow); padding:4px 10px; border-radius:6px; font-weight:500; }
+  .ll-text { font-size:12px; color:var(--text-muted); line-height:1.5; }
+
+  .sim-bar { display:flex; align-items:center; gap:12px; padding:12px 20px; border-top:1px solid var(--border); background:var(--surface2); }
+  .sim-btn { padding:8px 18px; background:var(--dark-bg); color:var(--yellow); border:none; border-radius:100px; font-family:'Syne',sans-serif; font-weight:700; font-size:12px; letter-spacing:0.05em; cursor:pointer; transition:transform 0.15s; }
+  .sim-btn:hover { transform:scale(1.03); }
+  .sim-btn:active { transform:scale(0.97); }
+  .sim-btn.paused { background:var(--surface3); color:var(--text-muted); border:1px solid var(--border-strong); }
+  .sim-counter { font-family:'DM Mono',monospace; font-size:12px; color:var(--text-dim); margin-left:auto; }
+
+  .right-col { display:flex; flex-direction:column; gap:16px; }
+
+  /* ── THEORY SECTION ── */
+  .theory-section { margin-top:32px; }
+  .theory-toggle {
+    width:100%; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 22px; background:var(--dark-bg); border:none; border-radius:var(--radius);
+    cursor:pointer; transition:background 0.2s; text-align:left;
+    border-bottom:3px solid var(--yellow);
+  }
+  .theory-toggle:hover { background:#222; }
+  .theory-toggle-left { display:flex; align-items:center; gap:14px; }
+  .theory-toggle-label { font-family:'Syne',sans-serif; font-size:15px; font-weight:700; color:#fff; letter-spacing:0.01em; }
+  .theory-toggle-sub { font-size:12px; color:rgba(255,255,255,0.45); margin-top:2px; }
+  .theory-toggle-icon {
+    width:28px; height:28px; border-radius:50%;
+    background:rgba(255,213,89,0.15); border:1px solid rgba(255,213,89,0.3);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--yellow); font-size:14px; flex-shrink:0;
+    transition:transform 0.3s, background 0.2s;
+  }
+  .theory-toggle[aria-expanded="true"] .theory-toggle-icon { transform:rotate(180deg); background:rgba(255,213,89,0.25); }
+
+  .theory-body {
+    display:none; background:var(--surface);
+    border:1px solid var(--border-strong); border-top:none;
+    border-radius:0 0 var(--radius) var(--radius);
+    overflow:hidden;
+  }
+  .theory-body.open { display:block; animation:slideDown 0.25s ease; }
+  @keyframes slideDown { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
+
+  .theory-tabs { display:flex; border-bottom:1px solid var(--border); background:var(--surface2); overflow-x:auto; }
+  .theory-tab {
+    padding:12px 20px; font-family:'Syne',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:0.06em; text-transform:uppercase; color:var(--text-muted);
+    cursor:pointer; border-bottom:2px solid transparent; white-space:nowrap;
+    transition:color 0.15s, border-color 0.15s; background:none; border-top:none; border-left:none; border-right:none;
+  }
+  .theory-tab:hover { color:var(--text); }
+  .theory-tab.active { color:var(--text); border-bottom-color:var(--yellow-dark); }
+
+  .theory-pane { display:none; padding:28px 28px 32px; }
+  .theory-pane.active { display:grid; grid-template-columns:1fr 1fr; gap:32px; }
+  .theory-pane.active.single { grid-template-columns:1fr; }
+  @media (max-width:700px) { .theory-pane.active, .theory-pane.active.single { grid-template-columns:1fr; } }
+
+  .theory-block h3 { font-family:'Syne',sans-serif; font-size:14px; font-weight:700; margin-bottom:10px; color:var(--text); }
+  .theory-block p { font-size:13px; color:var(--text-muted); line-height:1.7; margin-bottom:10px; }
+  .theory-block p:last-child { margin-bottom:0; }
+
+  .theory-formula {
+    background:var(--surface2); border:1px solid var(--border); border-radius:var(--radius-sm);
+    padding:14px 16px; margin:12px 0; font-family:'DM Mono',monospace; font-size:13px;
+    color:var(--text); line-height:1.8;
+  }
+  .theory-formula .f-label { font-size:10px; color:var(--text-dim); text-transform:uppercase; letter-spacing:0.08em; display:block; margin-bottom:6px; }
+  .theory-formula .f-eq { color:var(--dark-bg); font-size:14px; }
+  .theory-formula .f-condition { font-size:11px; color:var(--text-dim); display:block; margin-top:4px; }
+
+  .theory-callout {
+    background:var(--yellow-bg); border:1px solid var(--yellow-border);
+    border-left:3px solid var(--yellow-dark); border-radius:var(--radius-sm);
+    padding:12px 14px; margin-top:14px;
+  }
+  .theory-callout p { font-size:13px; color:var(--text-muted); margin:0; }
+  .theory-callout strong { color:var(--text); }
+
+  .theory-table { width:100%; border-collapse:collapse; font-size:13px; margin-top:10px; }
+  .theory-table th { font-family:'Syne',sans-serif; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-dim); padding:8px 12px; border-bottom:1px solid var(--border-strong); text-align:left; }
+  .theory-table td { padding:10px 12px; border-bottom:1px solid var(--border); color:var(--text-muted); vertical-align:top; }
+  .theory-table td:first-child { font-family:'DM Mono',monospace; font-size:12px; color:var(--text); font-weight:500; }
+  .theory-table tr:last-child td { border-bottom:none; }
+  .theory-table tr:hover td { background:var(--surface2); }
+
+  .zone-bar { display:flex; border-radius:var(--radius-sm); overflow:hidden; margin:14px 0 10px; height:10px; }
+  .zone-bar span { flex:1; }
+  .zone-label-row { display:flex; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-dim); justify-content:space-between; margin-bottom:14px; }
+
+  /* ── DARK FOOTER ── */
+  .site-footer { background:var(--dark-bg); border-top:3px solid var(--yellow); padding:0 32px; }
+  .site-footer-inner { max-width:1280px; margin:0 auto; padding:40px 0 32px; }
+  .footer-top { display:grid; grid-template-columns:1.4fr 1fr 1fr 1fr; gap:40px; padding-bottom:32px; border-bottom:1px solid rgba(255,255,255,0.08); }
+  @media (max-width:800px) { .footer-top { grid-template-columns:1fr 1fr; } }
+  .footer-brand p { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.65; max-width:240px; margin-top:14px; }
+  .footer-tagline { display:inline-block; margin-top:14px; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--yellow); font-family:'Syne',sans-serif; }
+  .footer-col h4 { font-family:'Syne',sans-serif; font-size:11px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.4); margin-bottom:14px; }
+  .footer-col a { display:block; font-size:13px; color:rgba(255,255,255,0.6); text-decoration:none; margin-bottom:9px; transition:color 0.15s; }
+  .footer-col a:hover { color:var(--yellow); }
+  .footer-bottom { padding-top:22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+  .footer-bottom p { font-size:12px; color:rgba(255,255,255,0.3); }
+  .footer-bottom a { font-size:12px; color:rgba(255,255,255,0.4); text-decoration:none; }
+  .footer-bottom a:hover { color:var(--yellow); }
+  .footer-cert { display:inline-flex; align-items:center; gap:7px; background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:6px 12px; margin-top:12px; }
+  .footer-cert span { font-size:11px; color:rgba(255,255,255,0.4); }
+</style>
+<script>
+function toggleTheory(btn){
+  var body=document.getElementById('theory-body');
+  var open=body.classList.contains('open');
+  body.classList.toggle('open',!open);
+  btn.setAttribute('aria-expanded',String(!open));
+}
+function showPane(id,tab){
+  document.querySelectorAll('.theory-pane').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.theory-tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+  tab.classList.add('active');
+}
+</script>
+</head>
+<body>
+
+<!-- ── DARK HEADER ── -->
+<header class="site-header">
+  <div class="site-header-inner">
+    <a class="brand" href="https://academy.continuousimprovement.education" target="_blank">
+      <img src="http://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy">
+      <div class="brand-name">
+        <strong>Kaizen Academy</strong>
+        <span>Australia · Continuous Improvement</span>
+      </div>
+    </a>
+    <nav class="header-nav">
+      <a class="nav-link" href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">TPS & Lean</a>
+      <a class="nav-link" href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20" target="_blank">Value Stream</a>
+      <a class="nav-link" href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20" target="_blank">Problem Solving</a>
+      <div class="header-tool-badge">Queue Theory Lab</div>
+      <a class="nav-cta" href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank">Get Certified →</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ── PAGE BODY ── -->
+<div class="page-body">
+  <div class="app">
+
+    <div class="page-title">
+      <h1>Queue Theory <em>Simulator</em></h1>
+      <p>Model waiting lines with real-time Erlang-C (M/M/c) calculations. Adjust parameters and get live improvement recommendations.</p>
+    </div>
+
+    <div class="main-grid">
+
+      <!-- LEFT: Controls -->
+      <div>
+        <div class="panel" style="margin-bottom:16px;">
+          <div class="panel-header"><span class="panel-title">System Parameters</span></div>
+          <div class="panel-body">
+
+            <div class="control-group">
+              <div class="control-label">
+                <div class="control-name">Arrival rate<strong>λ (lambda) — customers / min</strong></div>
+                <div class="control-value" id="lam-out">6</div>
+              </div>
+              <input type="range" id="lam" min="1" max="20" step="1" value="6">
+              <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span>1</span><span>20</span></div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <div class="control-name">Service rate<strong>μ (mu) — per server / min</strong></div>
+                <div class="control-value" id="mu-out">5</div>
+              </div>
+              <input type="range" id="mu" min="1" max="20" step="1" value="5">
+              <div style="display:flex;justify-content:space-between;margin-top:5px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)"><span>1</span><span>20</span></div>
+            </div>
+
+            <div class="control-group">
+              <div class="control-label">
+                <div class="control-name">Number of servers<strong>c — parallel service channels</strong></div>
+              </div>
+              <div class="server-selector" id="server-btns">
+                <div class="server-btn active" data-c="1">1</div>
+                <div class="server-btn" data-c="2">2</div>
+                <div class="server-btn" data-c="3">3</div>
+                <div class="server-btn" data-c="4">4</div>
+                <div class="server-btn" data-c="5">5</div>
+                <div class="server-btn" data-c="6">6</div>
+              </div>
+            </div>
+
+            <div class="rho-section">
+              <div class="rho-label-row">
+                <div>
+                  <div class="rho-label">Traffic intensity</div>
+                  <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:2px;">ρ = λ / (c × μ)</div>
+                </div>
+                <div class="rho-value" id="rho-val">—</div>
+              </div>
+              <div class="rho-track"><div class="rho-fill" id="rho-fill" style="width:0%"></div></div>
+              <div class="rho-zones"><span>0 — optimal</span><span>0.75 — caution</span><span>1.0 — unstable</span></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="rec-panel status-ok" id="rec-panel">
+          <div class="rec-header">
+            <div class="rec-dot"></div>
+            <div class="rec-status-text" id="rec-status">Adjust sliders to begin</div>
+          </div>
+          <div class="rec-body">
+            <div class="rec-insight" id="rec-insight">Live recommendations will appear here as you change parameters.</div>
+            <div class="rec-actions" id="rec-actions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Metrics + Charts -->
+      <div class="right-col">
+
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Erlang-C Results</span>
+            <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text-dim)" id="model-type">M/M/1</span>
+          </div>
+          <div class="panel-body">
+            <div class="metrics-grid">
+              <div class="metric-card">
+                <div class="metric-symbol">Lq</div>
+                <div class="metric-label">Avg queue length</div>
+                <div class="metric-value" id="stat-lq">—</div>
+                <div class="metric-unit">customers waiting</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-symbol">L</div>
+                <div class="metric-label">Avg in system</div>
+                <div class="metric-value" id="stat-l">—</div>
+                <div class="metric-unit">customers total</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-symbol">Wq</div>
+                <div class="metric-label">Avg wait time</div>
+                <div class="metric-value" id="stat-wq">—</div>
+                <div class="metric-unit">minutes in queue</div>
+              </div>
+              <div class="metric-card">
+                <div class="metric-symbol">W</div>
+                <div class="metric-label">Total time in system</div>
+                <div class="metric-value" id="stat-w">—</div>
+                <div class="metric-unit">minutes end-to-end</div>
+              </div>
+            </div>
+            <div class="littles-law">
+              <div class="ll-formula" id="ll-formula">L = λ × W</div>
+              <div class="ll-text">Little's Law: customers in system = arrival rate × time in system.</div>
+            </div>
+          </div>
+
+          <div class="vis-container" style="margin:0 20px 14px;" id="vis-container">
+            <div class="vis-label">← Queue</div>
+            <div class="vis-label right">Servers →</div>
+            <div id="vis-area" style="position:absolute;inset:0;"></div>
+          </div>
+
+          <div class="sim-bar">
+            <button class="sim-btn paused" id="sim-btn">▶ Start Simulation</button>
+            <span style="font-size:12px;color:var(--text-dim)">Live M/M/c model</span>
+            <div class="sim-counter" id="sim-counter">Served: 0</div>
+          </div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-title">Wait time vs. traffic intensity (ρ) — red dot = current</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-wq"></canvas></div>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-title">Queue length — live history</div>
+          <div class="chart-canvas-wrap"><canvas id="chart-history"></canvas></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ── THEORY SECTION ── -->
+    <div class="theory-section">
+      <button class="theory-toggle" onclick="toggleTheory(this)" aria-expanded="false">
+        <div class="theory-toggle-left">
+          <div>
+            <div class="theory-toggle-label">Queue Theory — Reference Guide</div>
+            <div class="theory-toggle-sub">Formulas, concepts, and Lean applications</div>
+          </div>
+        </div>
+        <div class="theory-toggle-icon">▾</div>
+      </button>
+      <div class="theory-body" id="theory-body">
+
+        <div class="theory-tabs">
+          <button class="theory-tab active" onclick="showPane('pane-basics', this)">The Basics</button>
+          <button class="theory-tab" onclick="showPane('pane-formulas', this)">Key Formulas</button>
+          <button class="theory-tab" onclick="showPane('pane-littles', this)">Little's Law</button>
+          <button class="theory-tab" onclick="showPane('pane-rho', this)">Traffic Intensity</button>
+          <button class="theory-tab" onclick="showPane('pane-lean', this)">Lean Connection</button>
+          <button class="theory-tab" onclick="showPane('pane-models', this)">Model Types</button>
+        </div>
+
+        <!-- BASICS -->
+        <div class="theory-pane active" id="pane-basics">
+          <div class="theory-block">
+            <h3>What is queue theory?</h3>
+            <p>Queue theory (or queueing theory) is the mathematical study of waiting lines. It gives us a way to predict how a system behaves when demand is random — how long people wait, how many pile up, and how busy servers are.</p>
+            <p>Every queue has three core components: an <strong>arrival process</strong> (how customers enter), a <strong>service mechanism</strong> (how fast they're served), and a <strong>queue discipline</strong> (the order they're served in, usually FIFO).</p>
+            <div class="theory-callout">
+              <p><strong>Why it matters in Lean:</strong> Queue theory makes waste visible with numbers. It proves that adding capacity is not always the answer — sometimes reducing variability or smoothing arrivals is far more effective.</p>
+            </div>
+          </div>
+          <div class="theory-block">
+            <h3>The Kendall notation</h3>
+            <p>Queuing models are described using Kendall's notation: <strong>A/S/c</strong> — where A is the arrival distribution, S is the service distribution, and c is the number of servers.</p>
+            <div class="theory-formula">
+              <span class="f-label">Kendall notation</span>
+              <span class="f-eq">A / S / c / K / N / D</span>
+              <span class="f-condition">A = arrival process · S = service process · c = servers</span>
+              <span class="f-condition">K = capacity limit · N = population size · D = discipline</span>
+            </div>
+            <p>The <strong>M/M/1</strong> model (Markovian arrivals, Markovian service, 1 server) is the simplest and most widely used. The M/M/c model used in this simulator extends it to multiple servers.</p>
+            <p>The "M" stands for <em>memoryless</em> (exponential distribution) — meaning the probability of the next arrival doesn't depend on when the last one came.</p>
+          </div>
+        </div>
+
+        <!-- FORMULAS -->
+        <div class="theory-pane" id="pane-formulas">
+          <div class="theory-block">
+            <h3>M/M/1 — single server</h3>
+            <div class="theory-formula">
+              <span class="f-label">Traffic intensity</span>
+              <span class="f-eq">ρ = λ / μ</span>
+              <span class="f-condition">Must be &lt; 1 for stability</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Avg customers in queue (Lq)</span>
+              <span class="f-eq">Lq = ρ² / (1 − ρ)</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Avg customers in system (L)</span>
+              <span class="f-eq">L = ρ / (1 − ρ)</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Avg wait in queue (Wq)</span>
+              <span class="f-eq">Wq = Lq / λ</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Avg time in system (W)</span>
+              <span class="f-eq">W = Wq + 1/μ = L / λ</span>
+            </div>
+          </div>
+          <div class="theory-block">
+            <h3>M/M/c — multiple servers</h3>
+            <p>With c servers, the offered load per server is reduced. The Erlang-C formula calculates the probability a customer must wait (P_wait):</p>
+            <div class="theory-formula">
+              <span class="f-label">Server utilisation per server</span>
+              <span class="f-eq">ρ = λ / (c × μ)</span>
+              <span class="f-condition">Stability requires ρ &lt; 1</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Erlang-C (prob. of waiting)</span>
+              <span class="f-eq">C(c,a) = (aᶜ/c!) × (1/(1−ρ)) × P₀</span>
+              <span class="f-condition">where a = λ/μ (offered load)</span>
+            </div>
+            <div class="theory-formula">
+              <span class="f-label">Avg queue length</span>
+              <span class="f-eq">Lq = C(c,a) × ρ / (1 − ρ)</span>
+            </div>
+            <div class="theory-callout">
+              <p><strong>Key insight:</strong> Going from 1 to 2 servers doesn't halve wait time — it can reduce it by 75% or more near ρ = 0.9. The relationship is highly non-linear.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LITTLE'S LAW -->
+        <div class="theory-pane single" id="pane-littles">
+          <div class="theory-block">
+            <h3>Little's Law</h3>
+            <p>Proposed by John D.C. Little in 1961, Little's Law is one of the most powerful and general results in operations management. It applies to any stable system, regardless of the arrival distribution, service distribution, or queue discipline.</p>
+            <div class="theory-formula">
+              <span class="f-label">Little's Law</span>
+              <span class="f-eq">L = λ × W</span>
+              <span class="f-condition">L = avg number in system · λ = arrival rate · W = avg time in system</span>
+            </div>
+            <p>The law also applies within sub-components of the system:</p>
+            <div class="theory-formula">
+              <span class="f-label">For the queue alone</span>
+              <span class="f-eq">Lq = λ × Wq</span>
+            </div>
+          </div>
+          <div class="theory-block">
+            <h3>Practical applications</h3>
+            <p>Little's Law lets you derive any one of the three variables if you know the other two. This is incredibly useful in practice because arrivals (λ) and queue length (L) are often easy to count, but wait time (W) is hard to measure directly.</p>
+            <table class="theory-table">
+              <tr><th>You know</th><th>You can find</th><th>Formula</th></tr>
+              <tr><td>λ and L</td><td>W (avg time in system)</td><td>W = L / λ</td></tr>
+              <tr><td>λ and W</td><td>L (avg in system)</td><td>L = λ × W</td></tr>
+              <tr><td>L and W</td><td>λ (throughput rate)</td><td>λ = L / W</td></tr>
+            </table>
+            <div class="theory-callout">
+              <p><strong>Lean example:</strong> If 10 WIP items sit in a process and throughput is 2/hour, each item waits 5 hours on average (W = 10/2). Reducing WIP to 5 cuts wait time to 2.5 hours — without speeding up the process at all.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- RHO / TRAFFIC INTENSITY -->
+        <div class="theory-pane" id="pane-rho">
+          <div class="theory-block">
+            <h3>Understanding traffic intensity (ρ)</h3>
+            <p>Traffic intensity ρ (rho) is the single most important number in queue theory. It measures the fraction of time a server is busy — equivalently, the ratio of demand to capacity.</p>
+            <div class="theory-formula">
+              <span class="f-label">Traffic intensity</span>
+              <span class="f-eq">ρ = λ / (c × μ)</span>
+              <span class="f-condition">λ = arrival rate · μ = service rate per server · c = servers</span>
+            </div>
+            <p>Queue length grows <strong>non-linearly</strong> with ρ. Near ρ = 1, even a tiny increase in demand causes wait times to explode. This is the "cliff effect" — the core reason why operating at 100% utilisation is so dangerous.</p>
+            <div class="zone-bar">
+              <span style="background:#16a34a;flex:3"></span>
+              <span style="background:#f59e0b;flex:2"></span>
+              <span style="background:#ef4444;flex:1"></span>
+            </div>
+            <div class="zone-label-row"><span>0 — optimal</span><span>0.75 — caution</span><span>1.0 — collapse</span></div>
+          </div>
+          <div class="theory-block">
+            <h3>The utilisation zones</h3>
+            <table class="theory-table">
+              <tr><th>ρ range</th><th>Status</th><th>Implication</th></tr>
+              <tr><td>&lt; 0.30</td><td>Underutilised</td><td>Excess capacity. Review staffing or absorb more demand.</td></tr>
+              <tr><td>0.30 – 0.75</td><td>Balanced</td><td>Optimal zone. Focus on reducing variance.</td></tr>
+              <tr><td>0.75 – 0.90</td><td>High utilisation</td><td>Efficient but fragile. Plan extra capacity for peaks.</td></tr>
+              <tr><td>0.90 – 1.00</td><td>Critical</td><td>Long waits. Add capacity or reduce arrivals urgently.</td></tr>
+              <tr><td>≥ 1.00</td><td>Unstable</td><td>Queue grows forever. System will collapse.</td></tr>
+            </table>
+            <div class="theory-callout">
+              <p><strong>Why 85% is often used as a target:</strong> At ρ = 0.85, the system has a 15% buffer for variability. Above 0.90 the wait-time curve becomes so steep that normal demand variation causes severe service failures.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- LEAN CONNECTION -->
+        <div class="theory-pane" id="pane-lean">
+          <div class="theory-block">
+            <h3>Queue theory and Lean thinking</h3>
+            <p>Queue theory underpins many Lean tools — it gives the mathematical proof for principles that Toyota discovered empirically. Understanding the maths helps you make the case for improvement with hard numbers.</p>
+            <table class="theory-table">
+              <tr><th>Lean principle</th><th>Queue theory explanation</th></tr>
+              <tr><td>Reduce WIP</td><td>Lower L → lower W (Little's Law). Less inventory = faster flow.</td></tr>
+              <tr><td>Level loading (Heijunka)</td><td>Smoothing λ reduces variance, which dramatically reduces Wq even at the same average ρ.</td></tr>
+              <tr><td>Reduce batch sizes</td><td>Smaller batches reduce effective service time variability (σ), cutting queue length.</td></tr>
+              <tr><td>Standard work</td><td>Consistent μ (lower σ) reduces Lq non-linearly — variance hurts more than averages.</td></tr>
+              <tr><td>Pull systems (Kanban)</td><td>Cap L at a fixed level → cap W automatically → predictable lead times.</td></tr>
+              <tr><td>Right-size capacity</td><td>Target ρ = 0.70–0.85 to absorb demand spikes without queue explosion.</td></tr>
+            </table>
+          </div>
+          <div class="theory-block">
+            <h3>Variability — the hidden enemy</h3>
+            <p>The M/M/c model assumes exponential service times. In reality, variance is often the biggest driver of queuing problems — even when average capacity exceeds average demand.</p>
+            <div class="theory-formula">
+              <span class="f-label">VUT equation (approximation)</span>
+              <span class="f-eq">Wq ≈ (Ca² + Cs²)/2 × ρ/(1−ρ) × (1/μ)</span>
+              <span class="f-condition">Ca = coefficient of variation of arrivals · Cs = of service times</span>
+            </div>
+            <p>This shows that <strong>reducing variability</strong> (Ca or Cs) has the same mathematical effect as adding capacity. A process with consistent, predictable cycle times will always outperform one with higher average throughput but high variance.</p>
+            <div class="theory-callout">
+              <p><strong>Practical implication:</strong> Before adding servers, use standard work and mistake-proofing to reduce σ(service time). You may not need extra headcount at all.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- MODEL TYPES -->
+        <div class="theory-pane" id="pane-models">
+          <div class="theory-block">
+            <h3>Common queuing models</h3>
+            <table class="theory-table">
+              <tr><th>Model</th><th>Description</th><th>Typical use</th></tr>
+              <tr><td>M/M/1</td><td>Single server, exponential arrivals & service</td><td>Bank teller, checkout lane</td></tr>
+              <tr><td>M/M/c</td><td>c parallel servers, exponential distributions</td><td>Call centre, hospital triage</td></tr>
+              <tr><td>M/M/1/K</td><td>M/M/1 with finite queue capacity K</td><td>Parking lot, buffer with limit</td></tr>
+              <tr><td>M/D/1</td><td>Single server, deterministic service time</td><td>Automated production line</td></tr>
+              <tr><td>M/G/1</td><td>Single server, general service distribution</td><td>Most real-world service systems</td></tr>
+              <tr><td>G/G/c</td><td>General arrivals and service, c servers</td><td>Complex real-world systems</td></tr>
+            </table>
+          </div>
+          <div class="theory-block">
+            <h3>When to use which model</h3>
+            <p>The M/M/c model (used in this simulator) is the best starting point for most improvement projects. It gives conservative estimates — real-world systems with lower variance will perform better.</p>
+            <p>Key assumptions to be aware of:</p>
+            <p><strong>Poisson arrivals</strong> — customers arrive independently and randomly. Works well for walk-in demand but not for scheduled appointments.</p>
+            <p><strong>Exponential service times</strong> — high variance assumed. If your process uses standard work, actual wait times will be lower than the model predicts.</p>
+            <p><strong>Infinite population</strong> — suitable when the total number of potential customers is much larger than the queue. For small populations (e.g. a machine servicing 10 jobs), use the M/M/c/K/N model.</p>
+            <div class="theory-callout">
+              <p><strong>Rule of thumb:</strong> Use M/M/c to size for worst case. If real variance is lower than exponential, your system will perform better than the model predicts — which is a safe position to design from.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── DARK FOOTER ── -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="footer-top">
+
+      <div class="footer-brand">
+        <a class="brand" href="https://academy.continuousimprovement.education" target="_blank">
+          <img src="http://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy">
+          <div class="brand-name">
+            <strong>Kaizen Academy</strong>
+            <span>Australia</span>
+          </div>
+        </a>
+        <p>Empowering individuals and organisations to achieve real results through continuous improvement methodologies.</p>
+        <span class="footer-tagline">Keep Moving Forward!</span>
+      </div>
+
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">TPS & Lean Fundamentals</a>
+        <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20" target="_blank">Value Stream Mapping</a>
+        <a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20" target="_blank">Scientific Problem Solving</a>
+        <a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20" target="_blank">Business Process Management</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Certification</h4>
+        <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank">Lean Practitioner Program</a>
+        <a href="https://www.linkedin.com/company/theciacademy" target="_blank">LinkedIn Community</a>
+        <a href="https://www.youtube.com/@ContinuousImprovementAcademy" target="_blank">YouTube Channel</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <a href="/cdn-cgi/l/email-protection#9bf7fefae9f5dbf8f4f5eff2f5eef4eee8f2f6ebe9f4edfef6fef5efb5feffeef8faeff2f4f5"><span class="__cf_email__" data-cfemail="fd91989c8f93bd9e92938994938892888e94908d8f928b9890989389d39899889e9c89949293">[email&#160;protected]</span></a>
+        <a style="pointer-events:none;cursor:default">Craigieburn, Victoria 3064</a>
+        <a style="pointer-events:none;cursor:default">Australia</a>
+        <div class="footer-cert">
+          <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="6.5" cy="6.5" r="5.5" stroke="#ffd559" stroke-width="1.2"/><path d="M3.5 6.5l2 2 4-4" stroke="#ffd559" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Registered with CSSC</span>
+        </div>
+      </div>
+
+    </div>
+    <div class="footer-bottom">
+      <p>© 2024 Kaizen Academy Pty Ltd · The Continuous Improvement Academy</p>
+      <a href="https://academy.continuousimprovement.education" target="_blank">academy.continuousimprovement.education</a>
+    </div>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+let params={lam:6,mu:5,c:1};
+let simRunning=false,simTimer=null;
+let people=[],nextId=0,serverStates=[];
+let servedCount=0,lqHistory=[];
+let chartWq=null,chartHistory=null;
+
+function factorial(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+
+function calcMmc(lam,mu,c){
+  const rho=lam/(mu*c);
+  if(rho>=1)return{rho,stable:false};
+  const a=lam/mu;
+  let p0i=0;
+  for(let k=0;k<c;k++)p0i+=Math.pow(a,k)/factorial(k);
+  p0i+=Math.pow(a,c)/(factorial(c)*(1-rho));
+  const P0=1/p0i;
+  const Ce=(Math.pow(a,c)/(factorial(c)*(1-rho)))*P0;
+  const Lq=Ce*rho/(1-rho);
+  const Wq=Lq/lam;
+  const W=Wq+1/mu;
+  const L=lam*W;
+  return{rho,stable:true,Lq,Wq,W,L};
+}
+
+function getRec(m,lam,mu,c){
+  if(!m.stable)return{
+    status:'status-bad',label:'System overloaded — queue grows forever',
+    insight:`Arrival rate <strong>(${lam}/min)</strong> exceeds total capacity <strong>(${mu*c}/min)</strong>. The queue grows without limit.`,
+    actions:[
+      {p:'high',i:'▲',t:`Add servers — need at least ${Math.ceil(lam/mu)}`,d:`Currently ${c}. Minimum ${Math.ceil(lam/mu)} required to stabilise.`},
+      {p:'high',i:'↓',t:'Reduce arrival rate (λ)',d:'Divert customers, use appointments, or gate entry.'},
+      {p:'med',i:'⚡',t:'Improve service rate (μ)',d:'Apply standard work, remove waste, or upgrade tooling.'}
+    ]
+  };
+  const rho=m.rho,s80=Math.ceil(lam/(mu*0.80));
+  if(rho>0.90)return{
+    status:'status-bad',label:'Critical utilisation — waits escalating',
+    insight:`At <strong>ρ = ${rho.toFixed(2)}</strong> (${(rho*100).toFixed(0)}% utilisation), customers wait <strong>${m.Wq.toFixed(1)} min</strong>. Any spike will cause severe backlog.`,
+    actions:[
+      {p:'high',i:'▲',t:`Add ${Math.max(1,s80-c)} server(s) now`,d:`${s80} servers brings ρ below 0.80, reducing wait ~${Math.round((1-0.8/rho)*100)}%.`},
+      {p:'med',i:'⚡',t:'Kaizen the service process',d:`Cutting service time 20% (μ → ${Math.round(mu*1.2)}) equals adding a server.`},
+      {p:'low',i:'→',t:'Implement priority queuing',d:'Prioritise urgent customers without adding capacity.'}
+    ]
+  };
+  if(rho>0.75)return{
+    status:'status-warn',label:'High utilisation — monitor closely',
+    insight:`ρ = <strong>${rho.toFixed(2)}</strong>. Efficient but fragile. Avg wait: <strong>${m.Wq.toFixed(1)} min</strong>. A 15% demand increase would destabilise.`,
+    actions:[
+      {p:'med',i:'▲',t:`Plan for ${c+1} servers at peak`,d:`+1 server → ρ = ${(lam/(mu*(c+1))).toFixed(2)}, safely below danger zone.`},
+      {p:'low',i:'⚡',t:'Reduce service time variability',d:'Standard work (SOPs) cuts σ. High variance worsens queues more than high averages.'},
+      {p:'low',i:'◷',t:'Smooth arrivals with scheduling',d:'Appointments or off-peak incentives flatten λ without adding headcount.'}
+    ]
+  };
+  if(rho<0.30)return{
+    status:'status-ok',label:'Underutilised — review capacity',
+    insight:`ρ = <strong>${rho.toFixed(2)}</strong>. Servers are idle <strong>${((1-rho)*100).toFixed(0)}%</strong> of the time. Stable but possibly over-resourced.`,
+    actions:[
+      {p:'low',i:'▼',t:`Reduce to ${Math.max(1,c-1)} server(s) off-peak`,d:`ρ would be ${(lam/(mu*Math.max(1,c-1))).toFixed(2)} — still within safe range.`},
+      {p:'low',i:'↑',t:'Capacity to absorb more demand',d:`Handles up to ${(mu*c*0.80).toFixed(0)}/min before high-utilisation zone.`},
+      {p:'low',i:'✓',t:'Use slack for improvement',d:'Idle time is perfect for kaizen events, cross-training, and 5S.'}
+    ]
+  };
+  return{
+    status:'status-ok',label:'System balanced — optimal range',
+    insight:`ρ = <strong>${rho.toFixed(2)}</strong>. In the sweet spot. Avg wait: <strong>${m.Wq.toFixed(1)} min</strong>. Handles moderate variability without significant queuing.`,
+    actions:[
+      {p:'low',i:'✓',t:'Maintain current configuration',d:'No changes needed. Monitor for sustained shifts in λ or μ.'},
+      {p:'low',i:'⚡',t:'Focus on reducing service variance',d:'Consistent times beat faster-on-average but erratic service.'},
+      {p:'low',i:'◷',t:'Model peak demand separately',d:'Build a separate M/M/c model for your busiest hour.'}
+    ]
+  };
+}
+
+function update(){
+  const{lam,mu,c}=params;
+  document.getElementById('lam-out').textContent=lam;
+  document.getElementById('mu-out').textContent=mu;
+  document.getElementById('model-type').textContent=c===1?'M/M/1':`M/M/${c}`;
+  const m=calcMmc(lam,mu,c);
+  const rhoEl=document.getElementById('rho-val');
+  rhoEl.textContent=m.rho.toFixed(3);
+  const pct=Math.min(m.rho*100,100);
+  const fill=document.getElementById('rho-fill');
+  fill.style.width=pct+'%';
+  if(!m.stable||m.rho>0.90){rhoEl.style.color='var(--red)';fill.style.background='var(--red)';}
+  else if(m.rho>0.75){rhoEl.style.color='var(--amber)';fill.style.background='var(--amber)';}
+  else{rhoEl.style.color='var(--green)';fill.style.background='var(--green)';}
+  if(!m.stable){
+    ['stat-lq','stat-l','stat-wq','stat-w'].forEach(id=>{const el=document.getElementById(id);el.textContent='∞';el.style.color='var(--red)';});
+    document.getElementById('ll-formula').textContent='L = λ × W → ∞';
+  }else{
+    const tc=m.rho>0.90?'var(--red)':m.rho>0.75?'var(--amber)':'var(--text)';
+    const map={'stat-lq':m.Lq.toFixed(2),'stat-l':m.L.toFixed(2),'stat-wq':m.Wq.toFixed(2)+' min','stat-w':m.W.toFixed(2)+' min'};
+    Object.entries(map).forEach(([id,v])=>{const el=document.getElementById(id);el.textContent=v;el.style.color=tc;});
+    document.getElementById('ll-formula').textContent=`${m.L.toFixed(2)} = ${lam} × ${m.W.toFixed(2)}`;
+  }
+  const rec=getRec(m,lam,mu,c);
+  document.getElementById('rec-panel').className='rec-panel '+rec.status;
+  document.getElementById('rec-status').textContent=rec.label;
+  document.getElementById('rec-insight').innerHTML=rec.insight;
+  document.getElementById('rec-actions').innerHTML=rec.actions.map(a=>`
+    <div class="rec-action">
+      <div class="rec-action-icon priority-${a.p}">${a.i}</div>
+      <div class="rec-action-text"><strong>${a.t}</strong>${a.d}</div>
+    </div>`).join('');
+  rebuildVis();
+  updateWqChart(m,lam,mu,c);
+}
+
+/* ── PERSON COLOURS ── */
+const PC=[
+  {body:'#bfdbfe',stroke:'#1d4ed8',skin:'#fde68a',hair:'#1e3a5f'},
+  {body:'#bbf7d0',stroke:'#15803d',skin:'#fde68a',hair:'#14532d'},
+  {body:'#fef08a',stroke:'#a16207',skin:'#fcd34d',hair:'#78350f'},
+  {body:'#f5d0fe',stroke:'#7e22ce',skin:'#fde68a',hair:'#4a044e'},
+  {body:'#fed7aa',stroke:'#c2410c',skin:'#fde68a',hair:'#7c2d12'},
+  {body:'#e0e7ff',stroke:'#4338ca',skin:'#fde68a',hair:'#1e1b4b'},
+];
+
+function personSVG(p,size){
+  const s=size||36;
+  const cx=s/2, headR=s*0.18, bodyY=s*0.42, legY=s*0.72, armY=s*0.5, bodyW=s*0.13;
+  return `<svg viewBox="0 0 ${s} ${s*1.2}" xmlns="http://www.w3.org/2000/svg">
+    <!-- hair --><circle cx="${cx}" cy="${s*0.22}" r="${headR+1.5}" fill="${p.hair}"/>
+    <!-- head --><circle cx="${cx}" cy="${s*0.25}" r="${headR}" fill="${p.skin}" stroke="${p.stroke}" stroke-width="1"/>
+    <!-- body --><rect x="${cx-bodyW}" y="${bodyY}" width="${bodyW*2}" height="${s*0.28}" rx="${bodyW*0.8}" fill="${p.body}" stroke="${p.stroke}" stroke-width="1"/>
+    <!-- left arm --><line x1="${cx-bodyW}" y1="${armY}" x2="${cx-bodyW*2.8}" y2="${armY+s*0.14}" stroke="${p.stroke}" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- right arm --><line x1="${cx+bodyW}" y1="${armY}" x2="${cx+bodyW*2.8}" y2="${armY+s*0.14}" stroke="${p.stroke}" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- left leg --><line x1="${cx-bodyW*0.5}" y1="${bodyY+s*0.28}" x2="${cx-bodyW*1.4}" y2="${legY+s*0.16}" stroke="${p.stroke}" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- right leg --><line x1="${cx+bodyW*0.5}" y1="${bodyY+s*0.28}" x2="${cx+bodyW*1.4}" y2="${legY+s*0.16}" stroke="${p.stroke}" stroke-width="1.5" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function serverSVG(color){
+  const c=color||'#6b6860';
+  return `<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+    <!-- desk surface --><rect x="3" y="16" width="26" height="3" rx="1.5" fill="${c}" opacity="0.85"/>
+    <!-- desk legs --><rect x="5" y="19" width="2.5" height="8" rx="1" fill="${c}" opacity="0.6"/>
+    <rect x="24.5" y="19" width="2.5" height="8" rx="1" fill="${c}" opacity="0.6"/>
+    <!-- monitor base --><rect x="13" y="13" width="6" height="3" rx="1" fill="${c}" opacity="0.5"/>
+    <!-- monitor --><rect x="9" y="4" width="14" height="10" rx="2" fill="${c}" opacity="0.15" stroke="${c}" stroke-width="1.2"/>
+    <!-- screen glow --><rect x="10.5" y="5.5" width="11" height="7" rx="1" fill="${c}" opacity="0.2"/>
+    <!-- keyboard --><rect x="7" y="14.5" width="10" height="2" rx="1" fill="${c}" opacity="0.4"/>
+    <!-- person at desk (head) --><circle cx="24" cy="11" r="3" fill="#fde68a" stroke="${c}" stroke-width="0.8"/>
+    <!-- person body --><path d="M21.5 14 Q24 13 26.5 14" stroke="${c}" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+  </svg>`;
+}
+
+function getVisHeight(c){
+  const sh=56, gap=10, pad=28;
+  // Add extra height for queue rows when system is overloaded
+  const queueRows = Math.max(0, Math.floor((people.filter(p => p.inQueue).length - 15) / 15));
+  const queueHeight = queueRows * 50;
+  return Math.max(180, c*sh+(c-1)*gap+pad*2 + queueHeight);
+}
+
+function rebuildVis(){
+  const{c}=params;
+  const vis=document.getElementById('vis-area');
+  const container=document.getElementById('vis-container');
+  vis.innerHTML='';
+
+  const w=container.offsetWidth||700;
+  const sh=56, gap=10, pad=24;
+  const visH=getVisHeight(c);
+  container.style.minHeight=visH+'px';
+
+  const srvW=160, srvX=w-srvW-16;
+
+  /* divider line */
+  const div=document.createElement('div');
+  div.className='vis-divider';
+  div.style.cssText=`left:${srvX-14}px;`;
+  vis.appendChild(div);
+
+  serverStates=[];
+  for(let i=0;i<c;i++){
+    const totalH=c*sh+(c-1)*gap;
+    const startY=(visH-totalH)/2;
+    const ty=startY+i*(sh+gap);
+    const el=document.createElement('div');
+    el.className='server-slot';el.id='srv-'+i;
+    el.style.cssText=`width:${srvW}px;height:${sh}px;left:${srvX}px;top:${ty}px;`;
+    el.innerHTML=`
+      <div class="server-slot-icon">${serverSVG('#6b6860')}</div>
+      <div class="server-slot-info">
+        <div class="server-slot-label">Server ${i+1}</div>
+        <div class="server-slot-status" id="srv-status-${i}">idle</div>
+        <div class="server-progress-track" id="srv-ptrack-${i}" style="display:none">
+          <div class="server-progress-fill" id="srv-pfill-${i}" style="width:0%"></div>
+        </div>
+      </div>`;
+    vis.appendChild(el);
+    /* person docks 10px left of server, vertically centred */
+    const personW=36, personH=44;
+    serverStates.push({
+      busy:false, progress:0, personId:null,
+      x: srvX - personW - 6,
+      y: ty + (sh-personH)/2
+    });
+  }
+}
+
+function addPerson(){
+  const id=nextId++;
+  const ci=id%PC.length;
+  const p=PC[ci];
+  const vis=document.getElementById('vis-area');
+  const container=document.getElementById('vis-container');
+  const visH=parseInt(container.style.minHeight)||180;
+  const el=document.createElement('div');
+  el.className='person-icon';
+  el.id='pdot-'+id;
+  el.style.cssText=`left:-40px;top:${(visH-44)/2}px;opacity:0;`;
+  el.innerHTML=personSVG(p,36);
+  vis.appendChild(el);
+  setTimeout(()=>{if(el){el.style.left='8px';el.style.opacity='1';}},20);
+  people.push({id,inQueue:true,ci});
+}
+
+function updateServerVisual(i,busy,progress){
+  const slot=document.getElementById('srv-'+i);
+  const statusEl=document.getElementById('srv-status-'+i);
+  const ptrack=document.getElementById('srv-ptrack-'+i);
+  const pfill=document.getElementById('srv-pfill-'+i);
+  if(!slot)return;
+  if(busy){
+    slot.classList.add('busy');
+    slot.querySelector('.server-slot-icon').innerHTML=serverSVG('#b45309');
+    if(statusEl)statusEl.textContent='serving…';
+    if(ptrack)ptrack.style.display='block';
+    if(pfill)pfill.style.width=Math.min(progress*100,100)+'%';
+  }else{
+    slot.classList.remove('busy');
+    slot.querySelector('.server-slot-icon').innerHTML=serverSVG('#6b6860');
+    if(statusEl)statusEl.textContent='idle';
+    if(ptrack)ptrack.style.display='none';
+    if(pfill)pfill.style.width='0%';
+  }
+}
+
+function simStep(){
+  const{lam,mu,c}=params;
+  const container=document.getElementById('vis-container');
+  const w=container.offsetWidth||700;
+  const visH=getVisHeight(c);
+
+  if(Math.random()<lam/10) addPerson();
+
+  for(let i=0;i<c;i++){
+    const srv=serverStates[i];
+    if(srv.busy){
+      srv.progress+=(mu/10)*(0.8+Math.random()*0.4);
+      updateServerVisual(i,true,srv.progress);
+      if(srv.progress>=1){
+        srv.busy=false; srv.progress=0;
+        const el=document.getElementById('pdot-'+srv.personId);
+        if(el){el.style.opacity='0'; el.style.left=(w+20)+'px'; setTimeout(()=>el&&el.remove(),500);}
+        people=people.filter(p=>p.id!==srv.personId);
+        srv.personId=null;
+        updateServerVisual(i,false,0);
+        servedCount++;
+        document.getElementById('sim-counter').textContent='Served: '+servedCount;
+      }
+    }
+    if(!srv.busy){
+      const next=people.find(p=>p.inQueue);
+      if(next){
+        next.inQueue=false; srv.busy=true; srv.progress=0; srv.personId=next.id;
+        const el=document.getElementById('pdot-'+next.id);
+        if(el){el.style.left=srv.x+'px'; el.style.top=srv.y+'px';}
+        updateServerVisual(i,true,0);
+      }
+    }
+  }
+
+  /* reposition queued people */
+  const queued=people.filter(p=>p.inQueue);
+  const iconW=36, iconStep=32;
+  const srvX=w-160-16;
+  const maxVisible=Math.max(1,Math.floor((srvX-16)/iconStep));
+
+  queued.forEach((p,i)=>{
+    const el=document.getElementById('pdot-'+p.id);
+    if(!el)return;
+    const tx=12+i*iconStep;
+    const ty=(visH-44)/2;
+    if(i<maxVisible){
+      el.style.left=tx+'px'; el.style.top=ty+'px'; el.style.opacity='1';
+    } else {
+      // Wrap around to multiple rows if queue is too long
+      const row=Math.floor(i/maxVisible);
+      const col=i%maxVisible;
+      el.style.left=(12+col*iconStep)+'px'; 
+      el.style.top=(ty+row*50)+'px'; 
+      el.style.opacity='0.8';
+    }
+  });
+
+  lqHistory.push(queued.length);
+  if(lqHistory.length>50)lqHistory.shift();
+  updateHistoryChart();
+  
+  // Update container height if queue grows
+  const newHeight=getVisHeight(c);
+  const cont=document.getElementById('vis-container');
+  if(cont && parseInt(cont.style.minHeight) < newHeight){
+    cont.style.minHeight=newHeight+'px';
+  }
+}
+
+function toggleSim(){
+  simRunning=!simRunning;
+  const btn=document.getElementById('sim-btn');
+  if(simRunning){btn.textContent='⏸ Pause';btn.classList.remove('paused');simTimer=setInterval(simStep,200);}
+  else{btn.textContent='▶ Resume';btn.classList.add('paused');clearInterval(simTimer);}
+}
+
+function updateWqChart(m,lam,mu,c){
+  const labels=[],data=[];
+  for(let r=0.05;r<=0.98;r+=0.03){
+    const res=calcMmc(r*mu*c,mu,c);
+    labels.push(r.toFixed(2));
+    data.push(res.stable?parseFloat(res.Wq.toFixed(3)):null);
+  }
+  const cr=Math.min(m.rho,0.99),cw=m.stable?m.Wq:null;
+  if(!chartWq){
+    chartWq=new Chart(document.getElementById('chart-wq'),{
+      type:'line',
+      data:{labels,datasets:[
+        {data,borderColor:'#1a1a1a',backgroundColor:'rgba(255,213,89,0.18)',fill:true,tension:0.4,pointRadius:0,borderWidth:2},
+        {data:labels.map(l=>Math.abs(parseFloat(l)-cr)<0.025&&cw!==null?cw:null),borderColor:'#dc2626',backgroundColor:'#dc2626',pointRadius:6,showLine:false,type:'scatter'}
+      ]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{
+          x:{ticks:{color:'#a09d98',maxTicksLimit:8,font:{family:'DM Mono',size:10}},grid:{color:'rgba(0,0,0,0.05)'},title:{display:true,text:'ρ (traffic intensity)',color:'#6b6860',font:{size:10}}},
+          y:{ticks:{color:'#a09d98',font:{family:'DM Mono',size:10},callback:v=>v+'min'},grid:{color:'rgba(0,0,0,0.05)'}}
+        }
+      }
+    });
+  }else{
+    chartWq.data.labels=labels;
+    chartWq.data.datasets[0].data=data;
+    chartWq.data.datasets[1].data=labels.map(l=>Math.abs(parseFloat(l)-cr)<0.025&&cw!==null?cw:null);
+    chartWq.update('none');
+  }
+}
+
+function updateHistoryChart(){
+  if(!chartHistory){
+    chartHistory=new Chart(document.getElementById('chart-history'),{
+      type:'line',
+      data:{labels:lqHistory.map((_,i)=>i),datasets:[{data:[...lqHistory],borderColor:'#1d4ed8',backgroundColor:'rgba(29,78,216,0.07)',fill:true,tension:0.3,pointRadius:0,borderWidth:1.5}]},
+      options:{responsive:true,maintainAspectRatio:false,animation:false,plugins:{legend:{display:false}},
+        scales:{x:{display:false},y:{min:0,ticks:{color:'#a09d98',font:{family:'DM Mono',size:10},stepSize:1},grid:{color:'rgba(0,0,0,0.05)'}}}
+      }
+    });
+  }else{
+    chartHistory.data.labels=lqHistory.map((_,i)=>i);
+    chartHistory.data.datasets[0].data=[...lqHistory];
+    chartHistory.update('none');
+  }
+}
+
+document.getElementById('sim-btn').addEventListener('click', toggleSim);
+document.getElementById('lam').addEventListener('input',e=>{params.lam=+e.target.value;update();});
+document.getElementById('mu').addEventListener('input',e=>{params.mu=+e.target.value;update();});
+document.querySelectorAll('.server-btn').forEach(btn=>{  btn.addEventListener('click',function(){
+    document.querySelectorAll('.server-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const oldC=params.c;
+    params.c=+btn.dataset.c;
+    
+    // Only reset simulation if it's not running, preserve state
+    if(!simRunning){
+      // Clear visual elements but preserve simulation state
+      const vis=document.getElementById('vis-area');
+      if(vis) vis.innerHTML='';
+      chartHistory=null;
+      update();
+    } else {
+      // If running, just update the visualization without resetting
+      rebuildVis();
+      update();
+    }
+  });
+});
+
+update();
+</script>
+</body>
+</html>

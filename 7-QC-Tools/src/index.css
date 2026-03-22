@@ -1,0 +1,36 @@
+@tailwind utilities;
+
+/* Sidebar collapse utilities */
+.sidebar-collapsed {
+  width: 80px !important;
+  min-width: 80px !important;
+}
+
+.sidebar-collapsed .sidebar-header {
+  padding: 20px 16px;
+}
+
+.nav-item-collapsed {
+  justify-content: center;
+  padding: 16px;
+}
+
+.nav-item-collapsed span {
+  display: none;
+}
+
+.main-content {
+  transition: margin-left 0.3s ease;
+}
+
+.main-content-expanded {
+  margin-left: 0;
+}
+
+.sidebar-toggle {
+  transition: all 0.2s ease;
+}
+
+.sidebar-toggle:hover {
+  transform: translateY(-50%) scale(1.1);
+}
