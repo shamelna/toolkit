@@ -1,0 +1,2282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One-Piece Flow vs Batch — Kaizen Academy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --yellow: #ffd559;
+  --yellow-dark: #e6be3e;
+  --yellow-dim: rgba(255,213,89,0.10);
+  --yellow-border: rgba(255,213,89,0.30);
+  --black: #0d0d0d;
+  --dark: #1a1a1a;
+  --mid: #2e2e2e;
+  --grey: #8a8a8a;
+  --light: #f5f5f0;
+  --white: #ffffff;
+  --font-display: 'Syne', sans-serif;
+  --font-body: 'DM Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Sim colours */
+  --va: #007a52;
+  --nva: #cc2222;
+  --idle: #b07000;
+  --bg-sim: #ffffff;
+  --bg2: #f7f7f4;
+  --bg3: #eeede9;
+  --border-sim: rgba(0,0,0,0.09);
+  --border2-sim: rgba(0,0,0,0.16);
+  --text-sim: #111111;
+  --muted-sim: rgba(17,17,17,0.48);
+  --muted2-sim: rgba(17,17,17,0.28);
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--light);
+  color: var(--black);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ═══════════════════════════════════
+   HEADER  (exact from template)
+═══════════════════════════════════ */
+.ka-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--black);
+  border-bottom: 2px solid var(--yellow);
+}
+
+.ka-header__bar {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.ka-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.ka-logo img {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 2px solid var(--yellow);
+  object-fit: cover;
+}
+
+.ka-logo__text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.ka-logo__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+
+.ka-logo__name span { color: var(--yellow); }
+
+.ka-logo__tagline {
+  font-size: 0.62rem;
+  font-weight: 300;
+  color: var(--grey);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.ka-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.ka-nav a {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #ccc;
+  text-decoration: none;
+  padding: 0.45rem 0.85rem;
+  border-radius: 6px;
+  transition: color var(--transition), background var(--transition);
+  white-space: nowrap;
+}
+
+.ka-nav a:hover {
+  color: var(--yellow);
+  background: rgba(255,213,89,0.08);
+}
+
+.ka-header__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--yellow);
+  color: var(--black);
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  padding: 0.55rem 1.2rem;
+  border-radius: 6px;
+  border: 2px solid var(--yellow);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.ka-header__cta:hover {
+  background: transparent;
+  color: var(--yellow);
+}
+
+.ka-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 0.4rem;
+  background: none;
+  border: none;
+}
+
+.ka-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+.ka-mobile-nav {
+  display: none;
+  flex-direction: column;
+  background: var(--dark);
+  border-top: 1px solid #2e2e2e;
+  padding: 1rem 2rem 1.5rem;
+  gap: 0.25rem;
+}
+
+.ka-mobile-nav a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #ccc;
+  text-decoration: none;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #2e2e2e;
+  transition: color var(--transition);
+}
+
+.ka-mobile-nav a:last-child { border-bottom: none; }
+.ka-mobile-nav a:hover { color: var(--yellow); }
+
+.ka-mobile-nav .ka-header__cta {
+  margin-top: 0.75rem;
+  justify-content: center;
+}
+
+.ka-mobile-nav.open { display: flex; }
+
+/* ═══════════════════════════════════
+   HERO BAND
+═══════════════════════════════════ */
+.sim-hero {
+  background: var(--white);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  padding: 3rem 2rem 2.5rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.sim-hero::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 340px; height: 100%;
+  background: linear-gradient(135deg, transparent 40%, rgba(255,213,89,0.06) 100%);
+  pointer-events: none;
+}
+
+.sim-hero__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 2rem;
+  flex-wrap: wrap;
+  position: relative;
+}
+
+.sim-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--yellow-dark);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.sim-hero__eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 22px; height: 2px;
+  background: var(--yellow-dark);
+}
+
+.sim-hero__title {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+  margin-bottom: 0.75rem;
+}
+
+.sim-hero__title span { color: var(--yellow-dark); }
+
+.sim-hero__desc {
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 1.7;
+  max-width: 480px;
+}
+
+.sim-hero__badges {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  padding-bottom: 0.25rem;
+}
+
+.sim-badge {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  padding: 0.35rem 0.75rem;
+  border-radius: 4px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid;
+}
+
+.sim-badge--yellow { color: #8a6800; border-color: rgba(230,190,62,0.5); background: rgba(255,213,89,0.12); }
+.sim-badge--green  { color: #005c3c; border-color: rgba(0,122,82,0.3);   background: rgba(0,122,82,0.07); }
+.sim-badge--grey   { color: #666;    border-color: rgba(0,0,0,0.12);     background: rgba(0,0,0,0.03); }
+
+/* ═══════════════════════════════════
+   MAIN / SIMULATION
+═══════════════════════════════════ */
+.sim-main {
+  flex: 1;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2rem 2rem 3rem;
+}
+
+/* Controls bar */
+.sim-controls-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 0.9rem 1.2rem;
+  background: var(--white);
+  border: 1px solid var(--border-sim);
+  border-radius: 10px;
+}
+
+.sim-title-block h2 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: -0.01em;
+}
+
+.sim-title-block p {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--muted-sim);
+  margin-top: 2px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sim-btns { display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+
+.speed-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted-sim);
+  padding-right: 0.75rem;
+  border-right: 1px solid var(--border-sim);
+}
+
+.speed-row input[type=range] { width: 70px; accent-color: var(--yellow-dark); cursor: pointer; }
+
+.ctrl-btn {
+  font-family: var(--font-display);
+  font-size: 0.72rem; font-weight: 700;
+  letter-spacing: 0.04em; text-transform: uppercase;
+  padding: 0.5rem 1.1rem;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: var(--bg2);
+  color: #555;
+  cursor: pointer; border-radius: 6px;
+  transition: all 0.15s;
+}
+
+.ctrl-btn:hover { color: var(--black); border-color: rgba(0,0,0,0.22); background: var(--bg3); }
+
+.ctrl-btn.run-btn.active {
+  background: var(--yellow);
+  color: var(--black);
+  border-color: var(--yellow-dark);
+}
+
+.ctrl-btn.run-btn:not(.active):hover {
+  background: rgba(255,213,89,0.15);
+  border-color: var(--yellow-dark);
+  color: #7a5e00;
+}
+
+.ctrl-btn.stop-btn { color: var(--nva); border-color: rgba(204,34,34,0.22); }
+.ctrl-btn.stop-btn:hover { background: rgba(204,34,34,0.06); }
+
+/* Config row */
+.config-row {
+  display: flex; gap: 1.25rem; flex-wrap: wrap;
+  margin-bottom: 1rem; padding: 0.85rem 1.2rem;
+  background: var(--white); border: 1px solid var(--border-sim); border-radius: 10px;
+}
+
+.cfg-item { display: flex; align-items: center; gap: 0.6rem; }
+
+.cfg-label {
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted-sim); white-space: nowrap;
+}
+
+.cfg-label span { color: #7a5e00; font-weight: 500; }
+.cfg-item input[type=range] { width: 85px; accent-color: var(--yellow-dark); cursor: pointer; }
+
+/* Lanes */
+.lanes-wrap {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 1rem; margin-bottom: 1rem;
+}
+
+.lane {
+  background: var(--white);
+  border: 1px solid var(--border-sim);
+  border-radius: 10px; overflow: hidden;
+}
+
+.lane-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-sim);
+}
+
+.lane.opf-lane .lane-header   { background: rgba(0,122,82,0.04);  border-bottom-color: rgba(0,122,82,0.12); }
+.lane.batch-lane .lane-header { background: rgba(176,112,0,0.04); border-bottom-color: rgba(176,112,0,0.12); }
+
+.lane-name {
+  font-family: var(--font-display);
+  font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.06em; text-transform: uppercase;
+  display: flex; align-items: center; gap: 0.5rem;
+}
+
+.lane-name::before {
+  content: ''; width: 7px; height: 7px;
+  border-radius: 50%; flex-shrink: 0;
+}
+
+.lane.opf-lane .lane-name   { color: var(--va); }
+.lane.opf-lane .lane-name::before   { background: var(--va); box-shadow: 0 0 6px rgba(0,122,82,0.5); }
+.lane.batch-lane .lane-name { color: var(--idle); }
+.lane.batch-lane .lane-name::before { background: var(--idle); box-shadow: 0 0 6px rgba(176,112,0,0.5); }
+
+.lane-lt { font-family: var(--font-mono); font-size: 0.68rem; color: var(--muted-sim); }
+.lane-lt span { font-weight: 500; color: var(--text-sim); }
+
+.track-area { padding: 0.9rem 1rem; }
+
+.steps-row { display: flex; gap: 0.5rem; margin-bottom: 0.65rem; }
+.step-col  { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+.step-label {
+  font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted2-sim);
+  text-align: center; letter-spacing: 0.06em; text-transform: uppercase;
+}
+
+.step-box {
+  height: 40px; border: 1px solid var(--border-sim); border-radius: 6px;
+  background: var(--bg2);
+  display: flex; align-items: center; justify-content: center; gap: 3px;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.step-box.active       { border-color: rgba(0,122,82,0.5); background: rgba(0,122,82,0.06); box-shadow: 0 0 12px rgba(0,122,82,0.08); }
+.step-box.active-batch { border-color: rgba(176,112,0,0.45); background: rgba(176,112,0,0.06); box-shadow: 0 0 12px rgba(176,112,0,0.08); }
+
+.unit-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; animation: pulse 0.65s ease infinite alternate; }
+.unit-dot.opf-dot   { background: var(--va); }
+.unit-dot.batch-dot { background: var(--idle); }
+
+@keyframes pulse { from { opacity: 0.55; transform: scale(0.75); } to { opacity: 1; transform: scale(1.2); } }
+
+.unit-count { font-family: var(--font-mono); font-size: 0.6rem; font-weight: 500; color: var(--text-sim); }
+
+.queue-area { height: 20px; display: flex; align-items: center; gap: 2px; padding: 0 2px; overflow: hidden; }
+.q-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(176,112,0,0.5); flex-shrink: 0; animation: qpop 0.25s ease both; }
+@keyframes qpop { from { transform: scale(0); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.q-more { font-family: var(--font-mono); font-size: 0.55rem; color: var(--idle); margin-left: 3px; }
+
+.output-row {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0 0; border-top: 1px solid var(--border-sim); overflow: hidden;
+}
+
+.out-label { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted-sim); white-space: nowrap; }
+.out-count { font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted-sim); white-space: nowrap; margin-left: auto; }
+.out-units { display: flex; gap: 3px; flex-wrap: nowrap; overflow: hidden; align-items: center; }
+
+.out-unit { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; animation: slideIn 0.3s ease; }
+.out-unit.opf-out   { background: var(--va); }
+.out-unit.batch-out { background: var(--idle); }
+
+@keyframes slideIn { from { transform: translateX(-12px) scale(0.3); opacity: 0; } to { transform: translateX(0) scale(1); opacity: 1; } }
+
+/* PCE */
+.pce-section {
+  margin-bottom: 1rem; padding: 1rem 1.2rem;
+  background: var(--white); border: 1px solid var(--border-sim); border-radius: 10px;
+}
+
+.pce-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 0.85rem; flex-wrap: wrap; gap: 0.6rem;
+}
+
+.pce-section-title {
+  font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted-sim);
+  text-transform: uppercase; letter-spacing: 0.1em;
+}
+
+.legend-row { display: flex; gap: 1rem; }
+.leg { display: flex; align-items: center; gap: 4px; font-family: var(--font-mono); font-size: 0.6rem; color: var(--muted-sim); }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+
+.pce-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+.pce-row:last-child { margin-bottom: 0; }
+
+.pce-tag {
+  font-family: var(--font-mono); font-size: 0.65rem; font-weight: 500;
+  width: 44px; letter-spacing: 0.06em; flex-shrink: 0; text-transform: uppercase;
+}
+
+.pce-tag.opf { color: var(--va); }
+.pce-tag.bat { color: var(--idle); }
+
+.pce-track {
+  flex: 1; height: 16px;
+  background: var(--bg2); border-radius: 4px; overflow: hidden; display: flex;
+  border: 1px solid var(--border-sim);
+}
+
+.pce-fill {
+  height: 100%;
+  display: flex; align-items: center; justify-content: flex-end; padding-right: 4px;
+  font-family: var(--font-mono); font-size: 0.58rem; font-weight: 500; color: var(--white);
+  transition: width 0.6s ease; min-width: 3px;
+}
+
+.pce-fill.opf-fill { background: var(--va); }
+.pce-fill.bat-fill { background: var(--idle); }
+.nva-fill { height: 100%; background: rgba(204,34,34,0.35); transition: width 0.6s ease; min-width: 2px; }
+
+.pce-lbl { font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted-sim); width: 72px; text-align: right; flex-shrink: 0; }
+
+/* Metrics */
+.metrics-strip { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.65rem; margin-bottom: 1rem; }
+
+.met-card {
+  background: var(--white); border: 1px solid var(--border-sim); border-radius: 8px;
+  padding: 0.75rem 0.9rem; transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.met-card:hover { border-color: var(--border2-sim); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+.met-label {
+  font-family: var(--font-mono); font-size: 0.58rem; color: var(--muted-sim);
+  letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 0.55rem;
+}
+
+.met-row { display: flex; justify-content: space-between; align-items: baseline; gap: 4px; margin-bottom: 3px; }
+.met-row:last-child { margin-bottom: 0; }
+
+.met-tag { font-family: var(--font-mono); font-size: 0.55rem; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; }
+.met-tag.opf { color: var(--va); }
+.met-tag.bat { color: var(--idle); }
+
+.met-num { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 500; color: var(--text-sim); transition: color 0.3s; }
+.met-num.better { color: var(--va); }
+.met-num.worse  { color: var(--nva); }
+
+/* Ticker */
+.ticker {
+  font-family: var(--font-mono); font-size: 0.65rem; color: var(--muted-sim);
+  text-align: center; padding: 0.75rem 1rem;
+  background: var(--white); border: 1px solid var(--border-sim); border-radius: 8px;
+  letter-spacing: 0.03em;
+}
+
+.ticker .hi   { color: #7a5e00; font-weight: 500; }
+.ticker .go   { color: var(--va); font-weight: 500; }
+.ticker .warn { color: var(--idle); font-weight: 500; }
+
+/* ═══════════════════════════════════
+   WELCOME MODAL
+═══════════════════════════════════ */
+.ob-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: rgba(13,13,13,0.72);
+  display: flex; align-items: center; justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.ob-overlay.hidden { display: none; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.ob-modal {
+  background: var(--white);
+  border-radius: 16px;
+  border-top: 4px solid var(--yellow);
+  max-width: 580px; width: 100%;
+  padding: 2.5rem;
+  position: relative;
+  animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+
+@keyframes slideUp { from { transform: translateY(24px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+.ob-step { display: none; }
+.ob-step.active { display: block; }
+
+.ob-step-count {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  color: var(--grey);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ob-dots { display: flex; gap: 5px; }
+.ob-dot { width: 6px; height: 6px; border-radius: 50%; background: #ddd; transition: background 0.2s; }
+.ob-dot.active { background: var(--yellow-dark); }
+
+.ob-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.75rem;
+  line-height: 1;
+}
+
+.ob-title {
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+.ob-title span { color: var(--yellow-dark); }
+
+.ob-body {
+  font-size: 0.88rem;
+  color: #555;
+  line-height: 1.75;
+  margin-bottom: 1.5rem;
+}
+
+.ob-body strong { color: var(--black); font-weight: 600; }
+
+.ob-concepts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.ob-concept {
+  background: var(--light);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.ob-concept-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+  margin-bottom: 3px;
+}
+
+.ob-concept-label.green { color: var(--va); }
+.ob-concept-label.amber { color: var(--idle); }
+.ob-concept-label.red   { color: var(--nva); }
+.ob-concept-label.blue  { color: #2563eb; }
+
+.ob-concept p {
+  font-size: 0.78rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.ob-visual {
+  background: var(--light);
+  border-radius: 10px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.ob-flow-demo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.ob-flow-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+}
+
+.ob-flow-label.green { color: var(--va); }
+.ob-flow-label.amber { color: var(--idle); }
+
+.ob-flow-track {
+  display: flex;
+  gap: 3px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.ob-unit {
+  width: 10px; height: 10px;
+  border-radius: 2px;
+}
+
+.ob-unit.green { background: var(--va); }
+.ob-unit.amber { background: var(--idle); opacity: 0.5; }
+.ob-unit.active-amber { background: var(--idle); }
+
+.ob-arrow { font-size: 1.1rem; color: #ccc; flex-shrink: 0; }
+
+.ob-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ob-btn-primary {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--black);
+  background: var(--yellow);
+  border: 2px solid var(--yellow-dark);
+  padding: 0.6rem 1.4rem;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: background var(--transition);
+  letter-spacing: 0.01em;
+}
+
+.ob-btn-primary:hover { background: var(--yellow-dark); }
+
+.ob-btn-secondary {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  color: var(--grey);
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s;
+}
+
+.ob-btn-secondary:hover { color: var(--black); }
+
+.ob-progress {
+  height: 3px;
+  background: #eee;
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  overflow: hidden;
+}
+
+.ob-progress-fill {
+  height: 100%;
+  background: var(--yellow);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+
+/* ═══════════════════════════════════
+   TOUR TOOLTIP
+═══════════════════════════════════ */
+.tour-tooltip {
+  position: absolute;
+  z-index: 200;
+  background: var(--black);
+  color: var(--white);
+  border-radius: 10px;
+  border-left: 3px solid var(--yellow);
+  padding: 0.9rem 1.1rem;
+  max-width: 280px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.tour-tooltip.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.tour-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -7px; left: 18px;
+  width: 12px; height: 12px;
+  background: var(--black);
+  transform: rotate(45deg);
+  border-left: 3px solid var(--yellow);
+  border-top: 3px solid var(--yellow);
+}
+
+.tour-tooltip.arrow-bottom::before {
+  top: auto; bottom: -7px;
+  border-left: none; border-top: none;
+  border-right: 3px solid var(--yellow);
+  border-bottom: 3px solid var(--yellow);
+}
+
+.tour-tooltip h5 {
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--yellow);
+  margin-bottom: 0.35rem;
+}
+
+.tour-tooltip p {
+  font-size: 0.76rem;
+  color: #bbb;
+  line-height: 1.55;
+  margin-bottom: 0.6rem;
+}
+
+.tour-tooltip-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.tour-next-btn {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: var(--black);
+  background: var(--yellow);
+  border: none;
+  padding: 4px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  pointer-events: auto;
+}
+
+.tour-skip-btn {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: #666;
+  background: none;
+  border: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.tour-highlight {
+  outline: 3px solid var(--yellow) !important;
+  outline-offset: 3px !important;
+  border-radius: 8px;
+  position: relative;
+  z-index: 150;
+}
+
+/* ═══════════════════════════════════
+   INSIGHTS PANEL
+═══════════════════════════════════ */
+.insights-panel {
+  margin-top: 1rem;
+  background: var(--white);
+  border: 1px solid var(--border-sim);
+  border-radius: 12px;
+  overflow: hidden;
+  display: none;
+}
+
+.insights-panel.visible { display: block; animation: fadeIn 0.5s ease; }
+
+.insights-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--border-sim);
+  background: var(--bg2);
+  cursor: pointer;
+  user-select: none;
+}
+
+.insights-header h3 {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--black);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.insights-header h3::before {
+  content: '';
+  display: inline-block;
+  width: 10px; height: 10px;
+  background: var(--yellow);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.insights-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  color: var(--grey);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.insights-body { padding: 1.5rem 1.2rem; }
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.insight-card {
+  border: 1px solid var(--border-sim);
+  border-radius: 10px;
+  padding: 1rem 1.1rem;
+  background: var(--bg2);
+}
+
+.insight-card-title {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.insight-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 2px 7px;
+  border-radius: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.insight-badge.green { background: rgba(0,122,82,0.1); color: var(--va); }
+.insight-badge.amber { background: rgba(176,112,0,0.1); color: var(--idle); }
+
+.insight-card p {
+  font-size: 0.82rem;
+  color: #555;
+  line-height: 1.65;
+}
+
+.insight-card p strong { color: var(--black); }
+
+.insights-why {
+  border-top: 1px solid var(--border-sim);
+  padding-top: 1.25rem;
+  margin-top: 0.25rem;
+}
+
+.insights-why h4 {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.75rem;
+}
+
+.insights-why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.why-card {
+  background: var(--white);
+  border: 1px solid var(--border-sim);
+  border-radius: 8px;
+  padding: 0.85rem;
+}
+
+.why-card-icon { font-size: 1.2rem; margin-bottom: 0.4rem; }
+
+.why-card-title {
+  font-family: var(--font-display);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 0.3rem;
+}
+
+.why-card p {
+  font-size: 0.76rem;
+  color: #666;
+  line-height: 1.55;
+}
+
+.insights-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem 1.2rem;
+  background: var(--black);
+  border-radius: 10px;
+  margin-top: 0.25rem;
+}
+
+.insights-cta-text {
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.insights-cta-text span { color: var(--yellow); }
+
+.insights-cta-text p {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 300;
+  color: #aaa;
+  margin-top: 2px;
+}
+
+.insights-cta-btn {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--black);
+  background: var(--yellow);
+  border: 2px solid var(--yellow-dark);
+  padding: 0.55rem 1.3rem;
+  border-radius: 6px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.insights-cta-btn:hover { background: var(--yellow-dark); }
+
+/* ═══════════════════════════════════
+   GLOSSARY STRIP
+═══════════════════════════════════ */
+.glossary-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-bottom: 1rem;
+}
+
+.gloss-card {
+  background: var(--white);
+  border: 1px solid var(--border-sim);
+  border-radius: 8px;
+  padding: 0.75rem 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+
+.gloss-card:hover { border-color: var(--yellow-dark); box-shadow: 0 2px 10px rgba(0,0,0,0.06); }
+
+.gloss-term {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 4px;
+}
+
+.gloss-term.green { color: var(--va); }
+.gloss-term.amber { color: var(--idle); }
+.gloss-term.red   { color: var(--nva); }
+.gloss-term.blue  { color: #2563eb; }
+
+.gloss-def {
+  font-size: 0.76rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+.gloss-expand {
+  display: none;
+  margin-top: 0.5rem;
+  font-size: 0.74rem;
+  color: #444;
+  line-height: 1.6;
+  border-top: 1px solid var(--border-sim);
+  padding-top: 0.5rem;
+}
+
+.gloss-card.open .gloss-expand { display: block; }
+
+/* ═══════════════════════════════════
+   FOOTER  (exact from template)
+═══════════════════════════════════ */
+.ka-footer {
+  background: var(--black);
+  border-top: 3px solid var(--yellow);
+  color: #ccc;
+  font-family: var(--font-body);
+}
+
+.ka-footer__top {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 3.5rem 2rem 2.5rem;
+  display: grid;
+  grid-template-columns: 1.6fr 1fr 1fr;
+  gap: 3rem;
+}
+
+.ka-footer__brand {}
+
+.ka-footer__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+
+.ka-footer__logo img {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 2px solid var(--yellow);
+}
+
+.ka-footer__logo-name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  color: var(--white);
+}
+
+.ka-footer__logo-name span { color: var(--yellow); }
+
+.ka-footer__desc {
+  font-size: 0.83rem;
+  line-height: 1.7;
+  color: #888;
+  margin-bottom: 1.5rem;
+  max-width: 260px;
+}
+
+.ka-footer__social {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.ka-footer__social a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  color: #888;
+  text-decoration: none;
+  transition: border-color var(--transition), color var(--transition), background var(--transition);
+}
+
+.ka-footer__social a:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  background: rgba(255,213,89,0.06);
+}
+
+.ka-footer__cert {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255,213,89,0.08);
+  border: 1px solid rgba(255,213,89,0.25);
+  border-radius: 8px;
+  padding: 0.6rem 0.9rem;
+  margin-top: 1.5rem;
+  font-size: 0.75rem;
+  color: #aaa;
+}
+
+.ka-footer__cert strong { color: var(--yellow); font-weight: 600; }
+
+.ka-footer__col h4 {
+  font-family: var(--font-display);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 1rem;
+}
+
+.ka-footer__col ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.ka-footer__col ul li a {
+  font-size: 0.84rem;
+  color: #888;
+  text-decoration: none;
+  transition: color var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.ka-footer__col ul li a::before {
+  content: '→';
+  font-size: 0.7rem;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--transition), transform var(--transition);
+}
+
+.ka-footer__col ul li a:hover { color: var(--white); }
+.ka-footer__col ul li a:hover::before { opacity: 1; transform: translateX(0); }
+
+.ka-footer__bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.2rem 2rem;
+  border-top: 1px solid #222;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.ka-footer__copy { font-size: 0.78rem; color: #555; }
+.ka-footer__copy a { color: var(--yellow); text-decoration: none; }
+
+/* ═══════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════ */
+@media (max-width: 900px) {
+  .lanes-wrap { grid-template-columns: 1fr; }
+  .metrics-strip { grid-template-columns: repeat(3,1fr); }
+  .ka-footer__top { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .sim-hero__title { font-size: 1.8rem; }
+}
+
+@media (max-width: 680px) {
+  .ka-nav, .ka-header__cta { display: none; }
+  .ka-hamburger { display: flex; }
+  .ka-footer__top { grid-template-columns: 1fr; gap: 2rem; }
+  .ka-footer__desc { max-width: 100%; }
+  .metrics-strip { grid-template-columns: repeat(2,1fr); }
+  .sim-hero { padding: 2rem 1rem 1.5rem; }
+  .sim-main { padding: 1.25rem 1rem 2rem; }
+  .sim-hero__title { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     WELCOME MODAL
+════════════════════════════════════════ -->
+<div class="ob-overlay" id="obOverlay">
+  <div class="ob-modal">
+
+    <div class="ob-progress"><div class="ob-progress-fill" id="obProgressFill" style="width:20%"></div></div>
+
+    <div class="ob-step-count">
+      <span id="obStepNum">Step 1 of 5</span>
+      <div class="ob-dots" id="obDots"></div>
+    </div>
+
+    <!-- Step 1: Welcome -->
+    <div class="ob-step active" data-step="1">
+      <div class="ob-icon">⚡</div>
+      <h2 class="ob-title">See lean thinking <span>in motion</span></h2>
+      <p class="ob-body">This simulator lets you run both <strong>one-piece flow</strong> and <strong>batch production</strong> side by side — and watch in real time why lean manufacturers choose flow over batch every time.</p>
+      <p class="ob-body">It takes about 2 minutes to run through. By the end, you'll understand the mechanics behind lead time, WIP, and process cycle efficiency — not just the theory.</p>
+      <div class="ob-actions">
+        <button class="ob-btn-secondary" onclick="skipOnboarding()">Skip intro</button>
+        <button class="ob-btn-primary" onclick="nextObStep()">Let's go →</button>
+      </div>
+    </div>
+
+    <!-- Step 2: What you're comparing -->
+    <div class="ob-step" data-step="2">
+      <div class="ob-icon">🏭</div>
+      <h2 class="ob-title">Two systems, <span>one goal</span></h2>
+      <p class="ob-body">Both systems are making the same product, with the same number of steps and the same process times. The <strong>only difference is how units are grouped</strong> as they move through production.</p>
+      <div class="ob-visual">
+        <div class="ob-flow-demo">
+          <div class="ob-flow-label green">One-Piece Flow — 1 unit moves at a time</div>
+          <div class="ob-flow-track">
+            <div class="ob-unit green"></div>
+            <span style="font-size:0.7rem;color:#aaa;padding:0 4px;">→ step 1 → step 2 → step 3 →</span>
+            <div class="ob-unit green"></div>
+          </div>
+          <div class="ob-flow-label amber" style="margin-top:0.75rem">Batch — entire group waits between steps</div>
+          <div class="ob-flow-track">
+            <div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div><div class="ob-unit active-amber"></div>
+            <span style="font-size:0.7rem;color:#aaa;padding:0 4px;">→ waits → step 1 → waits → step 2…</span>
+          </div>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-btn-secondary" onclick="prevObStep()">← Back</button>
+        <button class="ob-btn-primary" onclick="nextObStep()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 3: Key concepts -->
+    <div class="ob-step" data-step="3">
+      <div class="ob-icon">📊</div>
+      <h2 class="ob-title">What the <span>metrics mean</span></h2>
+      <p class="ob-body">The simulation tracks four core lean measurements. These are the same numbers your improvement team should be monitoring on the shop floor.</p>
+      <div class="ob-concepts">
+        <div class="ob-concept">
+          <div class="ob-concept-label green">Lead Time</div>
+          <p>Total elapsed time from first unit entering the process to the last unit leaving. The lower the better.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label blue">PCE — Process Cycle Efficiency</div>
+          <p>Value-added time ÷ total lead time × 100. Most batch systems run at 5–30%. World-class flow systems hit 80%+.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label amber">WIP — Work in Progress</div>
+          <p>Units stuck inside the process at any moment. High WIP hides problems, consumes cash, and delays defect detection.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label red">NVA — Non-Value-Added Time</div>
+          <p>Time the product spends waiting, queuing, or being transported. Customers don't pay for this — it's pure waste.</p>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-btn-secondary" onclick="prevObStep()">← Back</button>
+        <button class="ob-btn-primary" onclick="nextObStep()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 4: Variables explained -->
+    <div class="ob-step" data-step="4">
+      <div class="ob-icon">🎛️</div>
+      <h2 class="ob-title">Adjust the <span>variables</span></h2>
+      <p class="ob-body">Five sliders control the simulation. Changing them reveals different lean principles in action.</p>
+      <div class="ob-concepts">
+        <div class="ob-concept">
+          <div class="ob-concept-label amber">Batch Size</div>
+          <p>Bigger batches = longer lead time, more WIP, later defect detection. Try 20 vs 2 to feel the impact.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label green">Queue / Wait Time</div>
+          <p>Set this to 0 and both systems converge. <em>The queue is the enemy</em> — not the process itself.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label blue">Process Steps</div>
+          <p>More steps amplify the batch penalty. Each added step multiplies how long the whole batch waits.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label red">Units to Produce</div>
+          <p>Increase this to see how the completion gap between OPF and batch widens at scale.</p>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-btn-secondary" onclick="prevObStep()">← Back</button>
+        <button class="ob-btn-primary" onclick="nextObStep()">Next →</button>
+      </div>
+    </div>
+
+    <!-- Step 5: Ready -->
+    <div class="ob-step" data-step="5">
+      <div class="ob-icon">🚀</div>
+      <h2 class="ob-title">You're ready <span>to run it</span></h2>
+      <p class="ob-body">Hit <strong>▶ Run</strong> and watch both systems go simultaneously. After the simulation completes, scroll down for a full breakdown of <em>why</em> the results differ — with real-world context.</p>
+      <p class="ob-body">Try these experiments after your first run:</p>
+      <div class="ob-concepts">
+        <div class="ob-concept">
+          <div class="ob-concept-label amber">Experiment 1</div>
+          <p>Set batch size to 16, queue to 5s. Watch WIP pile up and PCE collapse.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label green">Experiment 2</div>
+          <p>Set queue time to 0. Notice both systems become identical — queues are the root cause.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label blue">Experiment 3</div>
+          <p>Max out process steps to 6 with a large batch. The batch lead time becomes extreme.</p>
+        </div>
+        <div class="ob-concept">
+          <div class="ob-concept-label red">Experiment 4</div>
+          <p>Shrink batch size to 2. Notice how close it gets to one-piece flow performance.</p>
+        </div>
+      </div>
+      <div class="ob-actions">
+        <button class="ob-btn-secondary" onclick="skipOnboarding()">Skip</button>
+        <button class="ob-btn-primary" onclick="skipOnboarding()">Start Simulation ▶</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     TOUR TOOLTIP (positioned by JS)
+════════════════════════════════════════ -->
+<div class="tour-tooltip" id="tourTooltip">
+  <h5 id="tourTitle">Title</h5>
+  <p id="tourBody">Body text</p>
+  <div class="tour-tooltip-actions">
+    <button class="tour-skip-btn" onclick="endTour()">Skip tour</button>
+    <button class="tour-next-btn" id="tourNextBtn" onclick="nextTourStep()">Next →</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     HEADER
+════════════════════════════════════════ -->
+<header class="ka-header">
+  <div class="ka-header__bar">
+    <a href="/" class="ka-logo">
+      <img src="https://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy Logo" />
+      <div class="ka-logo__text">
+        <span class="ka-logo__name">Kaizen <span>Academy</span></span>
+        <span class="ka-logo__tagline">Continuous Improvement</span>
+      </div>
+    </a>
+    <nav class="ka-nav">
+      <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1">TPS &amp; Lean</a>
+      <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping">Value Stream</a>
+      <a href="https://academy.continuousimprovement.education/p/en-home">Problem Solving</a>
+      <a href="https://academy.continuousimprovement.education/p/business-process-management">BPM</a>
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle">Certification</a>
+      <a href="http://toolkit.kaizenacademy.education/" target="_blank" rel="noopener">Toolkit</a>
+    </nav>
+    <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" class="ka-header__cta">
+      Enrol Now — 20% Off
+    </a>
+    <button class="ka-hamburger" id="kaHamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="ka-mobile-nav" id="kaMobileNav">
+    <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1">TPS &amp; Lean Fundamentals</a>
+    <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping">Value Stream Mapping</a>
+    <a href="https://academy.continuousimprovement.education/p/en-home">Scientific Problem Solving</a>
+    <a href="https://academy.continuousimprovement.education/p/business-process-management">Business Process Management</a>
+    <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle">Lean Practitioner Certification</a>
+    <a href="http://toolkit.kaizenacademy.education/" target="_blank" rel="noopener">Kaizen Toolkit</a>
+    <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" class="ka-header__cta">
+      Enrol Now — 20% Off
+    </a>
+  </nav>
+</header>
+
+<!-- ═══════════════════════════════════════
+     HERO BAND
+════════════════════════════════════════ -->
+<div class="sim-hero">
+  <div class="sim-hero__inner">
+    <div>
+      <div class="sim-hero__eyebrow">Interactive Learning Tool</div>
+      <h1 class="sim-hero__title">One-Piece Flow vs<br><span>Batch Production</span></h1>
+      <p class="sim-hero__desc">Watch units move through both production systems in real time. Adjust batch size, steps, and wait times — see lead time, WIP, and process cycle efficiency change instantly.</p>
+    </div>
+    <div class="sim-hero__badges">
+      <span class="sim-badge sim-badge--yellow">Live Animation</span>
+      <span class="sim-badge sim-badge--green">VA vs NVA</span>
+      <span class="sim-badge sim-badge--grey">PCE Calculator</span>
+      <span class="sim-badge sim-badge--grey">6 Lean Metrics</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════
+     SIMULATION
+════════════════════════════════════════ -->
+<main class="sim-main">
+
+  <!-- Glossary strip — click any card to expand -->
+  <div class="glossary-strip">
+    <div class="gloss-card" onclick="this.classList.toggle('open')">
+      <div class="gloss-term green">Lead Time</div>
+      <div class="gloss-def">Start-to-finish elapsed time</div>
+      <div class="gloss-expand">Total time from when the first unit enters the process to when the last unit exits. Includes both value-added time and all waiting/queue time. Reducing lead time is a primary goal of lean.</div>
+    </div>
+    <div class="gloss-card" onclick="this.classList.toggle('open')">
+      <div class="gloss-term blue">PCE</div>
+      <div class="gloss-def">% of time actually adding value</div>
+      <div class="gloss-expand">Process Cycle Efficiency = VA time ÷ Lead time × 100. Most batch processes score 5–15%. Lean flow systems typically achieve 25–80%. A PCE below 10% means 90% of lead time is waste.</div>
+    </div>
+    <div class="gloss-card" onclick="this.classList.toggle('open')">
+      <div class="gloss-term amber">WIP</div>
+      <div class="gloss-def">Units trapped inside the system</div>
+      <div class="gloss-expand">Work In Progress — all units that have entered the process but haven't yet left it. High WIP hides defects, consumes floor space and cash, and makes problems harder to trace. Little's Law: Lead Time = WIP ÷ Throughput.</div>
+    </div>
+    <div class="gloss-card" onclick="this.classList.toggle('open')">
+      <div class="gloss-term red">NVA</div>
+      <div class="gloss-def">Time customers don't pay for</div>
+      <div class="gloss-expand">Non-Value-Added activities are anything a customer wouldn't pay for — waiting, moving, inspecting, reworking. The 7 wastes (TIMWOOD) are all forms of NVA. Eliminating NVA is the core of kaizen.</div>
+    </div>
+  </div>
+
+  <div class="sim-controls-bar">
+    <div class="sim-title-block">
+      <h2>Simulation Controls</h2>
+      <p>Adjust variables · then press Run</p>
+    </div>
+    <div class="sim-btns">
+      <div class="speed-row">
+        <span>Speed</span>
+        <input type="range" id="speedSlider" min="1" max="6" value="3" step="1">
+        <span id="speedLabel">3×</span>
+      </div>
+      <button class="ctrl-btn run-btn active" id="startBtn" onclick="startSim()">▶ Run</button>
+      <button class="ctrl-btn stop-btn" onclick="stopSim()">■ Pause</button>
+      <button class="ctrl-btn" onclick="resetSim()">↺ Reset</button>
+    </div>
+  </div>
+
+  <div class="config-row">
+    <div class="cfg-item">
+      <span class="cfg-label">Batch size: <span id="bsDisp">8</span></span>
+      <input type="range" id="bsSlider" min="2" max="20" value="8" step="1" oninput="onCfgChange()">
+    </div>
+    <div class="cfg-item">
+      <span class="cfg-label">Process steps: <span id="stDisp">4</span></span>
+      <input type="range" id="stSlider" min="2" max="6" value="4" step="1" oninput="onCfgChange()">
+    </div>
+    <div class="cfg-item">
+      <span class="cfg-label">Process time: <span id="ptDisp">2</span>s</span>
+      <input type="range" id="ptSlider" min="1" max="6" value="2" step="1" oninput="onCfgChange()">
+    </div>
+    <div class="cfg-item">
+      <span class="cfg-label">Queue / wait: <span id="qtDisp">3</span>s</span>
+      <input type="range" id="qtSlider" min="0" max="8" value="3" step="1" oninput="onCfgChange()">
+    </div>
+    <div class="cfg-item">
+      <span class="cfg-label">Units to produce: <span id="upDisp">16</span></span>
+      <input type="range" id="upSlider" min="4" max="32" value="16" step="2" oninput="onCfgChange()">
+    </div>
+  </div>
+
+  <div class="lanes-wrap">
+    <div class="lane opf-lane">
+      <div class="lane-header">
+        <span class="lane-name">One-Piece Flow</span>
+        <span class="lane-lt">Lead time: <span id="opfLT">—</span></span>
+      </div>
+      <div class="track-area">
+        <div class="steps-row" id="opfSteps"></div>
+        <div class="output-row">
+          <span class="out-label">OUTPUT →</span>
+          <div class="out-units" id="opfOutput"></div>
+          <span class="out-count" id="opfCount">0 done</span>
+        </div>
+      </div>
+    </div>
+    <div class="lane batch-lane">
+      <div class="lane-header">
+        <span class="lane-name">Batch Production</span>
+        <span class="lane-lt">Lead time: <span id="batchLT">—</span></span>
+      </div>
+      <div class="track-area">
+        <div class="steps-row" id="batchSteps"></div>
+        <div class="output-row">
+          <span class="out-label">OUTPUT →</span>
+          <div class="out-units" id="batchOutput"></div>
+          <span class="out-count" id="batchCount">0 done</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pce-section">
+    <div class="pce-header">
+      <span class="pce-section-title">Process Cycle Efficiency — VA time as % of total lead time</span>
+      <div class="legend-row">
+        <div class="leg"><div class="leg-dot" style="background:var(--va)"></div>Value-added</div>
+        <div class="leg"><div class="leg-dot" style="background:rgba(204,34,34,0.45)"></div>Non-value-added</div>
+        <div class="leg"><div class="leg-dot" style="background:rgba(0,0,0,0.1)"></div>Remaining</div>
+      </div>
+    </div>
+    <div class="pce-row">
+      <span class="pce-tag opf">OPF</span>
+      <div class="pce-track">
+        <div class="pce-fill opf-fill" id="opfPceBar" style="width:0%"></div>
+        <div class="nva-fill" id="opfNvaBar" style="width:0%"></div>
+      </div>
+      <span class="pce-lbl" id="opfPceLbl">PCE: —%</span>
+    </div>
+    <div class="pce-row">
+      <span class="pce-tag bat">Batch</span>
+      <div class="pce-track">
+        <div class="pce-fill bat-fill" id="batPceBar" style="width:0%"></div>
+        <div class="nva-fill" id="batNvaBar" style="width:0%"></div>
+      </div>
+      <span class="pce-lbl" id="batPceLbl">PCE: —%</span>
+    </div>
+  </div>
+
+  <div class="metrics-strip" id="metricsStrip"></div>
+
+  <div class="ticker" id="ticker">Press <span class="hi">▶ Run</span> to start — watch units move through both production systems in real time</div>
+
+  <!-- Insights panel — appears after simulation completes -->
+  <div class="insights-panel" id="insightsPanel">
+    <div class="insights-header" onclick="toggleInsights()">
+      <h3>Why did OPF win? Understanding the results</h3>
+      <span class="insights-toggle" id="insightsToggleLabel">▼ Expand</span>
+    </div>
+    <div class="insights-body" id="insightsBody">
+
+      <div class="insights-grid" id="insightCardsGrid"></div>
+
+      <div class="insights-why">
+        <h4>The three root causes behind every result</h4>
+        <div class="insights-why-grid">
+          <div class="why-card">
+            <div class="why-card-icon">⏳</div>
+            <div class="why-card-title">The Queue Multiplier</div>
+            <p>In batch production, every unit in a batch must wait for all others to be processed before moving forward. With a batch of 10 and 4 steps, a single unit waits for 9 others at each step — that's 36 units worth of idle time per unit produced.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card-icon">🔍</div>
+            <div class="why-card-title">Defect Exposure</div>
+            <p>In batch production, a defect introduced at step 1 isn't discovered until the whole batch reaches inspection — potentially after all 4 steps. In one-piece flow, defects surface immediately and affect only 1 unit, not the whole batch.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card-icon">💰</div>
+            <div class="why-card-title">Cash & Space Cost</div>
+            <p>Every unit sitting in WIP represents tied-up capital — material, labour, and overhead costs already spent but not yet recovered. Batch systems can carry 10–50× more WIP than flow systems, creating significant cash flow pressure.</p>
+          </div>
+        </div>
+
+        <div class="insights-why-grid">
+          <div class="why-card">
+            <div class="why-card-icon">📈</div>
+            <div class="why-card-title">Little's Law</div>
+            <p>Lead Time = WIP ÷ Throughput. Reducing WIP by half — without touching process speed — cuts lead time by half. One-piece flow minimises WIP structurally, making lead time reduction automatic, not a goal to chase.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card-icon">🎯</div>
+            <div class="why-card-title">First Unit Out</div>
+            <p>OPF delivers its first completed unit much earlier. In a customer service context, this means faster response times, earlier revenue recognition, and better ability to respond to demand changes mid-production.</p>
+          </div>
+          <div class="why-card">
+            <div class="why-card-icon">🔄</div>
+            <div class="why-card-title">Why Batch Persists</div>
+            <p>Batch production feels efficient because machines appear busy. But machine utilisation ≠ system efficiency. Batch optimises local steps at the cost of system-wide flow. Lean optimises the whole value stream, not individual stations.</p>
+          </div>
+        </div>
+
+        <div class="insights-why" style="border-top:none;padding-top:0;">
+          <h4>Real-world benchmarks</h4>
+          <div class="insights-why-grid">
+            <div class="why-card">
+              <div class="why-card-icon">🏥</div>
+              <div class="why-card-title">Healthcare</div>
+              <p>Hospitals that moved from batch (process all forms → then triage → then treat) to flow reduced patient wait times by 40–60% without adding staff or beds.</p>
+            </div>
+            <div class="why-card">
+              <div class="why-card-icon">🏗️</div>
+              <div class="why-card-title">Manufacturing</div>
+              <p>Toyota's Camry line runs at near-zero WIP between stations. Batch competitors in the same sector carry 3–8 days of WIP and suffer 15–40% longer lead times.</p>
+            </div>
+            <div class="why-card">
+              <div class="why-card-icon">💻</div>
+              <div class="why-card-title">Software / Services</div>
+              <p>Agile sprints are one-piece flow for knowledge work. Organisations that shifted from large project batches to small continuous delivery reduced time-to-market by 50–80%.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="insights-cta">
+        <div class="insights-cta-text">
+          Ready to apply this in your workplace?
+          <p>Our TPS &amp; Lean Fundamentals course covers flow, WIP, takt time, and value stream mapping — with practical tools you can use immediately.</p>
+        </div>
+        <a class="insights-cta-btn" href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">
+          Explore the Course →
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+</main>
+
+<!-- ═══════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer class="ka-footer">
+  <div class="ka-footer__top">
+
+    <div class="ka-footer__brand">
+      <a href="/" class="ka-footer__logo">
+        <img src="https://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy" />
+        <span class="ka-footer__logo-name">Kaizen <span>Academy</span></span>
+      </a>
+      <p class="ka-footer__desc">
+        Practical lean and continuous improvement training built for real workplaces. Structured, certificate-backed, and designed to create lasting change.
+      </p>
+      <div class="ka-footer__social">
+        <a href="https://www.linkedin.com/company/theciacademy" aria-label="LinkedIn" target="_blank" rel="noopener">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@ContinuousImprovementAcademy" aria-label="YouTube" target="_blank" rel="noopener">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+        </a>
+      </div>
+      <div class="ka-footer__cert">
+        <svg width="14" height="14" fill="#ffd559" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Certificates by <strong>Kaizen Academy Australia</strong>
+      </div>
+    </div>
+
+    <div class="ka-footer__col">
+      <h4>Courses</h4>
+      <ul>
+        <li><a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20">TPS &amp; Lean Fundamentals</a></li>
+        <li><a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20">Value Stream Mapping</a></li>
+        <li><a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20">Scientific Problem Solving</a></li>
+        <li><a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20">Business Process Management</a></li>
+        <li><a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20">Lean Practitioner Bundle</a></li>
+      </ul>
+    </div>
+
+    <div class="ka-footer__col">
+      <h4>Connect</h4>
+      <ul>
+        <li><a href="https://www.linkedin.com/company/theciacademy" target="_blank" rel="noopener">LinkedIn</a></li>
+        <li><a href="https://www.youtube.com/@ContinuousImprovementAcademy" target="_blank" rel="noopener">YouTube</a></li>
+        <li><a href="http://toolkit.kaizenacademy.education/" target="_blank" rel="noopener">Kaizen Toolkit</a></li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="ka-footer__bottom">
+    <p class="ka-footer__copy">
+      © <span id="kaYear"></span> <a href="https://academy.continuousimprovement.education">Kaizen Academy</a>. All rights reserved.
+    </p>
+  </div>
+</footer>
+
+<script>
+  /* ── Mobile nav ── */
+  document.getElementById('kaHamburger').addEventListener('click', () => {
+    document.getElementById('kaMobileNav').classList.toggle('open');
+  });
+  document.getElementById('kaYear').textContent = new Date().getFullYear();
+
+  /* ══════════════════════════════════════
+     ONBOARDING MODAL
+  ══════════════════════════════════════ */
+  const TOTAL_OB_STEPS = 5;
+  let currentObStep = 1;
+
+  function buildObDots() {
+    const container = document.getElementById('obDots');
+    container.innerHTML = '';
+    for (let i = 1; i <= TOTAL_OB_STEPS; i++) {
+      const d = document.createElement('div');
+      d.className = 'ob-dot' + (i === currentObStep ? ' active' : '');
+      container.appendChild(d);
+    }
+  }
+
+  function showObStep(n) {
+    currentObStep = n;
+    document.querySelectorAll('.ob-step').forEach(s => s.classList.remove('active'));
+    const target = document.querySelector(`.ob-step[data-step="${n}"]`);
+    if (target) target.classList.add('active');
+    document.getElementById('obStepNum').textContent = `Step ${n} of ${TOTAL_OB_STEPS}`;
+    document.getElementById('obProgressFill').style.width = (n / TOTAL_OB_STEPS * 100) + '%';
+    buildObDots();
+  }
+
+  function nextObStep() {
+    if (currentObStep < TOTAL_OB_STEPS) showObStep(currentObStep + 1);
+    else skipOnboarding();
+  }
+
+  function prevObStep() {
+    if (currentObStep > 1) showObStep(currentObStep - 1);
+  }
+
+  function skipOnboarding() {
+    document.getElementById('obOverlay').classList.add('hidden');
+    localStorage.setItem('ka_sim_seen', '1');
+    setTimeout(() => startTour(), 600);
+  }
+
+  buildObDots();
+
+  // Skip modal if returning visitor
+  if (localStorage.getItem('ka_sim_seen')) {
+    document.getElementById('obOverlay').classList.add('hidden');
+  }
+
+  /* ══════════════════════════════════════
+     GUIDED TOUR
+  ══════════════════════════════════════ */
+  const tourSteps = [
+    {
+      targetId: 'simControlsBar',
+      title: 'Simulation controls',
+      body: 'Use Speed to slow things down (1×) or fast-forward (6×). Pause at any moment to study what\'s happening. Reset to start fresh with new variables.',
+      arrow: 'top'
+    },
+    {
+      targetId: 'bsSlider',
+      title: 'Batch size is the key lever',
+      body: 'This single slider has the biggest impact. Drag it right to 15–20 and watch lead time and WIP explode. Batch size multiplies queue time at every step.',
+      arrow: 'top'
+    },
+    {
+      targetId: 'qtSlider',
+      title: 'Queue time reveals the truth',
+      body: 'Set this to 0 and both systems perform identically. That\'s the key insight: queues — not process time — are what makes batch production slow.',
+      arrow: 'top'
+    },
+    {
+      targetId: 'opfSteps',
+      title: 'Green = one unit flowing',
+      body: 'Watch a single green dot move step by step, immediately. No waiting. Each unit exits as soon as it\'s done — that\'s flow.',
+      arrow: 'bottom'
+    },
+    {
+      targetId: 'batchSteps',
+      title: 'Amber = whole batch waiting',
+      body: 'The amber dots show the entire batch sitting at one step before moving. Every unit waits for all its neighbours — even if it was processed first.',
+      arrow: 'bottom'
+    },
+    {
+      targetId: 'metricsStrip',
+      title: 'Live lean metrics',
+      body: 'These 6 cards update in real time. Green numbers are better. After the run completes, scroll down for a full explanation of why the gap exists.',
+      arrow: 'top'
+    }
+  ];
+
+  let currentTourStep = 0;
+  let tourActive = false;
+  let highlightedEl = null;
+
+  function startTour() {
+    if (localStorage.getItem('ka_tour_seen')) return;
+    tourActive = true;
+    currentTourStep = 0;
+    showTourStep(0);
+  }
+
+  function showTourStep(idx) {
+    if (idx >= tourSteps.length) { endTour(); return; }
+    const step = tourSteps[idx];
+    const target = document.getElementById(step.targetId);
+    if (!target) { endTour(); return; }
+
+    // Remove previous highlight
+    if (highlightedEl) highlightedEl.classList.remove('tour-highlight');
+    target.classList.add('tour-highlight');
+    highlightedEl = target;
+
+    const tooltip = document.getElementById('tourTooltip');
+    document.getElementById('tourTitle').textContent = step.title;
+    document.getElementById('tourBody').textContent = step.body;
+    document.getElementById('tourNextBtn').textContent = idx === tourSteps.length - 1 ? 'Done ✓' : 'Next →';
+
+    tooltip.className = 'tour-tooltip' + (step.arrow === 'bottom' ? ' arrow-bottom' : '');
+
+    // Position tooltip below or above target
+    const rect = target.getBoundingClientRect();
+    const scrollY = window.scrollY;
+    const tooltipW = 280;
+
+    let top, left;
+    if (step.arrow === 'bottom') {
+      top = rect.top + scrollY - 130;
+    } else {
+      top = rect.bottom + scrollY + 14;
+    }
+
+    left = Math.max(16, Math.min(rect.left, window.innerWidth - tooltipW - 16));
+    tooltip.style.top = top + 'px';
+    tooltip.style.left = left + 'px';
+    tooltip.style.position = 'absolute';
+
+    requestAnimationFrame(() => tooltip.classList.add('visible'));
+
+    // Scroll target into view
+    target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function nextTourStep() {
+    currentTourStep++;
+    if (currentTourStep >= tourSteps.length) { endTour(); return; }
+    const tooltip = document.getElementById('tourTooltip');
+    tooltip.classList.remove('visible');
+    setTimeout(() => showTourStep(currentTourStep), 250);
+  }
+
+  function endTour() {
+    tourActive = false;
+    const tooltip = document.getElementById('tourTooltip');
+    tooltip.classList.remove('visible');
+    if (highlightedEl) { highlightedEl.classList.remove('tour-highlight'); highlightedEl = null; }
+    localStorage.setItem('ka_tour_seen', '1');
+  }
+
+  /* ══════════════════════════════════════
+     INSIGHTS PANEL
+  ══════════════════════════════════════ */
+  let insightsOpen = true;
+
+  function toggleInsights() {
+    insightsOpen = !insightsOpen;
+    document.getElementById('insightsBody').style.display = insightsOpen ? 'block' : 'none';
+    document.getElementById('insightsToggleLabel').textContent = insightsOpen ? '▲ Collapse' : '▼ Expand';
+  }
+
+  function showInsightsPanel(c, opfLt, batLt, opfPce, batPce, batWip, ltSave, wipSave) {
+    const panel = document.getElementById('insightsPanel');
+    panel.classList.add('visible');
+
+    const ltDiff = (batLt - opfLt).toFixed(1);
+    const firstOutDiff = batchFirstTick && opfFirstTick ? batchFirstTick - opfFirstTick : '?';
+
+    document.getElementById('insightCardsGrid').innerHTML = `
+      <div class="insight-card">
+        <div class="insight-card-title">
+          Lead time gap
+          <span class="insight-badge green">OPF wins</span>
+        </div>
+        <p>One-piece flow completed in <strong>${opfLt.toFixed(1)}s</strong> vs batch at <strong>${batLt.toFixed(1)}s</strong> — a difference of <strong>${ltDiff}s (${ltSave}% faster)</strong>. This gap came entirely from queue time. Both systems had identical process time per unit: <strong>${(c.processTime * c.steps).toFixed(1)}s</strong>. The extra <strong>${ltDiff}s</strong> in batch was pure waiting.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-card-title">
+          Process Cycle Efficiency
+          <span class="insight-badge green">OPF wins</span>
+        </div>
+        <p>OPF achieved a PCE of <strong>${opfPce}%</strong> vs batch at <strong>${batPce}%</strong>. This means batch spent <strong>${100 - batPce}%</strong> of its total time on non-value-added activity — mostly waiting in queues between steps. For every second of real work in the batch system, there was <strong>${((100 - batPce) / batPce).toFixed(1)}s</strong> of waste.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-card-title">
+          WIP comparison
+          <span class="insight-badge amber">Batch carries ${batWip}×</span>
+        </div>
+        <p>Batch carried <strong>${batWip} units</strong> of WIP in the system simultaneously, vs <strong>1 unit</strong> in OPF — a <strong>${wipSave}% reduction</strong>. Under Little's Law (Lead Time = WIP ÷ Throughput), this directly explains the lead time gap. Every one of those <strong>${batWip - 1}</strong> extra units in WIP represents cash tied up and a defect waiting to be found late.</p>
+      </div>
+      <div class="insight-card">
+        <div class="insight-card-title">
+          First unit out
+          <span class="insight-badge green">OPF delivered first</span>
+        </div>
+        <p>OPF delivered its first completed unit at tick <strong>${opfFirstTick || '—'}</strong>, batch at tick <strong>${batchFirstTick || '—'}</strong>. Batch couldn't release anything until the <em>entire</em> first batch had cleared all <strong>${c.steps} steps</strong> — even though the first unit was done much earlier. In customer terms, OPF gets products to market <strong>${typeof firstOutDiff === 'number' ? firstOutDiff + ' ticks' : 'significantly'}</strong> sooner.</p>
+      </div>
+    `;
+
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+
+  /* ── Simulation ── */
+  let simInterval = null, tick = 0;
+  let opfDone = 0, batchDone = 0;
+  let opfFirstTick = null, batchFirstTick = null;
+  let opfCompleteTick = null, batchCompleteTick = null;
+  let opfState = { phase: 'process', step: 0, timer: 0 };
+  let batState = { phase: 'fill', fillCount: 0, step: 0, timer: 0, unitsInBatch: 0 };
+
+  function cfg() {
+    return {
+      batchSize:   +document.getElementById('bsSlider').value,
+      steps:       +document.getElementById('stSlider').value,
+      processTime: +document.getElementById('ptSlider').value,
+      queueTime:   +document.getElementById('qtSlider').value,
+      totalUnits:  +document.getElementById('upSlider').value,
+      speed:       +document.getElementById('speedSlider').value
+    };
+  }
+
+  function onCfgChange() {
+    const c = cfg();
+    document.getElementById('bsDisp').textContent = c.batchSize;
+    document.getElementById('stDisp').textContent = c.steps;
+    document.getElementById('ptDisp').textContent = c.processTime;
+    document.getElementById('qtDisp').textContent = c.queueTime;
+    document.getElementById('upDisp').textContent = c.totalUnits;
+    buildDOM(); updatePCE(); updateMetrics();
+  }
+
+  document.getElementById('speedSlider').oninput = function () {
+    document.getElementById('speedLabel').textContent = this.value + '×';
+    if (simInterval) { stopSim(); startSim(); }
+  };
+
+  function buildDOM() {
+    const c = cfg();
+    ['opfSteps','batchSteps'].forEach((id, isB) => {
+      const el = document.getElementById(id);
+      el.innerHTML = '';
+      for (let i = 0; i < c.steps; i++) {
+        const col = document.createElement('div');
+        col.className = 'step-col';
+        col.innerHTML = `<div class="step-label">Step ${i+1}</div><div class="step-box" id="${isB?'b':'o'}box${i}"></div>` +
+          (isB ? `<div class="queue-area" id="bq${i}"></div>` : '');
+        el.appendChild(col);
+      }
+    });
+  }
+
+  function resetSim() {
+    stopSim();
+    tick = opfDone = batchDone = 0;
+    opfFirstTick = batchFirstTick = opfCompleteTick = batchCompleteTick = null;
+    opfState = { phase: 'process', step: 0, timer: 0 };
+    batState = { phase: 'fill', fillCount: 0, step: 0, timer: 0, unitsInBatch: 0 };
+    buildDOM();
+    ['opfOutput','batchOutput'].forEach(id => document.getElementById(id).innerHTML = '');
+    ['opfLT','batchLT'].forEach(id => document.getElementById(id).textContent = '—');
+    ['opfPceBar','batPceBar','opfNvaBar','batNvaBar'].forEach(id => document.getElementById(id).style.width = '0%');
+    ['opfPceLbl','batPceLbl'].forEach(id => document.getElementById(id).textContent = 'PCE: —%');
+    document.getElementById('opfCount').textContent = '0 done';
+    document.getElementById('batchCount').textContent = '0 done';
+    document.getElementById('ticker').innerHTML = 'Press <span class="hi">▶ Run</span> to start — watch units move through both production systems in real time';
+    document.getElementById('startBtn').classList.add('active');
+    document.getElementById('insightsPanel').classList.remove('visible');
+    updatePCE(); updateMetrics();
+  }
+
+  function startSim() {
+    if (simInterval) clearInterval(simInterval);
+    const interval = Math.round(320 / cfg().speed);
+    simInterval = setInterval(simStep, interval);
+    document.getElementById('startBtn').classList.add('active');
+    document.getElementById('ticker').innerHTML = `Tick <span class="go">0</span> — simulation running...`;
+  }
+
+  function stopSim() {
+    if (simInterval) { clearInterval(simInterval); simInterval = null; }
+    document.getElementById('startBtn').classList.remove('active');
+  }
+
+  function simStep() {
+    tick++;
+    const c = cfg();
+    const ptT = Math.max(2, c.processTime * 2);
+    const qtT = Math.max(1, c.queueTime);
+
+    document.getElementById('ticker').innerHTML =
+      `Tick <span class="go">${tick}</span> &nbsp;·&nbsp; OPF: <span class="go">${opfDone}/${c.totalUnits}</span> done &nbsp;·&nbsp; Batch: <span class="warn">${batchDone}/${c.totalUnits}</span> done`;
+
+    // OPF
+    if (opfDone < c.totalUnits) {
+      opfState.timer++;
+      if (opfState.phase === 'process') {
+        setBox('obox' + opfState.step, 'opf', 1);
+        if (opfState.timer >= ptT) {
+          opfState.timer = 0;
+          setBox('obox' + opfState.step, 'none', 0);
+          opfState.step++;
+          if (opfState.step >= c.steps) {
+            opfState.step = 0; opfDone++;
+            if (opfFirstTick === null) opfFirstTick = tick;
+            if (opfDone === c.totalUnits) { opfCompleteTick = tick; document.getElementById('opfLT').textContent = calcLT(c, false); }
+            addOut('opfOutput', 'opf-out');
+            clearSteps('o', c.steps);
+            document.getElementById('opfCount').textContent = opfDone + ' done';
+            opfState.phase = c.queueTime > 0 ? 'queue' : 'process';
+          } else {
+            opfState.phase = c.queueTime > 0 ? 'queue' : 'process';
+          }
+        }
+      } else {
+        if (opfState.timer >= Math.max(1, Math.ceil(qtT * 0.25))) { opfState.timer = 0; opfState.phase = 'process'; }
+      }
+    }
+
+    // Batch
+    if (batchDone < c.totalUnits) {
+      batState.timer++;
+      const fillRate = Math.max(1, Math.floor(ptT / 3));
+      if (batState.phase === 'fill') {
+        if (batState.timer % fillRate === 0 && batState.fillCount < c.batchSize) {
+          batState.fillCount++;
+          setQueue(0, batState.fillCount);
+        }
+        if (batState.fillCount >= c.batchSize) {
+          batState.phase = 'process'; batState.step = 0; batState.timer = 0;
+          batState.unitsInBatch = c.batchSize;
+          setQueue(0, 0);
+          setBox('bbox' + batState.step, 'batch', batState.unitsInBatch);
+        }
+      } else if (batState.phase === 'process') {
+        setBox('bbox' + batState.step, 'batch', batState.unitsInBatch);
+        if (batState.timer >= ptT) {
+          batState.timer = 0;
+          setBox('bbox' + batState.step, 'none', 0);
+          batState.step++;
+          if (batState.step >= c.steps) {
+            batState.phase = 'output';
+          } else {
+            if (c.queueTime > 0) { batState.phase = 'bqueue'; setQueue(batState.step, batState.unitsInBatch); }
+            else { setBox('bbox' + batState.step, 'batch', batState.unitsInBatch); }
+          }
+        }
+      } else if (batState.phase === 'bqueue') {
+        if (batState.timer >= Math.max(1, qtT * Math.min(batState.unitsInBatch, 4))) {
+          batState.timer = 0; setQueue(batState.step, 0);
+          batState.phase = 'process';
+          setBox('bbox' + batState.step, 'batch', batState.unitsInBatch);
+        }
+      } else if (batState.phase === 'output') {
+        const toAdd = Math.min(batState.unitsInBatch, c.totalUnits - batchDone);
+        for (let i = 0; i < toAdd; i++) { batchDone++; addOut('batchOutput', 'batch-out'); }
+        if (batchFirstTick === null && toAdd > 0) batchFirstTick = tick;
+        if (batchDone >= c.totalUnits) { batchCompleteTick = tick; document.getElementById('batchLT').textContent = calcLT(c, true); }
+        document.getElementById('batchCount').textContent = batchDone + ' done';
+        batState.fillCount = 0; batState.unitsInBatch = 0; batState.step = 0;
+        batState.phase = batchDone < c.totalUnits ? 'fill' : 'done';
+        clearSteps('b', c.steps);
+      }
+    }
+
+    updatePCE(); updateMetrics();
+
+    if (opfDone >= c.totalUnits && batchDone >= c.totalUnits) {
+      stopSim();
+      const opfWon = (opfCompleteTick || 9999) <= (batchCompleteTick || 9999);
+      const diff = Math.abs((opfCompleteTick || 0) - (batchCompleteTick || 0));
+      document.getElementById('ticker').innerHTML =
+        `✓ Complete — <span class="hi">OPF finished ${opfWon ? 'FIRST' : 'second'}</span> &nbsp;·&nbsp; OPF: tick ${opfCompleteTick} &nbsp;·&nbsp; Batch: tick ${batchCompleteTick} &nbsp;·&nbsp; Gap: <span class="${opfWon ? 'go' : 'warn'}">${diff} ticks</span> — scroll down for full analysis ↓`;
+
+      // Show insights panel with computed values
+      const va = c.processTime * c.steps;
+      const opfLt = va + c.queueTime * 0.2 * c.steps;
+      const batLt = va + c.queueTime * c.batchSize * c.steps;
+      const opfPce = opfLt > 0 ? Math.round(va / opfLt * 100) : 100;
+      const batPce = batLt > 0 ? Math.round(va / batLt * 100) : 100;
+      const batWip = c.batchSize * c.steps;
+      const ltSave = batLt > 0 ? Math.round((batLt - opfLt) / batLt * 100) : 0;
+      const wipSave = Math.round((batWip - 1) / batWip * 100);
+      setTimeout(() => showInsightsPanel(c, opfLt, batLt, opfPce, batPce, batWip, ltSave, wipSave), 800);
+    }
+  }
+
+  function calcLT(c, isBatch) {
+    if (isBatch) return ((c.processTime * c.steps) + (c.queueTime * c.batchSize * c.steps)).toFixed(1) + 's';
+    return ((c.processTime * c.steps) + (c.queueTime * 0.2 * c.steps)).toFixed(1) + 's';
+  }
+
+  function setBox(id, type, count) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (type === 'opf') {
+      el.className = 'step-box active';
+      el.innerHTML = count > 0 ? `<div class="unit-dot opf-dot"></div><span class="unit-count">×1</span>` : '';
+    } else if (type === 'batch') {
+      el.className = 'step-box active-batch';
+      const show = Math.min(count, 5);
+      let h = '';
+      for (let i = 0; i < show; i++) h += `<div class="unit-dot batch-dot" style="animation-delay:${i*0.1}s"></div>`;
+      if (count > 5) h += `<span class="unit-count">+${count-5}</span>`;
+      el.innerHTML = h;
+    } else {
+      el.className = 'step-box'; el.innerHTML = '';
+    }
+  }
+
+  function setQueue(step, count) {
+    const el = document.getElementById('bq' + step);
+    if (!el) return;
+    el.innerHTML = '';
+    const show = Math.min(count, 16);
+    for (let i = 0; i < show; i++) {
+      const d = document.createElement('div');
+      d.className = 'q-dot';
+      d.style.animationDelay = (i * 0.02) + 's';
+      el.appendChild(d);
+    }
+    if (count > 16) {
+      const s = document.createElement('span');
+      s.className = 'q-more'; s.textContent = '+' + (count-16);
+      el.appendChild(s);
+    }
+  }
+
+  function clearSteps(pre, steps) {
+    for (let i = 0; i < steps; i++) {
+      const b = document.getElementById(pre + 'box' + i);
+      if (b) { b.className = 'step-box'; b.innerHTML = ''; }
+      if (pre === 'b') { const q = document.getElementById('bq' + i); if (q) q.innerHTML = ''; }
+    }
+  }
+
+  function addOut(id, cls) {
+    const el = document.getElementById(id);
+    const d = document.createElement('div');
+    d.className = 'out-unit ' + cls;
+    el.appendChild(d);
+    while (el.children.length > 26) el.removeChild(el.firstChild);
+  }
+
+  function updatePCE() {
+    const c = cfg();
+    const va = c.processTime * c.steps;
+    const opfLt = va + c.queueTime * 0.2 * c.steps;
+    const batLt = va + c.queueTime * c.batchSize * c.steps;
+    const opfPce = opfLt > 0 ? Math.round(va / opfLt * 100) : 100;
+    const batPce = batLt > 0 ? Math.round(va / batLt * 100) : 100;
+    const opfNva = Math.min(100-opfPce, Math.round((100-opfPce) * 0.6));
+    const batNva = Math.min(100-batPce, Math.round((100-batPce) * 0.75));
+    document.getElementById('opfPceBar').style.width = opfPce + '%';
+    document.getElementById('opfNvaBar').style.width = opfNva + '%';
+    document.getElementById('batPceBar').style.width = batPce + '%';
+    document.getElementById('batNvaBar').style.width = batNva + '%';
+    document.getElementById('opfPceLbl').textContent = 'PCE: ' + opfPce + '%';
+    document.getElementById('batPceLbl').textContent = 'PCE: ' + batPce + '%';
+  }
+
+  function updateMetrics() {
+    const c = cfg();
+    const va = c.processTime * c.steps;
+    const opfLt = va + c.queueTime * 0.2 * c.steps;
+    const batLt = va + c.queueTime * c.batchSize * c.steps;
+    const opfPce = opfLt > 0 ? Math.round(va / opfLt * 100) : 100;
+    const batPce = batLt > 0 ? Math.round(va / batLt * 100) : 100;
+    const batWip = c.batchSize * c.steps;
+    const ltSave = batLt > 0 ? Math.round((batLt - opfLt) / batLt * 100) : 0;
+    const wipSave = Math.round((batWip - 1) / batWip * 100);
+    const defs = [
+      { label: 'Lead Time',     opf: opfLt.toFixed(1)+'s', bat: batLt.toFixed(1)+'s', ob: opfLt <= batLt },
+      { label: 'PCE',           opf: opfPce+'%',           bat: batPce+'%',           ob: opfPce >= batPce },
+      { label: 'WIP Units',     opf: '1 unit',             bat: batWip+' units',      ob: true },
+      { label: 'First Out',     opf: opfFirstTick ? 't'+opfFirstTick : '—', bat: batchFirstTick ? 't'+batchFirstTick : '—', ob: opfFirstTick !== null && (batchFirstTick === null || opfFirstTick <= batchFirstTick) },
+      { label: 'LT Reduction',  opf: ltSave+'%',           bat: '—',                 ob: true },
+      { label: 'WIP Reduction', opf: wipSave+'%',          bat: '—',                 ob: true },
+    ];
+    document.getElementById('metricsStrip').innerHTML = defs.map(d => `
+      <div class="met-card">
+        <div class="met-label">${d.label}</div>
+        <div class="met-row"><span class="met-tag opf">OPF</span><span class="met-num ${d.ob ? 'better' : ''}">${d.opf}</span></div>
+        <div class="met-row"><span class="met-tag bat">BATCH</span><span class="met-num ${!d.ob ? 'better' : 'worse'}">${d.bat}</span></div>
+      </div>`).join('');
+  }
+
+  buildDOM(); onCfgChange();
+</script>
+</body>
+</html>

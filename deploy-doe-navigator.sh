@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # DOE Navigator Deployment Script
-# Automatically builds and deploys the DOE Navigator to the toolkit
+# Automatically builds and deploys the DOE Navigator to root level
 
 echo "🚀 Starting DOE Navigator Deployment..."
 
@@ -21,14 +21,15 @@ if [ $? -eq 0 ]; then
     echo "✅ Build successful!"
     
     # Create deployment directory if it doesn't exist
-    mkdir -p "../toolkit/DOE-Navigator"
+    mkdir -p "../DOE-Navigator"
     
     # Copy built files to deployment directory
-    echo "📋 Copying files to toolkit..."
-    cp -r dist/* "../toolkit/DOE-Navigator/"
+    echo "📋 Copying files to root level..."
+    cp -r dist/* "../DOE-Navigator/"
     
     echo "🎉 DOE Navigator deployed successfully!"
-    echo "📍 Available at: toolkit/DOE-Navigator/"
+    echo "📍 Available at: DOE-Navigator/"
+    echo "🌐 After Vercel deploy: https://your-domain.vercel.app/DOE-Navigator/"
 else
     echo "❌ Build failed!"
     exit 1

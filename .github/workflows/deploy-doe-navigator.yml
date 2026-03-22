@@ -13,10 +13,10 @@ jobs:
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v3
       with:
         node-version: '18'
         cache: 'npm'
@@ -34,16 +34,16 @@ jobs:
         
     - name: Create deployment directory
       run: |
-        mkdir -p toolkit/DOE-Navigator
+        mkdir -p DOE-Navigator
         
     - name: Copy built files
       run: |
-        cp -r DOE-navigator/dist/* toolkit/DOE-Navigator/
+        cp -r DOE-navigator/dist/* DOE-Navigator/
         
     - name: Commit and push changes
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add toolkit/DOE-Navigator/
+        git add DOE-Navigator/
         git diff --staged --quiet || git commit -m "Auto-update DOE Navigator build"
         git push
