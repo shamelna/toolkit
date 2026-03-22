@@ -5,18 +5,18 @@
       "src": "package.json",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "."
+        "distDir": "toolkit"
       }
     }
   ],
   "routes": [
     {
       "src": "/DOE-Navigator",
-      "dest": "/DOE-Navigator/"
+      "dest": "/toolkit/DOE-Navigator/"
     },
     {
       "src": "/DOE-Navigator/(.*)",
-      "dest": "/DOE-Navigator/$1"
+      "dest": "/toolkit/DOE-Navigator/$1"
     },
     {
       "src": "/(.*)",
