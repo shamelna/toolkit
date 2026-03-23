@@ -1,15 +1,1216 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" href="https://practitioner.kaizenacademy.education/Tcia.ico" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="DOE Navigator — Design of Experiments guided by Montgomery's methodology" />
-    <title>DOE Navigator — Kaizen Academy</title>
-    <script type="module" crossorigin src="/assets/index-CTVvMI9l.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-DEl_qGr3.css">
-  </head>
-  <body>
-    <div id="root"></div>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/x-icon" href="https://practitioner.kaizenacademy.education/Tcia.ico" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kaizen Academy — Professional Toolkit Suite</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --yellow: #ffd559;
+      --yellow-dark: #e5b800;
+      --yellow-glow: rgba(255, 213, 89, 0.18);
+      --black: #0d0d0d;
+      --surface: #141414;
+      --surface-2: #1c1c1c;
+      --surface-3: #242424;
+      --border: rgba(255,255,255,0.07);
+      --text: #f0f0f0;
+      --text-muted: #888;
+      --text-dim: #555;
+      --green: #3ecf8e;
+      --blue: #4fa8ff;
+      --radius: 16px;
+      --radius-sm: 10px;
+    }
+
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* ─── HEADER ─── */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 200;
+      background: rgba(13, 13, 13, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .header-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-wrap {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      text-decoration: none;
+    }
+
+    .logo-img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      border: 1.5px solid var(--yellow);
+    }
+
+    .logo-text {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text);
+      letter-spacing: -0.01em;
+      line-height: 1.2;
+    }
+
+    .logo-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      font-weight: 400;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    nav { display: flex; align-items: center; gap: 8px; }
+
+    nav a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      transition: color 0.2s, background 0.2s;
+    }
+
+    nav a:hover { color: var(--text); background: var(--surface-2); }
+
+    .nav-cta {
+      background: var(--yellow) !important;
+      color: var(--black) !important;
+      font-weight: 600 !important;
+      padding: 8px 18px !important;
+    }
+
+    .nav-cta:hover { background: var(--yellow-dark) !important; }
+
+    /* ─── HERO ─── */
+    .hero {
+      position: relative;
+      min-height: 88vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Radial glow bg */
+    .hero-glow {
+      position: absolute;
+      width: 900px;
+      height: 900px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,213,89,0.10) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -60%);
+      pointer-events: none;
+    }
+
+    /* Animated grid */
+    .hero-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,213,89,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,213,89,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, black 40%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      max-width: 900px;
+      padding: 0 32px;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 6px 16px 6px 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .hero-badge-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 100px;
+      background: var(--yellow);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 28px;
+      animation: fadeUp 0.6s 0.1s ease both;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--yellow);
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 48px;
+      font-weight: 300;
+      animation: fadeUp 0.6s 0.2s ease both;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      animation: fadeUp 0.6s 0.3s ease both;
+    }
+
+    /* ─── BUTTONS ─── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 13px 26px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .btn-primary {
+      background: var(--yellow);
+      color: var(--black);
+    }
+
+    .btn-primary:hover {
+      background: var(--yellow-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255,213,89,0.3);
+    }
+
+    .btn-ghost {
+      background: var(--surface-2);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-ghost:hover {
+      background: var(--surface-3);
+      transform: translateY(-2px);
+    }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+      padding: 0;
+    }
+
+    .stats-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 32px;
+      display: flex;
+      align-items: stretch;
+    }
+
+    .stat-item {
+      flex: 1;
+      padding: 28px 32px;
+      text-align: center;
+      border-right: 1px solid var(--border);
+      position: relative;
+    }
+
+    .stat-item:last-child { border-right: none; }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--yellow);
+      line-height: 1;
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    /* ─── SECTION LAYOUT ─── */
+    .section {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 100px 32px;
+    }
+
+    .section-header {
+      margin-bottom: 60px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--yellow);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      color: var(--text);
+    }
+
+    .section-desc {
+      margin-top: 14px;
+      color: var(--text-muted);
+      max-width: 500px;
+      font-weight: 300;
+      font-size: 1rem;
+    }
+
+    /* ─── TOOLS GRID ─── */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .tool-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px;
+      text-decoration: none;
+      color: inherit;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+    }
+
+    .tool-card.clickable:hover {
+      border-color: rgba(255,213,89,0.4);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 48px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,213,89,0.15);
+    }
+
+    .tool-card.clickable:hover .tool-card-glow { opacity: 1; }
+
+    .tool-card-glow {
+      position: absolute;
+      top: -80px;
+      left: -80px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,213,89,0.08) 0%, transparent 70%);
+      opacity: 0;
+      transition: opacity 0.4s;
+      pointer-events: none;
+    }
+
+    .tool-card.disabled {
+      opacity: 0.5;
+      cursor: default;
+    }
+
+    .tool-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .tool-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .tool-icon.yellow { background: rgba(255,213,89,0.12); border-color: rgba(255,213,89,0.2); }
+    .tool-icon.blue   { background: rgba(79,168,255,0.1);  border-color: rgba(79,168,255,0.15); }
+
+    .tool-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .badge-live   { background: rgba(62,207,142,0.12); color: var(--green); border: 1px solid rgba(62,207,142,0.25); }
+    .badge-soon   { background: var(--surface-2); color: var(--text-dim); border: 1px solid var(--border); }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .tool-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin-bottom: 10px;
+    }
+
+    .tool-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 28px;
+      font-weight: 300;
+    }
+
+    .tool-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: auto;
+    }
+
+    .feature-pill {
+      background: var(--surface-2);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 12px;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .tool-cta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 28px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--yellow);
+      opacity: 0;
+      transform: translateX(-6px);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .tool-card.clickable:hover .tool-cta {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    /* ─── COURSES SECTION ─── */
+    .courses-bg {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .courses-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .course-card {
+      background: var(--black);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .course-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--yellow), transparent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.3s ease;
+    }
+
+    .course-card:hover {
+      border-color: rgba(255,213,89,0.25);
+      transform: translateY(-3px);
+    }
+
+    .course-card:hover::after { transform: scaleX(1); }
+
+    .course-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.7rem;
+      color: var(--yellow);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+
+    .course-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+    }
+
+    .course-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+
+    .course-link-text {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--yellow);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* ─── ABOUT SECTION ─── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-visual {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .about-visual::before {
+      content: '';
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,213,89,0.08), transparent 70%);
+    }
+
+    .about-metric {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .about-metric:last-child { border-bottom: none; }
+
+    .metric-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: rgba(255,213,89,0.1);
+      border: 1px solid rgba(255,213,89,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .metric-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .metric-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .pillar-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 36px;
+    }
+
+    .pillar-item {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .pillar-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: var(--yellow);
+      margin-top: 6px;
+      flex-shrink: 0;
+    }
+
+    .pillar-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .pillar-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      font-weight: 300;
+      line-height: 1.6;
+    }
+
+    /* ─── CTA BANNER ─── */
+    .cta-banner {
+      background: var(--yellow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(0,0,0,0.03) 20px,
+        rgba(0,0,0,0.03) 21px
+      );
+    }
+
+    .cta-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 72px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 40px;
+      position: relative;
+    }
+
+    .cta-text h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      font-weight: 800;
+      color: var(--black);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .cta-text p {
+      color: rgba(0,0,0,0.6);
+      margin-top: 10px;
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .cta-actions { display: flex; gap: 12px; flex-shrink: 0; }
+
+    .btn-dark {
+      background: var(--black);
+      color: var(--yellow);
+      padding: 13px 26px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-dark:hover {
+      background: #1a1a1a;
+      transform: translateY(-2px);
+    }
+
+    .btn-outline-dark {
+      background: transparent;
+      color: var(--black);
+      border: 2px solid rgba(0,0,0,0.25);
+      padding: 11px 24px;
+      border-radius: var(--radius-sm);
+      font-size: 0.9rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .btn-outline-dark:hover {
+      background: rgba(0,0,0,0.08);
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 64px 32px 40px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 16px;
+      font-weight: 300;
+      line-height: 1.7;
+      max-width: 280px;
+    }
+
+    .footer-col h4 {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .footer-col a {
+      display: block;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      padding: 5px 0;
+      transition: color 0.2s;
+      font-weight: 300;
+    }
+
+    .footer-col a:hover { color: var(--yellow); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-bottom p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .footer-cert {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50%       { opacity: 0.4; }
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .tools-grid    { grid-template-columns: 1fr; }
+      .courses-grid  { grid-template-columns: repeat(2, 1fr); }
+      .about-grid    { grid-template-columns: 1fr; gap: 40px; }
+      .footer-grid   { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .header-inner { padding: 0 20px; }
+      .section      { padding: 72px 20px; }
+      .stats-inner  { flex-direction: column; }
+      .stat-item    { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat-item:last-child { border-bottom: none; }
+      .courses-grid { grid-template-columns: 1fr; }
+      .cta-inner    { flex-direction: column; text-align: center; }
+      .cta-actions  { justify-content: center; }
+      .footer-grid  { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom{ flex-direction: column; gap: 12px; text-align: center; }
+      nav .nav-cta  { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── HEADER ─── -->
+<header class="header">
+  <div class="header-inner">
+    <a href="#" class="logo-wrap">
+      <img src="https://practitioner.kaizenacademy.education/Tcia.ico" alt="Kaizen Academy" class="logo-img">
+      <div>
+        <div class="logo-text">Kaizen Academy</div>
+        <div class="logo-sub">Toolkit Suite</div>
+      </div>
+    </a>
+    <nav>
+      <a href="#tools">Tools</a>
+      <a href="#courses">Courses</a>
+      <a href="#about">About</a>
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank" class="btn nav-cta">Get Certified</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <span class="hero-badge-dot">⚡</span>
+      Professional Continuous Improvement Tools — Free to Use
+    </div>
+    <h1>The Lean Practitioner's<br><em>Toolkit Suite</em></h1>
+    <p class="hero-sub">Professional-grade tools for Value Stream Mapping, Quality Control, and Toyota Production System practitioners. Built on proven methodologies.</p>
+    <div class="hero-actions">
+      <a href="#tools" class="btn btn-primary">Explore Tools ↓</a>
+      <a href="#courses" class="btn btn-ghost">View Courses</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── STATS BAR ─── -->
+<div class="stats-bar">
+  <div class="stats-inner">
+    <div class="stat-item">
+      <span class="stat-num">5,000+</span>
+      <span class="stat-label">Learners enrolled</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">15+</span>
+      <span class="stat-label">Years of expertise</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">9+</span>
+      <span class="stat-label">Tools available</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-num">100%</span>
+      <span class="stat-label">Methodology-backed</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOOLS SECTION ─── -->
+<section id="tools" class="section">
+  <div class="section-header">
+    <span class="section-tag">Professional Toolkit</span>
+    <h2 class="section-title">Tools built for<br>real improvement work</h2>
+    <p class="section-desc">Grounded in proven Lean methodologies — from Ishikawa's QC fundamentals to Toyota's VSM principles.</p>
+  </div>
+
+  <div class="tools-grid">
+
+    <!-- 7 QC Tools -->
+    <a href="7-QC-Tools/" class="tool-card clickable" target="_blank">
+      <div class="tool-card-glow"></div>
+      <div class="tool-header">
+        <div class="tool-icon yellow">📊</div>
+        <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
+      </div>
+      <div class="tool-name">7 QC Tools</div>
+      <div class="tool-desc">The complete Ishikawa quality control toolkit. From Pareto analysis to control charts — everything you need to diagnose and resolve quality problems scientifically.</div>
+      <div class="tool-features">
+        <span class="feature-pill">Histogram & Cpk</span>
+        <span class="feature-pill">Fishbone Diagram</span>
+        <span class="feature-pill">Pareto Analysis</span>
+        <span class="feature-pill">Control Charts (SPC)</span>
+        <span class="feature-pill">Scatter Diagrams</span>
+        <span class="feature-pill">Check Sheets</span>
+        <span class="feature-pill">PDF Reports</span>
+      </div>
+      <div class="tool-cta">Open Tool →</div>
+    </a>
+
+    <!-- VSM Calculator -->
+    <a href="VSM/" class="tool-card clickable" target="_blank">
+      <div class="tool-card-glow"></div>
+      <div class="tool-header">
+        <div class="tool-icon blue">🗺️</div>
+        <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
+      </div>
+      <div class="tool-name">VSM Calculator</div>
+      <div class="tool-desc">Full Value Stream Mapping calculator based on "Learning to See." Calculate takt time, flow efficiency, kanban quantities, and production lead time with professional reporting.</div>
+      <div class="tool-features">
+        <span class="feature-pill">Takt Time</span>
+        <span class="feature-pill">Days of Supply</span>
+        <span class="feature-pill">Process Capacity</span>
+        <span class="feature-pill">Kanban Calc</span>
+        <span class="feature-pill">Value-Added Ratio</span>
+        <span class="feature-pill">Formulas Guide</span>
+      </div>
+      <div class="tool-cta">Open Tool →</div>
+    </a>
+
+    <!-- DOE Navigator -->
+    <a href="DOE-Navigator/" class="tool-card clickable" target="_blank">
+      <div class="tool-card-glow"></div>
+      <div class="tool-header">
+        <div class="tool-icon blue">🧪</div>
+        <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
+      </div>
+      <div class="tool-name">DOE Navigator</div>
+      <div class="tool-desc">Complete Design of Experiments wizard with 7-stage methodology. From problem definition through analysis, based on Montgomery's DOE framework and statistical best practices.</div>
+      <div class="tool-features">
+        <span class="feature-pill">7-Stage Wizard</span>
+        <span class="feature-pill">Design Recommendation</span>
+        <span class="feature-pill">Statistical Analysis</span>
+        <span class="feature-pill">ANOVA & Effects</span>
+        <span class="feature-pill">Response Surface</span>
+        <span class="feature-pill">Montgomery Framework</span>
+      </div>
+      <div class="tool-cta">Open Tool →</div>
+    </a>
+
+    <!-- Flow Simulation -->
+    <a href="Flow Simulation/" class="tool-card clickable" target="_blank">
+      <div class="tool-card-glow"></div>
+      <div class="tool-header">
+        <div class="tool-icon green">⚡</div>
+        <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
+      </div>
+      <div class="tool-name">Flow Simulation</div>
+      <div class="tool-desc">Interactive simulation comparing one-piece flow vs batch processing. Visualize the impact of flow efficiency on lead time, work-in-progress, and throughput with real-time animations.</div>
+      <div class="tool-features">
+        <span class="feature-pill">One-Piece Flow</span>
+        <span class="feature-pill">Batch Processing</span>
+        <span class="feature-pill">Lead Time Analysis</span>
+        <span class="feature-pill">WIP Visualization</span>
+        <span class="feature-pill">Throughput Metrics</span>
+        <span class="feature-pill">Real-time Animation</span>
+      </div>
+      <div class="tool-cta">Open Tool →</div>
+    </a>
+
+    <!-- Kaizen Sensei -->
+    <div class="tool-card disabled">
+      <div class="tool-header">
+        <div class="tool-icon">🎓</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </div>
+      <div class="tool-name">Kaizen Academy Sensei</div>
+      <div class="tool-desc">An AI-powered lean manufacturing assistant grounded in Toyota Production System principles. Your on-demand sensei for problem-solving guidance and continuous improvement coaching.</div>
+      <div class="tool-features">
+        <span class="feature-pill">Interactive Chat</span>
+        <span class="feature-pill">TPS Principles</span>
+        <span class="feature-pill">Problem Guidance</span>
+      </div>
+    </div>
+
+    <!-- TPM Calculator -->
+    <div class="tool-card disabled">
+      <div class="tool-header">
+        <div class="tool-icon">⚙️</div>
+        <span class="tool-badge badge-soon">Coming Soon</span>
+      </div>
+      <div class="tool-name">TPM Calculator</div>
+      <div class="tool-desc">Total Productive Maintenance calculator for OEE analysis, MTBF/MTTR calculations, equipment reliability, and loss analysis with preventive maintenance scheduling tools.</div>
+      <div class="tool-features">
+        <span class="feature-pill">OEE Analysis</span>
+        <span class="feature-pill">MTBF / MTTR</span>
+        <span class="feature-pill">Reliability Metrics</span>
+        <span class="feature-pill">Loss Analysis</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ─── COURSES SECTION ─── -->
+<div class="courses-bg" id="courses">
+  <section class="section" style="padding-top: 80px; padding-bottom: 80px;">
+    <div class="section-header">
+      <span class="section-tag">Academy Courses</span>
+      <h2 class="section-title">Go deeper with structured learning</h2>
+      <p class="section-desc">Self-paced courses with lifetime access, downloadable templates, and certificates by Kaizen Academy Australia.</p>
+    </div>
+
+    <div class="courses-grid">
+
+      <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank" class="course-card">
+        <div class="course-num">Course 01</div>
+        <div class="course-name">TPS & Lean Fundamentals</div>
+        <div class="course-desc">Master the Toyota Production System, the pillars of Just-In-Time and Jidoka, and the foundational principles of Lean thinking.</div>
+        <div class="course-link-text">Enrol with 20% off →</div>
+      </a>
+
+      <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20" target="_blank" class="course-card">
+        <div class="course-num">Course 02</div>
+        <div class="course-name">Value Stream Mapping</div>
+        <div class="course-desc">Learn to map current state processes, identify waste, and design future state value streams that flow on customer demand.</div>
+        <div class="course-link-text">Enrol with 20% off →</div>
+      </a>
+
+      <a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20" target="_blank" class="course-card">
+        <div class="course-num">Course 03</div>
+        <div class="course-name">Scientific Problem Solving</div>
+        <div class="course-desc">Apply A3 thinking and the 7 QC tools to solve problems at their root cause using structured, data-driven methods.</div>
+        <div class="course-link-text">Enrol with 20% off →</div>
+      </a>
+
+      <a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20" target="_blank" class="course-card">
+        <div class="course-num">Course 04</div>
+        <div class="course-name">Business Process Management</div>
+        <div class="course-desc">Map, analyse, and redesign service and administrative processes to eliminate waste and create measurable improvement using A3 and BPM tools.</div>
+        <div class="course-link-text">Enrol with 20% off →</div>
+      </a>
+
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank" class="course-card" style="background: rgba(255,213,89,0.04); border-color: rgba(255,213,89,0.2);">
+        <div class="course-num" style="color: var(--yellow);">🏆 Certification</div>
+        <div class="course-name">Lean Practitioner Certification</div>
+        <div class="course-desc">The complete bundle: TPS, VSM, Scientific Problem Solving, project coaching, and a rigorous certification exam. Certificates issued by Kaizen Academy Australia.</div>
+        <div class="course-link-text">Get certified with 20% off →</div>
+      </a>
+
+    </div>
+  </section>
+</div>
+
+<!-- ─── ABOUT SECTION ─── -->
+<section id="about" class="section">
+  <div class="about-grid">
+    <div>
+      <span class="section-tag">About the Academy</span>
+      <h2 class="section-title">15 years of Lean expertise, built into every course</h2>
+      <ul class="pillar-list">
+        <li class="pillar-item">
+          <div class="pillar-dot"></div>
+          <div>
+            <div class="pillar-title">Expert Instructors</div>
+            <div class="pillar-desc">Lean Six Sigma Black Belt and Master Black Belt certified practitioners with over 15 years of real-world manufacturing and operational excellence experience.</div>
+          </div>
+        </li>
+        <li class="pillar-item">
+          <div class="pillar-dot"></div>
+          <div>
+            <div class="pillar-title">Trusted, Primary Sources</div>
+            <div class="pillar-desc">All content references authentic, primary sources — from Toyota's original TPS literature to Ishikawa's foundational quality work. No watered-down theory.</div>
+          </div>
+        </li>
+        <li class="pillar-item">
+          <div class="pillar-dot"></div>
+          <div>
+            <div class="pillar-title">Actionable from Day One</div>
+            <div class="pillar-desc">Every course ships with downloadable templates, practical exercises, and one-to-one project coaching so you apply learning immediately.</div>
+          </div>
+        </li>
+        <li class="pillar-item">
+          <div class="pillar-dot"></div>
+          <div>
+            <div class="pillar-title">Council for Six Sigma Certified</div>
+            <div class="pillar-desc">The Continuous Improvement Academy is a registered provider with the Council for Six Sigma Certification. Certificates issued by Kaizen Academy Australia.</div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="about-visual">
+      <div class="about-metric">
+        <div class="metric-icon">👥</div>
+        <div>
+          <div class="metric-num">5,000+</div>
+          <div class="metric-label">Learners across manufacturing, healthcare, finance & services</div>
+        </div>
+      </div>
+      <div class="about-metric">
+        <div class="metric-icon">🎓</div>
+        <div>
+          <div class="metric-num">4 Courses</div>
+          <div class="metric-label">From TPS fundamentals to full Lean Practitioner Certification</div>
+          <div class="metric-label">Access, updates, and project coaching support</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA BANNER ─── -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <h2>Ready to become a certified<br>Lean Practitioner?</h2>
+      <p>Join 5,000+ professionals. Save 20% with code KAIZEN20.</p>
+    </div>
+    <div class="cta-actions">
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank" class="btn-dark">Get Certified →</a>
+      <a href="https://www.linkedin.com/company/theciacademy" target="_blank" class="btn-outline-dark">Follow on LinkedIn</a>
+    </div>
+  </div>
+</div>
+
+<!-- ─── FOOTER ─── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo-wrap" style="text-decoration:none;">
+          <img src="https://practitioner.kaizenacademy.education/Tcia.ico" alt="Kaizen Academy" class="logo-img">
+          <div>
+            <div class="logo-text">Kaizen Academy</div>
+            <div class="logo-sub">Continuous Improvement Academy</div>
+          </div>
+        </a>
+        <p>Empowering individuals and organisations to achieve real results through Lean, TPS, and continuous improvement. Keep moving forward.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Tools</h4>
+        <a href="7-QC-Tools/" target="_blank">7 QC Tools</a>
+        <a href="VSM/" target="_blank">VSM Calculator</a>
+        <a href="DOE-Navigator/" target="_blank">DOE Navigator</a>
+        <a href="Flow Simulation/" target="_blank">Flow Simulation</a>
+        <a href="#">TPM Calculator (Soon)</a>
+        <a href="#">Sensei AI (Soon)</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Courses</h4>
+        <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">TPS & Lean Fundamentals</a>
+        <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20" target="_blank">Value Stream Mapping</a>
+        <a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20" target="_blank">Scientific Problem Solving</a>
+        <a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20" target="_blank">Business Process Mgmt</a>
+        <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank">Lean Practitioner Cert.</a>
+      </div>
+
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="https://www.linkedin.com/company/theciacademy" target="_blank">LinkedIn</a>
+        <a href="https://www.youtube.com/@ContinuousImprovementAcademy" target="_blank">YouTube</a>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>© 2026 Kaizen Academy Pty Ltd — The Continuous Improvement Academy. All rights reserved.</p>
+      <div class="footer-cert">🏅 Certificates issued by Kaizen Academy Australia · Council for Six Sigma Certification registered provider</div>
+    </div>
+  </div>
+</footer>
+
+</body>
 </html>
