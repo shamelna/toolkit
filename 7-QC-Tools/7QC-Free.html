@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Free Access: 7 Quality Tools Interactive App | Kaizen Academy</title>
+  <link rel="icon" href="http://practitioner.kaizenacademy.education/Tcia.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --yellow: #ffd559;
+      --yellow-dark: #e6be3e;
+      --black: #0d0d0d;
+      --dark: #1a1a1a;
+      --mid: #2e2e2e;
+      --grey: #8a8a8a;
+      --light: #f5f5f0;
+      --white: #ffffff;
+      --font-display: 'Syne', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+      --transition: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--white);
+      color: var(--black);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ─── HEADER ─────────────────────────────────────── */
+    .ka-header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--black);
+      border-bottom: 2px solid var(--yellow);
+    }
+
+    .ka-header__bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .ka-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .ka-logo img {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px solid var(--yellow);
+      object-fit: cover;
+    }
+
+    .ka-logo__text { display: flex; flex-direction: column; line-height: 1; }
+
+    .ka-logo__name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: var(--white);
+      letter-spacing: -0.02em;
+    }
+
+    .ka-logo__name span { color: var(--yellow); }
+
+    .ka-logo__tagline {
+      font-size: 0.62rem;
+      font-weight: 300;
+      color: var(--grey);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .ka-nav { display: flex; align-items: center; gap: 0.25rem; }
+
+    .ka-nav a {
+      font-family: var(--font-body);
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: #ccc;
+      text-decoration: none;
+      padding: 0.45rem 0.85rem;
+      border-radius: 6px;
+      transition: color var(--transition), background var(--transition);
+      white-space: nowrap;
+    }
+
+    .ka-nav a:hover { color: var(--yellow); background: rgba(255,213,89,0.08); }
+
+    .ka-header__cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--yellow);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-decoration: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: 6px;
+      border: 2px solid var(--yellow);
+      transition: background var(--transition), color var(--transition), border-color var(--transition);
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .ka-header__cta:hover { background: transparent; color: var(--yellow); }
+
+    .ka-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0.4rem;
+      background: none;
+      border: none;
+    }
+
+    .ka-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      border-radius: 2px;
+      transition: transform var(--transition), opacity var(--transition);
+    }
+
+    .ka-mobile-nav {
+      display: none;
+      flex-direction: column;
+      background: var(--dark);
+      border-top: 1px solid #2e2e2e;
+      padding: 1rem 2rem 1.5rem;
+      gap: 0.25rem;
+    }
+
+    .ka-mobile-nav a {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: #ccc;
+      text-decoration: none;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid #2e2e2e;
+      transition: color var(--transition);
+    }
+
+    .ka-mobile-nav a:last-child { border-bottom: none; }
+    .ka-mobile-nav a:hover { color: var(--yellow); }
+    .ka-mobile-nav .ka-header__cta { margin-top: 0.75rem; justify-content: center; }
+    .ka-mobile-nav.open { display: flex; }
+
+    /* ─── HERO SECTION ───────────────────────────────── */
+    .hero {
+      background: var(--black);
+      position: relative;
+      overflow: hidden;
+      padding: 5rem 2rem 4rem;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(255,213,89,0.08) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    /* subtle grid texture */
+    .hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,213,89,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,213,89,0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .hero__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 4rem;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero__badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,213,89,0.12);
+      border: 1px solid rgba(255,213,89,0.3);
+      border-radius: 100px;
+      padding: 0.35rem 0.9rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--yellow);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero__badge::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--yellow);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero__title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero__title em {
+      font-style: normal;
+      color: var(--yellow);
+    }
+
+    .hero__subtitle {
+      font-size: 1.05rem;
+      color: #aaa;
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 2rem;
+    }
+
+    /* Tool pills */
+    .hero__tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .hero__tool-pill {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      padding: 0.4rem 0.75rem;
+      font-size: 0.8rem;
+      color: #ddd;
+      font-weight: 500;
+    }
+
+    .hero__tool-pill span {
+      color: var(--yellow);
+      font-weight: 700;
+      font-size: 0.75rem;
+    }
+
+    /* ─── FORM CARD ───────────────────────────────────── */
+    .form-card {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 2.25rem 2rem;
+      box-shadow: 0 0 0 1px rgba(255,213,89,0.2), 0 24px 60px rgba(0,0,0,0.5);
+      position: relative;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--yellow);
+      border-radius: 16px 16px 0 0;
+    }
+
+    .form-card__eyebrow {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--grey);
+      margin-bottom: 0.5rem;
+    }
+
+    .form-card__title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--black);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-card__desc {
+      font-size: 0.88rem;
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ConvertKit form overrides — Kaizen branded */
+
+    /* Force the form to stay in document flow inside the card */
+    #ck-form-wrapper,
+    #ck-form-wrapper > div,
+    .formkit-form,
+    [data-uid="576e39ab8d"] {
+      position: static !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      left: auto !important;
+      right: auto !important;
+      top: auto !important;
+      bottom: auto !important;
+      transform: none !important;
+      margin: 0 !important;
+    }
+
+    .formkit-form[data-uid="576e39ab8d"] {
+      background: transparent !important;
+      padding: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      font-family: var(--font-body) !important;
+    }
+
+    /* Hide CK's own header/subheader — we have our own */
+    .formkit-form[data-uid="576e39ab8d"] .formkit-header,
+    .formkit-form[data-uid="576e39ab8d"] .formkit-subheader,
+    .formkit-form[data-uid="576e39ab8d"] .formkit-guarantee,
+    .formkit-form[data-uid="576e39ab8d"] .formkit-powered-by-convertkit-container,
+    .formkit-form[data-uid="576e39ab8d"] .formkit-alert {
+      display: none !important;
+    }
+
+    /* Inputs */
+    .formkit-form[data-uid="576e39ab8d"] .formkit-input,
+    .formkit-form[data-uid="576e39ab8d"] input[type="text"],
+    .formkit-form[data-uid="576e39ab8d"] input[type="email"] {
+      border: 1.5px solid #e0e0e0 !important;
+      border-radius: 8px !important;
+      padding: 0.75rem 1rem !important;
+      font-size: 0.92rem !important;
+      font-family: var(--font-body) !important;
+      background: #fafafa !important;
+      color: var(--black) !important;
+      width: 100% !important;
+      box-shadow: none !important;
+      margin-bottom: 0.65rem !important;
+    }
+
+    .formkit-form[data-uid="576e39ab8d"] .formkit-input:focus,
+    .formkit-form[data-uid="576e39ab8d"] input:focus {
+      border-color: var(--yellow) !important;
+      box-shadow: 0 0 0 3px rgba(255,213,89,0.15) !important;
+      outline: none !important;
+      background: #fff !important;
+    }
+
+    /* Submit button */
+    .formkit-form[data-uid="576e39ab8d"] .formkit-submit,
+    .formkit-form[data-uid="576e39ab8d"] button[data-element="submit"],
+    .formkit-form[data-uid="576e39ab8d"] [data-element="submit"] {
+      background: var(--yellow) !important;
+      color: var(--black) !important;
+      font-family: var(--font-display) !important;
+      font-weight: 800 !important;
+      font-size: 0.95rem !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 0.9rem 1.5rem !important;
+      width: 100% !important;
+      cursor: pointer !important;
+      margin-top: 0.25rem !important;
+      transition: background 0.25s !important;
+    }
+
+    .formkit-form[data-uid="576e39ab8d"] .formkit-submit:hover,
+    .formkit-form[data-uid="576e39ab8d"] button[data-element="submit"]:hover {
+      background: var(--yellow-dark) !important;
+    }
+
+    /* Fallback custom form (shown when CK form loads) */
+    .ck-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .ck-form label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 0.2rem;
+      display: block;
+    }
+
+    .ck-form input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: var(--font-body);
+      font-size: 0.92rem;
+      color: var(--black);
+      background: #fafafa;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      outline: none;
+    }
+
+    .ck-form input:focus {
+      border-color: var(--yellow);
+      box-shadow: 0 0 0 3px rgba(255,213,89,0.15);
+      background: var(--white);
+    }
+
+    .ck-form input::placeholder { color: #aaa; }
+
+    .ck-form__submit {
+      width: 100%;
+      padding: 0.9rem 1.5rem;
+      background: var(--yellow);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+      margin-top: 0.25rem;
+    }
+
+    .ck-form__submit:hover {
+      background: var(--yellow-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(255,213,89,0.35);
+    }
+
+    .ck-form__submit:active { transform: translateY(0); }
+
+    .form-card__privacy {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      margin-top: 0.85rem;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
+    .form-card__privacy svg { flex-shrink: 0; }
+
+    /* ─── SOCIAL PROOF STRIP ─────────────────────────── */
+    .proof-strip {
+      background: var(--yellow);
+      padding: 0.75rem 2rem;
+      overflow: hidden;
+    }
+
+    .proof-strip__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .proof-stat {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--black);
+    }
+
+    /* ─── WHAT YOU GET SECTION ───────────────────────── */
+    .section {
+      padding: 5rem 2rem;
+    }
+
+    .section--alt { background: var(--light); }
+
+    .section__inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section__label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--yellow-dark);
+      margin-bottom: 0.6rem;
+    }
+
+    .section__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      color: var(--black);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .section__subtitle {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.7;
+      max-width: 560px;
+      margin-bottom: 3rem;
+    }
+
+    /* Tools grid */
+    .tools-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .tool-card {
+      background: var(--white);
+      border: 1px solid #e8e8e8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--yellow);
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform var(--transition);
+    }
+
+    .tool-card:hover {
+      border-color: rgba(255,213,89,0.4);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+      transform: translateY(-2px);
+    }
+
+    .tool-card:hover::before { transform: scaleY(1); }
+
+    .tool-card__number {
+      font-family: var(--font-display);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--yellow-dark);
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .tool-card__icon {
+      font-size: 1.8rem;
+      margin-bottom: 0.75rem;
+      line-height: 1;
+    }
+
+    .tool-card__name {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 0.4rem;
+    }
+
+    .tool-card__desc {
+      font-size: 0.83rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* ─── HOW IT WORKS ───────────────────────────────── */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      margin-top: 1rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 2rem 1.5rem;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid #e8e8e8;
+      position: relative;
+    }
+
+    .step__num {
+      width: 48px;
+      height: 48px;
+      background: var(--yellow);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--black);
+      margin: 0 auto 1.25rem;
+    }
+
+    .step__title {
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 0.5rem;
+    }
+
+    .step__desc {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* connector line */
+    .steps .step:not(:last-child)::after {
+      content: '→';
+      position: absolute;
+      right: -1.2rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--yellow);
+      font-weight: 700;
+    }
+
+    /* ─── BOTTOM CTA ─────────────────────────────────── */
+    .bottom-cta {
+      background: var(--black);
+      padding: 5rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .bottom-cta::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(255,213,89,0.1) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .bottom-cta__inner {
+      max-width: 620px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+
+    .bottom-cta__title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+      font-weight: 800;
+      color: var(--white);
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      margin-bottom: 1rem;
+    }
+
+    .bottom-cta__title em { font-style: normal; color: var(--yellow); }
+
+    .bottom-cta__sub {
+      font-size: 1rem;
+      color: #888;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    .btn-yellow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--yellow);
+      color: var(--black);
+      font-family: var(--font-display);
+      font-size: 1rem;
+      font-weight: 800;
+      padding: 0.95rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background var(--transition), transform var(--transition), box-shadow var(--transition);
+    }
+
+    .btn-yellow:hover {
+      background: var(--yellow-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 28px rgba(255,213,89,0.35);
+    }
+
+    /* ─── FOOTER ─────────────────────────────────────── */
+    .ka-footer {
+      background: var(--black);
+      border-top: 3px solid var(--yellow);
+      color: #ccc;
+      font-family: var(--font-body);
+    }
+
+    .ka-footer__top {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 2.5rem;
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr;
+      gap: 3rem;
+    }
+
+    .ka-footer__logo {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+
+    .ka-footer__logo img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--yellow);
+    }
+
+    .ka-footer__logo-name {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1rem;
+      color: var(--white);
+    }
+
+    .ka-footer__logo-name span { color: var(--yellow); }
+
+    .ka-footer__desc {
+      font-size: 0.85rem;
+      color: #666;
+      line-height: 1.7;
+      max-width: 300px;
+    }
+
+    .ka-footer__social {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.25rem;
+    }
+
+    .ka-footer__social a {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #1e1e1e;
+      border: 1px solid #333;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #888;
+      text-decoration: none;
+      transition: color var(--transition), border-color var(--transition), background var(--transition);
+    }
+
+    .ka-footer__social a:hover {
+      color: var(--yellow);
+      border-color: var(--yellow);
+      background: rgba(255,213,89,0.08);
+    }
+
+    .ka-footer__cert {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(255,213,89,0.08);
+      border: 1px solid rgba(255,213,89,0.25);
+      border-radius: 8px;
+      padding: 0.6rem 0.9rem;
+      margin-top: 1.5rem;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+
+    .ka-footer__cert strong { color: var(--yellow); font-weight: 600; }
+
+    .ka-footer__col h4 {
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 1rem;
+    }
+
+    .ka-footer__col ul { list-style: none; display: flex; flex-direction: column; gap: 0.55rem; }
+
+    .ka-footer__col ul li a {
+      font-size: 0.84rem;
+      color: #888;
+      text-decoration: none;
+      transition: color var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .ka-footer__col ul li a:hover { color: var(--white); }
+
+    .ka-footer__bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1.2rem 2rem;
+      border-top: 1px solid #222;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .ka-footer__copy { font-size: 0.78rem; color: #555; }
+
+    /* ─── RESPONSIVE ─────────────────────────────────── */
+    @media (max-width: 900px) {
+      .hero__inner {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .form-card { max-width: 480px; }
+
+      .steps {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .steps .step::after { display: none; }
+
+      .ka-footer__top {
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+      }
+    }
+
+    @media (max-width: 680px) {
+      .ka-nav, .ka-header__cta { display: none; }
+      .ka-hamburger { display: flex; }
+
+      .hero { padding: 3rem 1.5rem; }
+
+      .section { padding: 3.5rem 1.5rem; }
+
+      .proof-strip__inner { gap: 1.5rem; }
+
+      .ka-footer__top { grid-template-columns: 1fr; gap: 2rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════ HEADER ══════════════════════════════ -->
+  <header class="ka-header">
+    <div class="ka-header__bar">
+      <a href="/" class="ka-logo">
+        <img src="https://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy Logo" />
+        <div class="ka-logo__text">
+          <span class="ka-logo__name">Kaizen <span>Academy</span></span>
+          <span class="ka-logo__tagline">Continuous Improvement</span>
+        </div>
+      </a>
+
+      <nav class="ka-nav">
+        <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1">TPS & Lean</a>
+        <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping">Value Stream</a>
+        <a href="https://academy.continuousimprovement.education/p/en-home">Problem Solving</a>
+        <a href="https://academy.continuousimprovement.education/p/business-process-management">BPM</a>
+        <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle">Certification</a>
+      </nav>
+
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" class="ka-header__cta">
+        Enrol Now — 20% Off
+      </a>
+
+      <button class="ka-hamburger" id="kaHamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+
+    <nav class="ka-mobile-nav" id="kaMobileNav">
+      <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1">TPS & Lean Fundamentals</a>
+      <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping">Value Stream Mapping</a>
+      <a href="https://academy.continuousimprovement.education/p/en-home">Scientific Problem Solving</a>
+      <a href="https://academy.continuousimprovement.education/p/business-process-management">Business Process Management</a>
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle">Lean Practitioner Certification</a>
+      <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" class="ka-header__cta">
+        Enrol Now — 20% Off
+      </a>
+    </nav>
+  </header>
+
+  <!-- ═══════════════════════════ HERO ═════════════════════════════════ -->
+  <section class="hero">
+    <div class="hero__inner">
+
+      <!-- Left: Copy -->
+      <div class="hero__content">
+        <div class="hero__badge">Free Access — No Credit Card</div>
+
+        <h1 class="hero__title">
+          Master the <em>7 Quality Tools</em> with an Interactive App
+        </h1>
+
+        <p class="hero__subtitle">
+          Used by lean practitioners worldwide. Enter your details and get instant access to our interactive 7 QC Tools app — explore, learn, and apply each tool to real problems.
+        </p>
+
+        <div class="hero__tools">
+          <div class="hero__tool-pill"><span>01</span> Check Sheet</div>
+          <div class="hero__tool-pill"><span>02</span> Histogram</div>
+          <div class="hero__tool-pill"><span>03</span> Pareto Chart</div>
+          <div class="hero__tool-pill"><span>04</span> Fishbone Diagram</div>
+          <div class="hero__tool-pill"><span>05</span> Scatter Diagram</div>
+          <div class="hero__tool-pill"><span>06</span> Control Chart</div>
+          <div class="hero__tool-pill"><span>07</span> Stratification</div>
+        </div>
+      </div>
+
+      <!-- Right: Form Card -->
+      <div class="form-card">
+        <p class="form-card__eyebrow">Get Instant Access</p>
+        <h2 class="form-card__title">7 Quality Tools Interactive App</h2>
+        <p class="form-card__desc">Free forever. Enter your details and we'll send you direct access immediately.</p>
+
+        <div id="ck-form-wrapper">
+          <script src="https://f.convertkit.com/ckjs/ck.5.js"></script>
+          <form action="https://app.kit.com/forms/9347005/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="9347005" data-uid="576e39ab8d" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;redirect&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;https://toolkit.kaizenacademy.education/7-QC-Tools/&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:true,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800" style="background-color:transparent;border-radius:0;box-shadow:none;max-width:100%;"><div data-style="full"><div data-element="column" class="formkit-background" style="display:none;"></div><div data-element="column" class="formkit-column"><div class="formkit-header" data-element="header" style="display:none;"><h2>Get our how to guide</h2></div><ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul><div data-element="fields" class="seva-fields formkit-fields"><div class="formkit-field"><input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email"></div><div class="formkit-field"><input class="formkit-input" aria-label="First Name" name="fields[first_name]" placeholder="First Name" type="text"></div><button data-element="submit" class="formkit-submit formkit-submit"><div class="formkit-spinner"><div></div><div></div><div></div></div><span>Get Free Access →</span></button></div><div class="formkit-disclaimer" data-element="disclaimer" style="color:#aaa;font-size:12px;text-align:center;margin-top:8px;">We respect your privacy. Unsubscribe at anytime.</div><div class="formkit-powered-by-convertkit-container"><a href="https://kit.com/features/forms?utm_campaign=poweredby&utm_content=form&utm_medium=referral&utm_source=dynamic" data-element="powered-by" class="formkit-powered-by-convertkit" data-variant="dark" target="_blank" rel="nofollow">Built with Kit</a></div></div></div></form>
+
+          <!-- Kaizen brand overrides for ConvertKit form -->
+          <style>
+            .formkit-form[data-uid="576e39ab8d"] {
+              box-shadow: none !important;
+              background: transparent !important;
+              max-width: 100% !important;
+              min-width: 0 !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] [data-style="full"] {
+              display: block !important;
+              grid-template-columns: unset !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-column {
+              padding: 0 !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-background {
+              display: none !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-header {
+              display: none !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-input {
+              border: 1.5px solid #e0e0e0 !important;
+              border-left: 1.5px solid #e0e0e0 !important;
+              border-right: 1.5px solid #e0e0e0 !important;
+              border-top: 1.5px solid #e0e0e0 !important;
+              border-radius: 8px !important;
+              padding: 12px 16px !important;
+              font-size: 0.92rem !important;
+              background: #fafafa !important;
+              color: #333 !important;
+              width: 100% !important;
+              transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-input:focus {
+              border-color: #ffd559 !important;
+              box-shadow: 0 0 0 3px rgba(255,213,89,0.15) !important;
+              background: #fff !important;
+              outline: none !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-submit {
+              background: #ffd559 !important;
+              color: #0d0d0d !important;
+              border-radius: 8px !important;
+              font-weight: 800 !important;
+              font-size: 0.95rem !important;
+              width: 100% !important;
+              transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+              font-family: 'Syne', sans-serif !important;
+              letter-spacing: 0.01em !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-submit:hover {
+              background: #e6be3e !important;
+              transform: translateY(-1px) !important;
+              box-shadow: 0 6px 20px rgba(255,213,89,0.35) !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-field {
+              margin-bottom: 10px !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-fields .formkit-submit {
+              margin-top: 6px !important;
+            }
+            .formkit-form[data-uid="576e39ab8d"] .formkit-powered-by-convertkit-container {
+              justify-content: center !important;
+              margin-top: 10px !important;
+            }
+          </style>
+        </div>
+
+        <p class="form-card__privacy">
+          <svg width="12" height="12" fill="#aaa" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/></svg>
+          Your details are safe. No spam, ever. Unsubscribe anytime.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ SOCIAL PROOF STRIP ══════════════════════ -->
+  <div class="proof-strip">
+    <div class="proof-strip__inner">
+      <div class="proof-stat">
+        <svg width="14" height="14" fill="#0d0d0d" viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+        Trusted by thousands of practitioners
+      </div>
+      <div class="proof-stat">
+        <svg width="14" height="14" fill="#0d0d0d" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+        Certificates by Kaizen Academy Australia
+      </div>
+      <div class="proof-stat">
+        <svg width="14" height="14" fill="#0d0d0d" viewBox="0 0 24 24"><path d="M13 2.05v2.02c3.95.49 7 3.85 7 7.93 0 3.21-1.81 6-4.72 7.72L13 17v5h5l-1.22-1.22C19.91 18.92 22 15.11 22 12c0-5.18-3.94-9.45-9-9.95zM11 2.05C5.95 2.55 2 6.82 2 12c0 3.11 2.09 6.92 5.22 8.78L6 22h5v-5l-2.28 2.28C6.81 18 5 15.21 5 12c0-4.08 3.05-7.44 7-7.93V2.05z"/></svg>
+        Instant access on sign-up
+      </div>
+      <div class="proof-stat">
+        <svg width="14" height="14" fill="#0d0d0d" viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z"/></svg>
+        No credit card required
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ THE 7 TOOLS ═════════════════════════════ -->
+  <section class="section">
+    <div class="section__inner">
+      <p class="section__label">What's Inside</p>
+      <h2 class="section__title">All 7 Tools, Fully Interactive</h2>
+      <p class="section__subtitle">Each tool is explained, visualised, and interactive — so you don't just read about them, you use them.</p>
+
+      <div class="tools-grid">
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 01</p>
+          <div class="tool-card__icon">☑️</div>
+          <h3 class="tool-card__name">Check Sheet</h3>
+          <p class="tool-card__desc">Structured data collection forms that make it easy to see patterns and track defects, events, or frequencies over time.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 02</p>
+          <div class="tool-card__icon">📊</div>
+          <h3 class="tool-card__name">Histogram</h3>
+          <p class="tool-card__desc">Visualise the distribution of data to understand variation and identify where your process is centred and spread.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 03</p>
+          <div class="tool-card__icon">📉</div>
+          <h3 class="tool-card__name">Pareto Chart</h3>
+          <p class="tool-card__desc">Focus your improvement efforts on the vital few — identify which problems account for the majority of your issues.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 04</p>
+          <div class="tool-card__icon">🐟</div>
+          <h3 class="tool-card__name">Fishbone (Ishikawa) Diagram</h3>
+          <p class="tool-card__desc">Systematically map all possible causes of a problem across categories to find the true root cause.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 05</p>
+          <div class="tool-card__icon">🔵</div>
+          <h3 class="tool-card__name">Scatter Diagram</h3>
+          <p class="tool-card__desc">Explore and confirm the relationship between two variables — essential for validating your root cause hypotheses.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 06</p>
+          <div class="tool-card__icon">📈</div>
+          <h3 class="tool-card__name">Control Chart</h3>
+          <p class="tool-card__desc">Monitor process performance over time and distinguish between normal variation and signals that require action.</p>
+        </div>
+        <div class="tool-card">
+          <p class="tool-card__number">Tool 07</p>
+          <div class="tool-card__icon">🔢</div>
+          <h3 class="tool-card__name">Stratification</h3>
+          <p class="tool-card__desc">Separate data into subgroups to reveal hidden patterns and understand which source or category drives your problem.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ HOW IT WORKS ════════════════════════════ -->
+  <section class="section section--alt">
+    <div class="section__inner">
+      <p class="section__label">How It Works</p>
+      <h2 class="section__title">Three Steps to Access</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step__num">1</div>
+          <h3 class="step__title">Enter Your Details</h3>
+          <p class="step__desc">Fill in your first name and email address in the form above. Takes less than 20 seconds.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">2</div>
+          <h3 class="step__title">Check Your Inbox</h3>
+          <p class="step__desc">We'll send your personal access link immediately. No waiting, no approvals needed.</p>
+        </div>
+        <div class="step">
+          <div class="step__num">3</div>
+          <h3 class="step__title">Start Exploring</h3>
+          <p class="step__desc">Launch the interactive app and start using all 7 tools straight away — right in your browser.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════ BOTTOM CTA ══════════════════════════════ -->
+  <section class="bottom-cta">
+    <div class="bottom-cta__inner">
+      <h2 class="bottom-cta__title">Ready to solve problems <em>scientifically?</em></h2>
+      <p class="bottom-cta__sub">Get free access to the 7 QC Tools app and start applying the same tools used by world-class lean teams.</p>
+      <a href="#ck-form-wrapper" class="btn-yellow">Get Free Access Now →</a>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════ FOOTER ══════════════════════════════ -->
+  <footer class="ka-footer">
+    <div class="ka-footer__top">
+
+      <div class="ka-footer__brand">
+        <a href="/" class="ka-footer__logo">
+          <img src="https://practitioner.kaizenacademy.education/logo_round.png" alt="Kaizen Academy" />
+          <span class="ka-footer__logo-name">Kaizen <span>Academy</span></span>
+        </a>
+        <p class="ka-footer__desc">
+          Practical lean and continuous improvement training built for real workplaces. Structured, certificate-backed, and designed to create lasting change.
+        </p>
+        <div class="ka-footer__social">
+          <a href="https://www.linkedin.com/company/theciacademy" aria-label="LinkedIn" target="_blank" rel="noopener">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          </a>
+          <a href="https://www.youtube.com/@ContinuousImprovementAcademy" aria-label="YouTube" target="_blank" rel="noopener">
+            <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>
+          </a>
+        </div>
+        <div class="ka-footer__cert">
+          <svg width="14" height="14" fill="#ffd559" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+          Certificates by <strong>Kaizen Academy Australia</strong>
+        </div>
+      </div>
+
+      <div class="ka-footer__col">
+        <h4>Courses</h4>
+        <ul>
+          <li><a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20">TPS & Lean Fundamentals</a></li>
+          <li><a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20">Value Stream Mapping</a></li>
+          <li><a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20">Scientific Problem Solving</a></li>
+          <li><a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20">Business Process Management</a></li>
+          <li><a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20">Lean Practitioner Bundle</a></li>
+        </ul>
+      </div>
+
+      <div class="ka-footer__col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="https://www.linkedin.com/company/theciacademy" target="_blank" rel="noopener">LinkedIn</a></li>
+          <li><a href="https://www.youtube.com/@ContinuousImprovementAcademy" target="_blank" rel="noopener">YouTube</a></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="ka-footer__bottom">
+      <p class="ka-footer__copy">© <span id="kaYear"></span> Kaizen Academy. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav
+    const btn = document.getElementById('kaHamburger');
+    const nav = document.getElementById('kaMobileNav');
+    btn.addEventListener('click', () => nav.classList.toggle('open'));
+
+    // Dynamic year
+    document.getElementById('kaYear').textContent = new Date().getFullYear();
+
+    // Smooth scroll for bottom CTA button
+    document.querySelector('.btn-yellow').addEventListener('click', (e) => {
+      e.preventDefault();
+      document.getElementById('ck-form-wrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  </script>
+
+</body>
+</html>
