@@ -136,7 +136,6 @@
       overflow: hidden;
     }
 
-    /* Radial glow bg */
     .hero-glow {
       position: absolute;
       width: 900px;
@@ -149,7 +148,6 @@
       pointer-events: none;
     }
 
-    /* Animated grid */
     .hero-grid {
       position: absolute;
       inset: 0;
@@ -191,7 +189,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
     }
 
     .hero h1 {
@@ -406,7 +403,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26px;
       background: var(--surface-2);
       border: 1px solid var(--border);
       flex-shrink: 0;
@@ -414,6 +410,7 @@
 
     .tool-icon.yellow { background: rgba(255,213,89,0.12); border-color: rgba(255,213,89,0.2); }
     .tool-icon.blue   { background: rgba(79,168,255,0.1);  border-color: rgba(79,168,255,0.15); }
+    .tool-icon.green  { background: rgba(62,207,142,0.1);  border-color: rgba(62,207,142,0.15); }
 
     .tool-badge {
       display: inline-flex;
@@ -611,7 +608,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 20px;
       flex-shrink: 0;
     }
 
@@ -814,14 +810,6 @@
       color: var(--text-dim);
     }
 
-    .footer-cert {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     /* ─── ANIMATIONS ─── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
@@ -883,7 +871,12 @@
   <div class="hero-grid"></div>
   <div class="hero-inner">
     <div class="hero-badge">
-      <span class="hero-badge-dot">⚡</span>
+      <span class="hero-badge-dot">
+        <!-- Lightning bolt: free tools signal -->
+        <svg viewBox="0 0 24 24" fill="#0d0d0d" width="12" height="12" aria-hidden="true">
+          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+        </svg>
+      </span>
       Professional Continuous Improvement Tools — Free to Use
     </div>
     <h1>The Lean Practitioner's<br><em>Toolkit Suite</em></h1>
@@ -931,7 +924,15 @@
     <a href="7-QC-Tools/" class="tool-card clickable" target="_blank">
       <div class="tool-card-glow"></div>
       <div class="tool-header">
-        <div class="tool-icon yellow">📊</div>
+        <div class="tool-icon yellow">
+          <!-- Bar chart: Pareto / histogram representation -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffd559" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <line x1="3" y1="20" x2="21" y2="20"/>
+            <rect x="4" y="12" width="4" height="8" rx="0.5"/>
+            <rect x="10" y="7" width="4" height="13" rx="0.5"/>
+            <rect x="16" y="4" width="4" height="16" rx="0.5"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
       </div>
       <div class="tool-name">7 QC Tools</div>
@@ -952,7 +953,15 @@
     <a href="VSM/" class="tool-card clickable" target="_blank">
       <div class="tool-card-glow"></div>
       <div class="tool-header">
-        <div class="tool-icon blue">🗺️</div>
+        <div class="tool-icon blue">
+          <!-- Process map: two boxes with connecting arrow -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4fa8ff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <rect x="1" y="8" width="7" height="8" rx="1"/>
+            <rect x="16" y="8" width="7" height="8" rx="1"/>
+            <line x1="8" y1="12" x2="15" y2="12"/>
+            <polyline points="13 9.5 15.5 12 13 14.5"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
       </div>
       <div class="tool-name">VSM Calculator</div>
@@ -972,7 +981,15 @@
     <a href="Accounting/" class="tool-card clickable" target="_blank">
       <div class="tool-card-glow"></div>
       <div class="tool-header">
-        <div class="tool-icon yellow">💰</div>
+        <div class="tool-icon yellow">
+          <!-- Grid / box score table -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffd559" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="3" y1="15" x2="21" y2="15"/>
+            <line x1="9" y1="9" x2="9" y2="21"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
       </div>
       <div class="tool-name">Lean Accounting</div>
@@ -992,7 +1009,18 @@
     <a href="DOE-Navigator/" class="tool-card clickable" target="_blank">
       <div class="tool-card-glow"></div>
       <div class="tool-header">
-        <div class="tool-icon blue">🧪</div>
+        <div class="tool-icon blue">
+          <!-- Scatter plot with trend line: DOE / regression -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#4fa8ff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <line x1="4" y1="20" x2="4" y2="3"/>
+            <line x1="4" y1="20" x2="21" y2="20"/>
+            <circle cx="7"  cy="16" r="1.5" fill="#4fa8ff"/>
+            <circle cx="11" cy="12" r="1.5" fill="#4fa8ff"/>
+            <circle cx="15" cy="8"  r="1.5" fill="#4fa8ff"/>
+            <circle cx="19" cy="5"  r="1.5" fill="#4fa8ff"/>
+            <line x1="5" y1="18" x2="20" y2="4" stroke-dasharray="2 2" stroke-width="1" stroke-opacity="0.4"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
       </div>
       <div class="tool-name">DOE Navigator</div>
@@ -1012,7 +1040,18 @@
     <a href="Flow Simulation/" class="tool-card clickable" target="_blank">
       <div class="tool-card-glow"></div>
       <div class="tool-header">
-        <div class="tool-icon green">⚡</div>
+        <div class="tool-icon green">
+          <!-- Three process steps with connecting arrows: flow -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#3ecf8e" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <rect x="1"    y="10" width="5" height="4" rx="1"/>
+            <rect x="9.5"  y="10" width="5" height="4" rx="1"/>
+            <rect x="18"   y="10" width="5" height="4" rx="1"/>
+            <line x1="6"   y1="12" x2="9.5"  y2="12"/>
+            <line x1="14.5" y1="12" x2="18"  y2="12"/>
+            <polyline points="8 10.5 9.5 12 8 13.5"/>
+            <polyline points="16.5 10.5 18 12 16.5 13.5"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-live"><span class="badge-dot"></span>Live</span>
       </div>
       <div class="tool-name">Flow Simulation</div>
@@ -1031,7 +1070,14 @@
     <!-- Kaizen Sensei -->
     <div class="tool-card disabled">
       <div class="tool-header">
-        <div class="tool-icon">🎓</div>
+        <div class="tool-icon">
+          <!-- Graduation cap: sensei / knowledge -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <polygon points="12 3 22 9 12 15 2 9"/>
+            <path d="M6 11.5V16.5c0 0 2.5 2.5 6 2.5s6-2.5 6-2.5v-5"/>
+            <line x1="22" y1="9" x2="22" y2="14.5"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-soon">Coming Soon</span>
       </div>
       <div class="tool-name">Kaizen Academy Sensei</div>
@@ -1046,7 +1092,13 @@
     <!-- TPM Calculator -->
     <div class="tool-card disabled">
       <div class="tool-header">
-        <div class="tool-icon">⚙️</div>
+        <div class="tool-icon">
+          <!-- Settings gear: machinery / TPM -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" aria-hidden="true">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </div>
         <span class="tool-badge badge-soon">Coming Soon</span>
       </div>
       <div class="tool-name">TPM Calculator</div>
@@ -1075,7 +1127,7 @@
 
       <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank" class="course-card">
         <div class="course-num">Course 01</div>
-        <div class="course-name">TPS & Lean Fundamentals</div>
+        <div class="course-name">TPS &amp; Lean Fundamentals</div>
         <div class="course-desc">Master the Toyota Production System, the pillars of Just-In-Time and Jidoka, and the foundational principles of Lean thinking.</div>
         <div class="course-link-text">Enrol with 20% off →</div>
       </a>
@@ -1102,7 +1154,7 @@
       </a>
 
       <a href="https://academy.continuousimprovement.education/p/certified-lean-practitioner-training-bundle?coupon_code=kaizen20" target="_blank" class="course-card" style="background: rgba(255,213,89,0.04); border-color: rgba(255,213,89,0.2);">
-        <div class="course-num" style="color: var(--yellow);">🏆 Certification</div>
+        <div class="course-num" style="color: var(--yellow);">★ Certification</div>
         <div class="course-name">Lean Practitioner Certification</div>
         <div class="course-desc">The complete bundle: TPS, VSM, Scientific Problem Solving, project coaching, and a rigorous certification exam. Certificates issued by Kaizen Academy Australia.</div>
         <div class="course-link-text">Get certified with 20% off →</div>
@@ -1143,8 +1195,8 @@
         <li class="pillar-item">
           <div class="pillar-dot"></div>
           <div>
-            <div class="pillar-title">Council for Six Sigma Certified</div>
-            <div class="pillar-desc">The Continuous Improvement Academy is a registered provider with the Council for Six Sigma Certification. Certificates issued by Kaizen Academy Australia.</div>
+            <div class="pillar-title">Project-Led Certification</div>
+            <div class="pillar-desc">Certification is earned through a real improvement project completed in your workplace — not just an exam. One-to-one coaching throughout the programme ensures concepts become habits.</div>
           </div>
         </li>
       </ul>
@@ -1152,18 +1204,34 @@
 
     <div class="about-visual">
       <div class="about-metric">
-        <div class="metric-icon">👥</div>
+        <div class="metric-icon">
+          <!-- Group of people: learner community -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffd559" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true">
+            <circle cx="9" cy="7" r="3.5"/>
+            <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+            <path d="M16 3.5a3.5 3.5 0 0 1 0 7"/>
+            <path d="M21 21v-2a4 4 0 0 0-3-3.87"/>
+          </svg>
+        </div>
         <div>
           <div class="metric-num">5,000+</div>
-          <div class="metric-label">Learners across manufacturing, healthcare, finance & services</div>
+          <div class="metric-label">Learners across manufacturing, healthcare, finance &amp; services</div>
         </div>
       </div>
       <div class="about-metric">
-        <div class="metric-icon">🎓</div>
+        <div class="metric-icon">
+          <!-- Open book: courses / learning -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="#ffd559" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" width="22" height="22" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            <line x1="8" y1="8" x2="16" y2="8"/>
+            <line x1="8" y1="12" x2="13" y2="12"/>
+          </svg>
+        </div>
         <div>
           <div class="metric-num">4 Courses</div>
           <div class="metric-label">From TPS fundamentals to full Lean Practitioner Certification</div>
-          <div class="metric-label">Access, updates, and project coaching support</div>
+          <div class="metric-label">Lifetime access, updates, and project coaching support</div>
         </div>
       </div>
     </div>
@@ -1212,7 +1280,7 @@
 
       <div class="footer-col">
         <h4>Courses</h4>
-        <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">TPS & Lean Fundamentals</a>
+        <a href="https://academy.continuousimprovement.education/p/toyota-production-system-and-lean-fundamentals1?coupon_code=kaizen20" target="_blank">TPS &amp; Lean Fundamentals</a>
         <a href="https://academy.continuousimprovement.education/p/advanced-value-stream-mapping?coupon_code=kaizen20" target="_blank">Value Stream Mapping</a>
         <a href="https://academy.continuousimprovement.education/p/en-home?coupon_code=kaizen20" target="_blank">Scientific Problem Solving</a>
         <a href="https://academy.continuousimprovement.education/p/business-process-management?coupon_code=kaizen20" target="_blank">Business Process Mgmt</a>
@@ -1234,11 +1302,14 @@
     </div>
 
     <div class="footer-bottom">
-      <p> 2026 Kaizen Academy Pty Ltd — The Continuous Improvement Academy. All rights reserved.</p>
-      <div class="footer-cert"> Certificates issued by Kaizen Academy Australia · Council for Six Sigma Certification registered provider</div>
+      <p>&copy; <span id="yr"></span> Kaizen Academy Pty Ltd — The Continuous Improvement Academy. All rights reserved.</p>
     </div>
   </div>
 </footer>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+</script>
 
 </body>
 </html>
